@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
-import { Contract, Signer } from 'ethers';
+// import { Contract, Signer } from 'ethers';
+// import artifact from 'C:\Users\avine\OneDrive - Middlesex University\Documents\MDX\Year 3\CST3990 Undergraduate Individual Project\code\back-end\build\contracts\individual.json';
 
-const provider = new ethers.providers.InfuraProvider('goerli', 'b025a9a447ba4717a8943d27dee61447');
-const signer = provider.getSigner();
+const {ethers} = require("ethers");
+// const provider = new ethers.providers.InfuraProvider('goerli', '4da996a80bb64ba594118689db3208a7');
+// const signer = provider.getSigner();
+
+// const contractAddress = artifact.networks['5777'].address;
+// const contract = new Contract(contractAddress, artifact.abi, provider);
 
 const Register = () => {
   const [firstName, setFirstName] = useState('');
@@ -11,9 +16,16 @@ const Register = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
+  // async function registerIndividual(firstName, lastName, username, email, password) {
+  //   const result = await contract.registerUser(firstName, lastName, username,email, password);
+  //   console.log(result);
+  // }
+  
   const handleSubmit = (event) => {
     event.preventDefault();
     // Add logic to handle form submission
+    // registerIndividual(firstName, lastName, username, email, password)
+    setFirstName("");
   };
 
   return (
