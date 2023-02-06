@@ -15,10 +15,7 @@ contract individual {
         bytes32 password;
     }
      // Mapping from usernames to provider addresses
-    mapping (string => address) public individuals;
-
-    // Array of all registered providers
-    Individual[] public individualList;
+    mapping (uint32 => Individual) public individuals;
 
     // Events
     event LogInsuredPersonRegistered(string name, string email);
@@ -26,26 +23,33 @@ contract individual {
     // functions
 
     // Function to register a new provider
-    function registerProvider(string memory _firstname, string memory _lastname, string memory _username, string memory _email, string memory _password) public {
+    function registerProvider(string memory _firstname, string memory _lastname, string memory _username, string memory _email, string memory _password) public returns (uint32){
         // Check if the username is not already taken
-        require(individuals[_username] == address(0), "Username is already taken");
+        // require(individuals[_username] == address(0), "Username is already taken");
 
         // Create a new provider
-        Individual memory newIndividual = Individual({
-            individualAddress: msg.sender,
-            first_name: _firstname,
-            last_name: _lastname,
-            username: _username,
-            email: _email,
-            password: hashPassword(_password)
-        });
+        // Individual memory newIndividual = Individual({
+        //     individualAddress: msg.sender,
+        //     first_name: _firstname,
+        //     last_name: _lastname,
+        //     username: _username,
+        //     email: _email,
+        //     password: hashPassword(_password)
+        // });
 
-        // Add the new provider to the mapping and provider list
-        individuals[_username] = newIndividual.individualAddress;
-        individualList.push(newIndividual);
+        // // Add the new provider to the mapping and provider list
+        // individuals[_username] = newIndividual.individualAddress;
+        // individualList.push(newIndividual);
+        uint32 userId = individual_id++;
+        individuals[userId].first_name = _firstname;
+        individuals[userId].last_name = _lastname;
+        individuals[userId].username = _username;
+        individuals[userId].email = _email;
+        individuals[userId].password = hashPassword(_password);
 
         // Emit a NewProvider event
-        emit LogInsuredPersonRegistered(newIndividual.username, newIndividual.email);
+        // emit LogInsuredPersonRegistered(username, newIndividual.email);
+        return userId;
     }
 
     function hashPassword(string memory _password) private pure returns (bytes32) {
@@ -53,11 +57,11 @@ contract individual {
     }
 
 
-    function getIndividual(uint32 _individual_id) public view returns (string memory, address, string memory){
-        return (
-            individualList[_individual_id].username,
-            individualList[_individual_id].individualAddress,
-            individualList[_individual_id].email
-        );
-    }
+    // function getIndividual(uint32 _individual_id) public view returns (string memory, address, string memory){
+    //     return (
+    //         individualList[_individual_id].username,
+    //         individualList[_individual_id].individualAddress,
+    //         individualList[_individual_id].email
+    //     );
+    // }
 }
