@@ -1,10 +1,6 @@
 import { ethers } from 'ethers';
-// import { ethers } from "ethers";
 import React, { useState } from 'react';
-// import Web3 from 'web3';
 import Individual from '../../contracts/individual.json';
-// import { ethers } from 'ethers';
-// import { parseEther, formatEther } from '@ethersproject/units';
 
 const IndividualContractAddress = '0x303436626f2EC900060006EEE8f59fbd74313DDf';
 let address, signer, provider;
