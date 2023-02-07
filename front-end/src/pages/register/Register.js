@@ -36,6 +36,7 @@ const Register = () => {
     const individualContract = new ethers.Contract(IndividualContractAddress, Individual.abi, signer);
     const reponse = await individualContract.registerProvider(firstName, lastName, password, email, password);
     console.log(reponse);
+    
   }
 
   const handleSubmit = (event) => {

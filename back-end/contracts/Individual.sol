@@ -57,11 +57,11 @@ contract individual {
     }
 
 
-    // function getIndividual(uint32 _individual_id) public view returns (string memory, address, string memory){
-    //     return (
-    //         individualList[_individual_id].username,
-    //         individualList[_individual_id].individualAddress,
-    //         individualList[_individual_id].email
-    //     );
-    // }
+    function getIndividual(uint32 _individual_id) public view returns (string memory, address, string memory){
+        return (
+            individuals[_individual_id].username,
+            individuals[_individual_id].individualAddress,
+            individuals[_individual_id].email
+        );
+    }
 }

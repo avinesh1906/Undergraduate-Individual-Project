@@ -8,4 +8,10 @@ contract('Individual', async account => {
         console.log(individualID);
         assert.equal(individual[1], "avi");
     });
+
+    it("should return individual details", async() => {
+        let instance = await Individual.deployed();
+        let individualDetails = await instance.getIndividual(0);
+        assert.equal(individualDetails[0],"Avi1906");
+    });
 });
