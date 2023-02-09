@@ -34,7 +34,8 @@ const Register = () => {
   
   async function registerIndividual() {
     const individualContract = new ethers.Contract(IndividualContractAddress, Individual.abi, signer);
-    const reponse = await individualContract.registerProvider(firstName, lastName, password, email, password);
+    // const reponse = await individualContract.registerProvider(firstName, lastName, password, email, password);
+    const reponse = await individualContract.registerProvider("avi", "culloo", "Avi1906", "avi@gmail.com", "123");
     console.log(reponse);
     
   }
