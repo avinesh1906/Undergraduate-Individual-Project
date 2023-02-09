@@ -23,9 +23,10 @@ const Register = () => {
   }
 
   async function connectWallet() {
-    provider = new ethers.providers.Web3Provider(window.ethereum);
+    // provider = new ethers.providers.Web3Provider(window.ethereum);
     // Prompt user for account connections
-    await provider.send("eth_requestAccounts", []);
+    // await provider.send("eth_requestAccounts", []);
+    provider = new ethers.providers.JsonRpcProvider('http://127.0.0.1:7545');
     signer = provider.getSigner();
     setAddress( await signer.getAddress() );
     let balance = await signer.getBalance();
