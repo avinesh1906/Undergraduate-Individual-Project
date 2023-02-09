@@ -11,7 +11,8 @@ contract('Individual', async account => {
 
     it("should return individual details", async() => {
         let instance = await Individual.deployed();
-        let individualDetails = await instance.getIndividual(0);
-        assert.equal(individualDetails[0],"Avi1906");
+        let individualDetails = await instance.getIndividual();
+        console.log(individualDetails);
+        assert.equal(individualDetails,"Avi1906");
     });
 });
