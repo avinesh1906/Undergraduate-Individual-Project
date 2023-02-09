@@ -1,8 +1,8 @@
 import { ethers } from 'ethers';
 import React, { useState } from 'react';
-import Individual from '../../contracts/individual.json';
+import IndividualContract from '../../contracts/individual.json';
 
-const IndividualContractAddress = '0x303436626f2EC900060006EEE8f59fbd74313DDf';
+const IndividualContractAddress = '0xBcbDe88429851bc1E2D4b024e9Df80AAA617edEA';
 let address, signer, provider;
 
 
@@ -19,7 +19,6 @@ const Register = () => {
     address = ethaddy;
     if (address != null) {  toggleConnected ( !isConnected ); }
     console.log("Account:", address);
-    alert("Connected: " + address);
   }
 
   async function connectWallet() {
@@ -39,7 +38,7 @@ const Register = () => {
   }
 
   async function registerIndividual() {
-    const individualContract = new ethers.Contract(IndividualContractAddress, Individual.abi, signer);
+    const individualContract = new ethers.Contract(IndividualContractAddress, IndividualContract.abi, signer);
     // const reponse = await individualContract.registerProvider(firstName, lastName, password, email, password);
     const reponse = await individualContract.registerProvider("avi", "culloo", "Avi1906", "avi@gmail.com", "123");
     console.log(reponse);

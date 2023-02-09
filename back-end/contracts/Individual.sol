@@ -52,16 +52,15 @@ contract individual {
         return userId;
     }
 
-    function hashPassword(string memory _password) private pure returns (bytes32) {
-        return keccak256(abi.encodePacked(_password));
-    }
-
-
     function getIndividual(uint32 _individual_id) public view returns (string memory, address, string memory){
         return (
             individuals[_individual_id].username,
             individuals[_individual_id].individualAddress,
             individuals[_individual_id].email
         );
+    }
+
+    function hashPassword(string memory _password) private pure returns (bytes32) {
+        return keccak256(abi.encodePacked(_password));
     }
 }
