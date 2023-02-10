@@ -35,4 +35,8 @@ contract insuranceprovider {
     function hashPassword(string memory _password) private pure returns (bytes32) {
         return keccak256(abi.encodePacked(_password));
     }
+
+    function isInsuranceRegistered() public view returns (bool) {
+        return insuranceProviderAddress != address(0);
+    }
 }
