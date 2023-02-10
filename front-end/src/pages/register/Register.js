@@ -2,9 +2,8 @@ import { ethers } from 'ethers';
 import React, { useState } from 'react';
 import IndividualContract from '../../contracts/individual.json';
 
-const IndividualContractAddress = '0x70D7E2Ee1403f644f1f864ac2E2f972dAF52633D';
+const IndividualContractAddress = '0x628cA7926793a8b147657c212F84D924D4467C5d';
 let address, signer, provider;
-
 
 const Register = () => {
   const [firstName, setFirstName] = useState('');
@@ -38,9 +37,24 @@ const Register = () => {
   }
 
   async function registerIndividual() {
+    // Get the event signature
+    const eventSignature = ethers.utils.id("LogInsuredPersonRegistered(uint32,string)");
     const individualContract = new ethers.Contract(IndividualContractAddress, IndividualContract.abi, signer);
-    const reponse = await individualContract.registerProvider(firstName, lastName, password, email, password);
-    console.log(reponse);
+    const tx  = await individualContract.registerIndividual(firstName, lastName, username, email, password);
+    const receipt  = await  provider.waitForTransaction(tx.hash);
+    if (receipt.status === 1) {
+      console.log('Transaction successful');
+      // check the logs for the LogInsuredPersonRegistered event
+      receipt.logs.forEach(log => {
+        if (log.topics[0] === eventSignature) {
+          const event = individualContract.interface.parseLog(log);
+          console.log(event.args);
+        }
+      });
+    } else {
+      console.log('Transaction failed');
+    }
+
     getIndividual(individualContract);
   }
 
