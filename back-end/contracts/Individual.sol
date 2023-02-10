@@ -16,6 +16,8 @@ contract individual {
     }
      // Mapping from usernames to provider addresses
     mapping (uint32 => Individual) public individuals;
+    // Mappiing of the individual by username
+    mapping (string => uint32) public individualsByUsername;
 
     // Events
     event LogInsuredPersonRegistered(uint32, string username);
@@ -23,23 +25,10 @@ contract individual {
     // functions
 
     // Function to register a new provider
-    function registerProvider(string memory _firstname, string memory _lastname, string memory _username, string memory _email, string memory _password) public returns (uint32){
-        // Check if the username is not already taken
-        // require(individuals[_username] == address(0), "Username is already taken");
+    function registerIndividual(string memory _firstname, string memory _lastname, string memory _username, string memory _email, string memory _password) public {
+        // Check if username already exists
+        require(individualsByUsername[_username] == 0, "Username already exists");
 
-        // Create a new provider
-        // Individual memory newIndividual = Individual({
-        //     individualAddress: msg.sender,
-        //     first_name: _firstname,
-        //     last_name: _lastname,
-        //     username: _username,
-        //     email: _email,
-        //     password: hashPassword(_password)
-        // });
-
-        // // Add the new provider to the mapping and provider list
-        // individuals[_username] = newIndividual.individualAddress;
-        // individualList.push(newIndividual);
         uint32 userId = individual_id++;
         individuals[userId].first_name = _firstname;
         individuals[userId].last_name = _lastname;
@@ -47,9 +36,11 @@ contract individual {
         individuals[userId].email = _email;
         individuals[userId].password = hashPassword(_password);
 
+        // Add username to mapping
+        individualsByUsername[_username] = userId;
+
         // Emit a NewProvider event
         emit LogInsuredPersonRegistered(userId, individuals[userId].username);
-        return userId;
     }
 
     function getIndividual(uint32 _individual_id) public view returns (string memory, address, string memory){
@@ -62,5 +53,9 @@ contract individual {
 
     function hashPassword(string memory _password) private pure returns (bytes32) {
         return keccak256(abi.encodePacked(_password));
+    }
+
+    function getIndividualId(string memory _username) public view returns (uint32) {
+        return individualsByUsername[_username];
     }
 }
