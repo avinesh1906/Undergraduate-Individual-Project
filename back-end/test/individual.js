@@ -1,6 +1,6 @@
 var Individual  = artifacts.require('./Individual.sol');
 
-contract('Individual', async account => {
+contract('Individual', async accounts => {
     let instance;
 
     beforeEach(async () => {
@@ -53,6 +53,7 @@ contract('Individual', async account => {
         let individual = await instance.getIndividual.call(individualId);
         // Assert the returned values
         assert.equal(individual[0], "aviC", "The username is not correct");
+        assert.equal(individual[1], accounts[0], "The address is not correct");
         assert.equal(individual[2], "johndoe@example.com", "The email is not correct");
       });
 });

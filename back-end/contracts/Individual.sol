@@ -30,6 +30,7 @@ contract individual {
         require(individualsByUsername[_username] == 0, "Username already exists");
 
         uint32 userId = individual_id++;
+        individuals[userId].individualAddress = msg.sender;
         individuals[userId].first_name = _firstname;
         individuals[userId].last_name = _lastname;
         individuals[userId].username = _username;
