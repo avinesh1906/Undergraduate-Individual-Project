@@ -2,7 +2,7 @@ import { ethers } from 'ethers';
 import React, { useState } from 'react';
 import IndividualContract from '../../contracts/individual.json';
 
-const IndividualContractAddress = '0xBcbDe88429851bc1E2D4b024e9Df80AAA617edEA';
+const IndividualContractAddress = '0x70D7E2Ee1403f644f1f864ac2E2f972dAF52633D';
 let address, signer, provider;
 
 
@@ -39,8 +39,7 @@ const Register = () => {
 
   async function registerIndividual() {
     const individualContract = new ethers.Contract(IndividualContractAddress, IndividualContract.abi, signer);
-    // const reponse = await individualContract.registerProvider(firstName, lastName, password, email, password);
-    const reponse = await individualContract.registerProvider("avi", "culloo", "Avi1906", "avi@gmail.com", "123");
+    const reponse = await individualContract.registerProvider(firstName, lastName, password, email, password);
     console.log(reponse);
     getIndividual(individualContract);
   }

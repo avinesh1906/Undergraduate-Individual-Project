@@ -18,7 +18,7 @@ contract individual {
     mapping (uint32 => Individual) public individuals;
 
     // Events
-    event LogInsuredPersonRegistered(string name, string email);
+    event LogInsuredPersonRegistered(uint32, string username);
 
     // functions
 
@@ -48,7 +48,7 @@ contract individual {
         individuals[userId].password = hashPassword(_password);
 
         // Emit a NewProvider event
-        // emit LogInsuredPersonRegistered(username, newIndividual.email);
+        emit LogInsuredPersonRegistered(userId, individuals[userId].username);
         return userId;
     }
 
