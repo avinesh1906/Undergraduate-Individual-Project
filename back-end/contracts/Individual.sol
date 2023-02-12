@@ -66,7 +66,7 @@ contract individual {
         return individualsByUsername[_username];
     }
 
-    function chooseHealthContract(uint256 _healthContractId) public {
+    function signHealthContract(uint256 _healthContractId) public {
         require(healthContractsAssigned[msg.sender] == 0, "You have already chosen a health contract.");
         healthContractsAssigned[msg.sender] = _healthContractId;
 
