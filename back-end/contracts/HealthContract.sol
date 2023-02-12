@@ -14,7 +14,7 @@ contract HealthContract {
     mapping (Coverage => string) public coverageTypes;
     mapping (address => bool) public claimed;
     mapping (address => uint) public claims;
-    
+
     // Enumeration for coverage types
     enum Coverage { Bronze, Silver, Gold, Premium }
     // Array to keep track of the individuals who have requested a claim
@@ -22,7 +22,7 @@ contract HealthContract {
 
     // Events
     event LogHealthCoverage(address company, string coverage);
-    event NewClaimSubmitted(address claimant);
+    event NewClaimSubmitted(address claimant, address representative);
     event NewClaimRequested(address requester);
     event ClaimApproved(address requester);
     event ClaimRejected(address requester);
@@ -85,10 +85,11 @@ contract HealthContract {
         emit NewClaimRequested(msg.sender);
     }
 
-    function submitClaim(address _individual) public {
-        require(individuals[_individual], "Individual not registered in the contract");
-        individuals[_individual] = false;
-        emit NewClaimSubmitted(_individual);
+    function submitClaim(address _individual, uint _amount) public onlyHealthOrganization {
+        require(!claimed[_individual], "This claim has already been submitted for this individual.");
+        claimed[_individual] = true;
+        claims[_individual] = _amount;
+        NewClaimSubmitted(_individual, healthOrganizationAddress);
     }
 
     function approveClaim(address _individual) public {
