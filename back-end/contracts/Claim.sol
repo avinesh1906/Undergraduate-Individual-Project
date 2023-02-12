@@ -37,6 +37,12 @@ contract ClaimContract is HealthPolicy {
 
     // Events
     event returnClaimID(uint id);
+    
+    function setHealthOrganizationAddress(address _healthOrganizationAddress) public {
+        require(healthOrganizationAddress == address(0), "Health organization address has already been set.");
+        healthOrganizationAddress = _healthOrganizationAddress;
+    }
+
 
     // Function to submit a claim by the health organization
     function submitClaim(address _individual, uint _claimAmount, uint256 _healthContractID) public onlyHealthOrganization {
