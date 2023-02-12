@@ -56,4 +56,37 @@ contract('Individual', async accounts => {
         assert.equal(individual[1], accounts[0], "The address is not correct");
         assert.equal(individual[2], "johndoe@example.com", "The email is not correct");
       });
+      it('should sign a health contract', async () => {
+        const firstName = 'John';
+        const lastName = 'Doe';
+        const username = 'nidhi';
+        const email = 'johndoe@email.com';
+        const password = 'secretpassword';
+
+        await instance.registerIndividual(firstName, lastName, username, email, password, { from: accounts[0] });
+        await instance.signHealthContract(1);
+
+        const healthContractId = await instance.getHealthContract({ from: accounts[0] });
+        expect(healthContractId.toNumber()).to.equal(1);
+    });
+    it('should not get health contract if not assigned', async () => {
+      // Register an individual
+      await instance.registerIndividual("John", "Doe", "test12", "johndoe@example.com", "password123", { from: accounts[1] });
+      try {
+      await instance.getHealthContract({ from: accounts[1] });
+      assert.fail();
+      } catch (error) {
+      assert.equal(error.message.includes('No health contract has been assigned to this individual.'), true);
+      }
+    });
+    it('should not sign a health contract if already assigned', async () => {
+      await instance.registerIndividual("John", "Doe", "test36", "johndoe@example.com", "password123", { from: accounts[2] });
+      await instance.signHealthContract(1, { from: accounts[2] });
+      try {
+          await instance.signHealthContract(2, { from: accounts[2] });
+          assert.fail();
+      } catch (error) {
+          assert.include(error.message, 'You have already chosen a health contract.');
+      }
+    });
 });

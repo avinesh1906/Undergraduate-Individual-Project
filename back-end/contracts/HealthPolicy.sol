@@ -2,7 +2,7 @@
 pragma solidity ^0.8.0;
 
 contract HealthPolicy {
-    uint256 healthContractId = 0;
+    uint256 healthContractId = 1;
 
     struct HealthContract {
         uint healthcontractID;
