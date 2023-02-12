@@ -91,8 +91,10 @@ contract ClaimContract is HealthPolicy {
         // Check if the claim has already been approved or denied
         require(claim.status == ClaimStatus.Submitted, "The claim has already been approved or denied.");
 
+        uint claimLimit = claim.healthContract.premium * claim.healthContract.coverageLimit;
+
         // Approve the claim if the claim amount is within the coverage limit
-        if (claim.claimAmount <= claim.healthContract.coverageLimit) {
+        if (claim.claimAmount <= claimLimit) {
             claim.status = ClaimStatus.Approved;
         } else {
             claim.status = ClaimStatus.Denied;
