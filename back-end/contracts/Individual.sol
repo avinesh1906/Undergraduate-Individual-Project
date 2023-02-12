@@ -74,4 +74,9 @@ contract individual {
         individuals[_individual_id].healthContractId = _healthContractId;
         emit LogHealthContractAssigned(true);
     }
+
+    function getHealthContract() public view returns (uint256 heathContractID) {
+        require(healthContractsAssigned[msg.sender] != 0, "No health contract has been assigned to this individual.");
+        return healthContractsAssigned[msg.sender];
+    }
 }

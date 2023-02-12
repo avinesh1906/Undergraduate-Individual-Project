@@ -5,12 +5,14 @@ contract HealthPolicy {
     uint256 healthContractId = 0;
 
     struct HealthContract {
+        uint healthcontractID;
         uint coverageLimit;
         uint premium;
         string coverageType;
     }
 
-    mapping(uint256 => HealthContract) public healthContracts;
+    HealthContract[] public healthContracts;
+    // mapping(uint256 => HealthContract) public healthContracts;
     mapping(string => uint256) public coverageTypeByHealthContract;
     address insuranceCompanyAddress;
 
@@ -45,5 +47,9 @@ contract HealthPolicy {
         healthContracts[policyId].premium = _premium;
 
         emit NewPolicy(policyId);
+    }
+
+    function getAllHealthContracts() public view returns (HealthContract[] memory) {
+        return healthContracts;
     }
 }
