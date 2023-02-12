@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 contract HealthContract {
     // Fields
     address insuranceCompanyAddress;
+    address healthOrganizationAddress;
     Coverage coverageType;
     uint coverageLimit; // Coverage limit for the policy
     uint premium; // Premium amount to be paid by the individual
@@ -11,9 +12,13 @@ contract HealthContract {
 
     mapping (address => bool) individuals;
     mapping (Coverage => string) public coverageTypes;
+    mapping (address => bool) public claimed;
+    mapping (address => uint) public claims;
     
     // Enumeration for coverage types
     enum Coverage { Bronze, Silver, Gold, Premium }
+    // Array to keep track of the individuals who have requested a claim
+    address[] public claimedIndividuals;
 
     // Events
     event LogHealthCoverage(address company, string coverage);
@@ -28,7 +33,11 @@ contract HealthContract {
         require(msg.sender == insuranceCompanyAddress, "Only the insurance can execute this function.");
         _;
     }
-
+    // Modifier to ensure only the health organization can execute the function
+    modifier onlyHealthOrganization {
+        require(msg.sender == healthOrganizationAddress, "Only the health organization can execute this function.");
+        _;
+    }
     // Functions
 
     // Function to upload the health insurance policy
@@ -62,15 +71,24 @@ contract HealthContract {
         return coverageTypesArr;
     }
 
+    // Function to request a claim
+    function requestClaim() public {
+        // Check if the individual has already requested a claim
+        for (uint i = 0; i < claimedIndividuals.length; i++) {
+            if (claimedIndividuals[i] == msg.sender) {
+                revert("You have already requested a claim.");
+            }
+        }
+
+        // Add the individual to the claimedIndividuals array
+        claimedIndividuals.push(msg.sender);
+        emit NewClaimRequested(msg.sender);
+    }
+
     function submitClaim(address _individual) public {
         require(individuals[_individual], "Individual not registered in the contract");
         individuals[_individual] = false;
         emit NewClaimSubmitted(_individual);
-    }
-
-    function requestClaim(address _individual) public {
-        require(!individuals[_individual], "Claim already submitted by this individual");
-        emit NewClaimRequested(_individual);
     }
 
     function approveClaim(address _individual) public {
