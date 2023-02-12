@@ -92,6 +92,11 @@ contract HealthContract {
         emit NewClaimSubmitted(_individual, healthOrganizationAddress);
     }
 
+    // Function to retrieve the claim for a specific individual
+    function getClaim(address _individual) public view returns (uint) {
+        return claims[_individual];
+    }
+
     function approveClaim(address _individual) public {
         require(!individuals[_individual], "Claim already approved");
         individuals[_individual] = true;
