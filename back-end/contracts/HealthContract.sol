@@ -89,7 +89,7 @@ contract HealthContract {
         require(!claimed[_individual], "This claim has already been submitted for this individual.");
         claimed[_individual] = true;
         claims[_individual] = _amount;
-        NewClaimSubmitted(_individual, healthOrganizationAddress);
+        emit NewClaimSubmitted(_individual, healthOrganizationAddress);
     }
 
     function approveClaim(address _individual) public {
