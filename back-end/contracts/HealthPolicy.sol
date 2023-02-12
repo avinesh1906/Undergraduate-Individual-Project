@@ -5,9 +5,9 @@ contract HealthPolicy {
     uint256 healthContractId = 1;
 
     struct HealthContract {
-        uint healthcontractID;
+        uint256 healthcontractID;
         uint coverageLimit;
-        uint premium;
+        uint32 premium;
         string coverageType;
     }
 
@@ -27,25 +27,37 @@ contract HealthPolicy {
     }
 
     // Functions
-     function setInsuranceCompanyAddress(address _insuranceCompanyAddress) public {
+    function setInsuranceCompanyAddress(address _insuranceCompanyAddress) public {
         require(insuranceCompanyAddress == address(0), "Insurance company address has already been set.");
         insuranceCompanyAddress = _insuranceCompanyAddress;
     }
     
+    function getInsuranceCompanyAddress() public view returns (address){
+        return insuranceCompanyAddress;
+    }
+    
     function getHealthContract(uint256 _healthContractId) public view returns (HealthContract memory) {
-        return healthContracts[_healthContractId];
+        for (uint256 i = 0; i < healthContracts.length; i++) {
+            if (healthContracts[i].healthcontractID == _healthContractId) {
+                return healthContracts[i];
+            }
+        }
+        return HealthContract(0,0,0,"empty");
     }
 
     // Function to upload the health insurance policy
-    function uploadPolicy(string memory _coverageType, uint _coverageLimit, uint _premium) public  onlyInsurance {
+    function uploadPolicy(string memory _coverageType, uint _coverageLimit, uint32 _premium) public  onlyInsurance {
         require(coverageTypeByHealthContract[_coverageType] == 0, "Coverage already exits");
 
+        HealthContract memory newHealthContract;
         // Assign the policy information
         uint256 policyId = healthContractId++;
-        healthContracts[policyId].coverageLimit = _coverageLimit;
-        healthContracts[policyId].coverageType = _coverageType;
-        healthContracts[policyId].premium = _premium;
+        newHealthContract.healthcontractID = policyId;
+        newHealthContract.coverageLimit = _coverageLimit;
+        newHealthContract.coverageType = _coverageType;
+        newHealthContract.premium = _premium;
 
+        healthContracts.push(newHealthContract);
         emit NewPolicy(policyId);
     }
 
