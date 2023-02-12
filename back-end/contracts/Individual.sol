@@ -13,14 +13,18 @@ contract individual {
         string username;
         string email;
         bytes32 password;
+        uint256 healthContractId;
     }
      // Mapping from usernames to provider addresses
     mapping (uint32 => Individual) public individuals;
     // Mappiing of the individual by username
     mapping (string => uint32) public individualsByUsername;
+    mapping (address => uint256) public healthContractsAssigned;
+    mapping (address => uint32) public addressByIndiviudalID;
 
     // Events
     event LogInsuredPersonRegistered(uint32, string username);
+    event LogHealthContractAssigned(bool success);
 
     // functions
 
@@ -39,6 +43,8 @@ contract individual {
 
         // Add username to mapping
         individualsByUsername[_username] = userId;
+        // Add address to mapping
+        addressByIndiviudalID[msg.sender] = userId;
 
         // Emit a NewProvider event
         emit LogInsuredPersonRegistered(userId, individuals[userId].username);
@@ -58,5 +64,14 @@ contract individual {
 
     function getIndividualId(string memory _username) public view returns (uint32) {
         return individualsByUsername[_username];
+    }
+
+    function chooseHealthContract(uint256 _healthContractId) public {
+        require(healthContractsAssigned[msg.sender] == 0, "You have already chosen a health contract.");
+        healthContractsAssigned[msg.sender] = _healthContractId;
+
+        uint32 _individual_id = addressByIndiviudalID[msg.sender];
+        individuals[_individual_id].healthContractId = _healthContractId;
+        emit LogHealthContractAssigned(true);
     }
 }
