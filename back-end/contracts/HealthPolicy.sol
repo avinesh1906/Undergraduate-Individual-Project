@@ -6,7 +6,7 @@ contract HealthPolicy {
 
     struct HealthContract {
         uint256 healthcontractID;
-        uint coverageLimit;
+        uint32 coverageLimit;
         uint32 premium;
         string coverageType;
     }
@@ -46,7 +46,7 @@ contract HealthPolicy {
     }
 
     // Function to upload the health insurance policy
-    function uploadPolicy(string memory _coverageType, uint _coverageLimit, uint32 _premium) public  onlyInsurance {
+    function uploadPolicy(string memory _coverageType, uint32 _coverageLimit, uint32 _premium) public  onlyInsurance {
         require(coverageTypeByHealthContract[_coverageType] == 0, "Coverage already exits");
 
         HealthContract memory newHealthContract;

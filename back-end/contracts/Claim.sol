@@ -4,6 +4,8 @@ pragma solidity ^0.8.0;
 import "./HealthPolicy.sol";
 
 contract ClaimContract is HealthPolicy {
+    uint ClaimContractCount = 0;
+
     // Enumeration for claim status
     enum ClaimStatus { Submitted, Approved, Denied }
 
@@ -19,9 +21,10 @@ contract ClaimContract is HealthPolicy {
     struct Claim {
         uint id;
         address requester;
+        address claimant;
         HealthContract healthContract;
         ClaimStatus status;
-        uint claimAmount;
+        uint32 claimAmount;
     }
 
     // Modifier to ensure only the health organization can execute the function
@@ -37,7 +40,9 @@ contract ClaimContract is HealthPolicy {
 
     // Events
     event returnClaimID(uint id);
-    
+    event LogClaimLimit(uint);
+    event LogHOClaims(Claim[]);
+
     function setHealthOrganizationAddress(address _healthOrganizationAddress) public {
         require(healthOrganizationAddress == address(0), "Health organization address has already been set.");
         healthOrganizationAddress = _healthOrganizationAddress;
@@ -45,16 +50,19 @@ contract ClaimContract is HealthPolicy {
 
 
     // Function to submit a claim by the health organization
-    function submitClaim(address _individual, uint _claimAmount, uint256 _healthContractID) public onlyHealthOrganization {
+    function submitClaim(address _individual, uint32 _claimAmount, uint256 _healthContractID) public onlyHealthOrganization {
         require(!claimExists[_individual], "This claim has already been submitted.");
         claimExists[_individual] = true;
 
         HealthContract memory _healthContract = getHealthContract(_healthContractID);
 
+        uint256 claimID = ClaimContractCount++;
+
         // Create a new claim
         Claim memory newClaim = Claim({
-            id: claims.length + 1,
+            id: claimID,
             requester: msg.sender,
+            claimant: _individual,
             healthContract: _healthContract,
             claimAmount: _claimAmount,
             status: ClaimStatus.Submitted
@@ -66,15 +74,19 @@ contract ClaimContract is HealthPolicy {
     }
 
     // Function to request a claim by the individual
-    function requestClaim(uint _claimAmount, uint256 _healthContractID) public onlyIndividual {
+    function requestClaim(uint32 _claimAmount, uint256 _healthContractID) public onlyIndividual {
         require(!claimExists[msg.sender], "This individual has already requested a claim.");
         claimExists[msg.sender] = true;
 
         HealthContract memory _healthContract = getHealthContract(_healthContractID);
+        
+        uint256 claimID = ClaimContractCount++;
+
         // Create a new claim
         Claim memory newClaim = Claim({
-            id: claims.length + 1,
+            id: claimID,
             requester: msg.sender,
+            claimant: msg.sender,
             healthContract: _healthContract,
             claimAmount: _claimAmount,
             status: ClaimStatus.Submitted
@@ -86,18 +98,18 @@ contract ClaimContract is HealthPolicy {
     }
     
     // Function to approve a claim
-    function approveClaim(uint _claimId) public view {
+    function approveClaim(uint _claimId) public  {
         // Get the claim from the list of claims
         Claim memory claim = claims[_claimId];
 
         // Check if the claim exists
-        address claimRequester = claim.requester;
+        address claimRequester = claim.claimant;
         require(claimExists[claimRequester], "This claim does not exist.");
        
         // Check if the claim has already been approved or denied
         require(claim.status == ClaimStatus.Submitted, "The claim has already been approved or denied.");
 
-        uint claimLimit = claim.healthContract.premium * claim.healthContract.coverageLimit;
+        uint claimLimit = (claim.healthContract.premium  * claim.healthContract.coverageLimit) / 100;
 
         // Approve the claim if the claim amount is within the coverage limit
         if (claim.claimAmount <= claimLimit) {
@@ -105,6 +117,9 @@ contract ClaimContract is HealthPolicy {
         } else {
             claim.status = ClaimStatus.Denied;
         }
+        claims[_claimId] = claim;
+
+        emit LogClaimLimit(claimLimit);
     }
 
     // Function to get all claims
@@ -114,28 +129,40 @@ contract ClaimContract is HealthPolicy {
     }
 
     // function for the health organization to get all claims related to him
-    function getHealhtOrganizationClaim() public view onlyHealthOrganization returns (Claim[] memory) {
-        uint256 index = 0;
-        Claim[] memory returnClaim;
-        for (uint i = 0; i < claims.length; i++){
-            if (claims[i].requester == healthOrganizationAddress){
-                returnClaim[index] = claims[i];
+    function getOrganizationClaims() public onlyHealthOrganization view returns (Claim[] memory) {
+        uint count = 0;
+        for (uint i = 0; i < claims.length; i++) {
+            if (claims[i].requester == healthOrganizationAddress) {
+                count++;
+            }
+        }
+        Claim[] memory result = new Claim[](count);
+        uint index = 0;
+        for (uint i = 0; i < claims.length; i++) {
+            if (claims[i].requester== healthOrganizationAddress) {
+                result[index] = claims[i];
                 index++;
             }
         }
-        return returnClaim;
+        return result;
     }
 
-    // function for the health organization to get all claims related to him
-    function getIndividualClaim() public view onlyIndividual returns (Claim[] memory) {
-        uint256 index = 0;
-        Claim[] memory returnClaim;
-        for (uint i = 0; i < claims.length; i++){
-            if (claims[i].requester == msg.sender){
-                returnClaim[index] = claims[i];
+    // function for the individual to get all claims related to him
+    function getIndividualClaims() public onlyIndividual view returns (Claim[] memory) {
+        uint count = 0;
+        for (uint i = 0; i < claims.length; i++) {
+            if (claims[i].requester == msg.sender) {
+                count++;
+            }
+        }
+        Claim[] memory result = new Claim[](count);
+        uint index = 0;
+        for (uint i = 0; i < claims.length; i++) {
+            if (claims[i].requester== msg.sender) {
+                result[index] = claims[i];
                 index++;
             }
         }
-        return returnClaim;
+        return result;
     }
 }
