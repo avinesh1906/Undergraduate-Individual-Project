@@ -85,4 +85,57 @@ contract("ClaimContract", async accounts => {
     assert.equal(claims.length, 1);
     assert.equal(claims[0].claimAmount, 300);
   });
+it("should return error message when claim array is empty", async () => {
+    let claimId = 1;
+
+    try {
+      // Attempt to approve an empty submitted claim array
+      await contract.approveClaim(claimId, { from: accounts[6] });
+      assert.fail();
+    } catch (error) {
+      assert.include(
+        error.message,
+        "Claims array is empty",
+        "The correct error message was not thrown"
+      );
+    }
+  });
+  it("should not approve a claim that does not exist", async () => {
+    await contract.submitClaim(individualAddress, 100, healthContractId, { from: healthOrganizationAddress });
+    let claimId = 10;
+
+    try {
+      // Attempt to approve a non-existent claim
+      await contract.approveClaim(claimId, { from: accounts[6] });
+      assert.fail();
+    } catch (error) {
+      assert.include(
+        error.message,
+        "Claim with this id does not exist.",
+        "The correct error message was not thrown"
+      );
+    }
+  });
+  it("should not approve a claim that has already been approved or denied", async () => {
+    let claimId = 0;
+    let claimAmount = 500;
+
+    // Submit the claim
+    await contract.submitClaim(accounts[7], claimAmount, healthOrganizationAddress);
+
+    // Approve the claim
+    await contract.approveClaim(claimId);
+
+    try {
+      // Attempt to approve the claim again
+      await contract.approveClaim(claimId);
+      assert.fail();
+    } catch (error) {
+      assert.include(
+        error.message,
+        "The claim has already been approved or denied.",
+        "The correct error message was not thrown"
+      );
+    }
+  });
 });

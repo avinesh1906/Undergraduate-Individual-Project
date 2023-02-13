@@ -99,13 +99,12 @@ contract ClaimContract is HealthPolicy {
     
     // Function to approve a claim
     function approveClaim(uint _claimId) public  {
-        // Get the claim from the list of claims
+        require(claims.length > 0, "Claims array is empty.");
+        require(_claimId < claims.length, "Claim with this id does not exist.");
+
+       // Get the claim from the list of claims
         Claim memory claim = claims[_claimId];
 
-        // Check if the claim exists
-        address claimRequester = claim.claimant;
-        require(claimExists[claimRequester], "This claim does not exist.");
-       
         // Check if the claim has already been approved or denied
         require(claim.status == ClaimStatus.Submitted, "The claim has already been approved or denied.");
 
