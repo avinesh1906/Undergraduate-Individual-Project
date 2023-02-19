@@ -6,11 +6,14 @@ const IndividualContractAddress = '0x628cA7926793a8b147657c212F84D924D4467C5d';
 let address, signer, provider;
 
 const Register = () => {
+  const [memberType, setMemberType] = useState('individual');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [orgName, setOrgName] = useState('');
+  const [insName, setInsName] = useState('');
 
   const [isConnected, toggleConnected] = useState(0);
 
@@ -61,57 +64,112 @@ const Register = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     // Add logic to handle form submission
-    if (!isConnected) {connectWallet()}
-      else {registerIndividual()}
+    // if (!isConnected) {connectWallet()}
+    //   else {registerIndividual()}
+    // handle form submission based on member type
+    if (memberType === 'individual') {
+      console.log('Individual member details:', {
+        firstName,
+        lastName,
+        username,
+        email,
+        password,
+      });
+    } else if (memberType === 'health_organization') {
+      console.log('Health organization member details:', {
+        orgName,
+        email,
+        password,
+      });
+    } else if (memberType === 'insurance') {
+      console.log('Insurance member details:', {
+        insName,
+        email,
+        password,
+      });
+    }
   }
   return (
-    <form onSubmit={handleSubmit}>
-      <label>
-        First Name:
+<form onSubmit={handleSubmit}>
+      <div>
+        <label htmlFor="memberType">Member Type:</label>
+        <select
+          id="memberType"
+          value={memberType}
+          onChange={(e) => setMemberType(e.target.value)}
+        >
+          <option value="individual">Individual</option>
+          <option value="health_organization">Health Organization</option>
+          <option value="insurance">Insurance</option>
+        </select>
+      </div>
+      {memberType === 'individual' && (
+        <>
+          <div>
+            <label htmlFor="firstName">First Name:</label>
+            <input
+              id="firstName"
+              type="text"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+            />
+          </div>
+          <div>
+            <label htmlFor="lastName">Last Name:</label>
+            <input
+              id="lastName"
+              type="text"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+            />
+          </div>
+          <div>
+            <label htmlFor="username">Username:</label>
+            <input
+              id="username"
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+          </div>
+        </>
+      )}
+      {(memberType === 'health_organization' || memberType === 'insurance') && (
+        <>
+          <div>
+            <label htmlFor="name">Name:</label>
+            <input
+              id="name"
+              type="text"
+              value={orgName || insName}
+              onChange={(e) =>
+                memberType === 'health_organization'
+                  ? setOrgName(e.target.value)
+                  : setInsName(e.target.value)
+              }
+            />
+          </div>
+        </>
+      )}
+      <div>
+        <label htmlFor="email">Email:</label>
         <input
-          type="text"
-          value={firstName}
-          onChange={(e) => setFirstName(e.target.value)}
-        />
-      </label>
-      <br />
-      <label>
-        Last Name:
-        <input
-          type="text"
-          value={lastName}
-          onChange={(e) => setLastName(e.target.value)}
-        />
-      </label>
-      <br />
-      <label>
-        Email:
-        <input
+          id="email"
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
-      </label>
-      <br />
-      <label>
-        Username:
+      </div>
+      <div>
+        <label htmlFor="password">Password:</label>
         <input
-          type="text"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-      </label>
-      <br />
-      <label>
-        Password:
-        <input
+          id="password"
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-      </label>
-      <br />
-      <button type="submit">{(isConnected) ? 'Submit Form' : 'CONNECT WALLET'}</button>
+      </div>
+      <button type="submit">Submit</button>
     </form>
   );
 };
