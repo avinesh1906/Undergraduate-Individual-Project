@@ -2,11 +2,11 @@
 
 pragma solidity ^0.8.0;
 
-contract individual {
+contract Individual {
     uint32 individual_id = 0;
 
     // structure for a sinhgle insured person
-    struct Individual{
+    struct individual{
         address individualAddress;
         string first_name;
         string last_name;
@@ -16,7 +16,7 @@ contract individual {
         uint256 healthContractId;
     }
      // Mapping from usernames to provider addresses
-    mapping (uint32 => Individual) public individuals;
+    mapping (uint32 => individual) public individuals;
     // Mappiing of the individual by username
     mapping (string => uint32) public individualsByUsername;
     mapping (address => uint256) public healthContractsAssigned;
