@@ -1,10 +1,13 @@
 import { ethers } from 'ethers';
 import React, { useState, useContext } from 'react';
 import IndividualContract from '../../contracts/individual.json';
+import HealthOrganizationContract from '../../contracts/HealthOrganization.json';
 import contractAddresses from '../../config';
 import { Web3Context } from '../../Web3Context';
 
 const IndividualContractAddress = contractAddresses.Individual;
+const HealthOrganizationContractAddress = contractAddresses.HHealthOrganization;
+const InsuranceProviderAddress = contractAddresses.InsuranceProvider;
 
 const Register = () => {
   const [memberType, setMemberType] = useState('individual');
@@ -21,6 +24,12 @@ const Register = () => {
     const response = await individualContract.getIndividual(0);
     console.log(response);
   }
+
+  async function getHealthOrganization(healthOrganizationContract) {
+    const response = await healthOrganizationContract.getHealthOrganization(0);
+    console.log(response);
+  }
+
 
   async function registerIndividual() {
     // Get the event signature
@@ -45,7 +54,25 @@ const Register = () => {
   }
 
   async function registerHealthOrganization() {
+    // Get the event signature
+    const eventSignature = ethers.utils.id("LogRegisterdHO(string)");
+    const healthOrganizationContract = new ethers.Contract(HealthOrganizationContractAddress, HealthOrganizationContract.abi, signer);
+    const tx  = await healthOrganizationContract.registerHealthOrganization(orgName,email, password);
+    const receipt  = await  provider.waitForTransaction(tx.hash);
+    if (receipt.status === 1) {
+      console.log('Transaction successful');
+      // check the logs for the LogInsuredPersonRegistered event
+      receipt.logs.forEach(log => {
+        if (log.topics[0] === eventSignature) {
+          const event = healthOrganizationContract.interface.parseLog(log);
+          console.log(event.args);
+        }
+      });
+    } else {
+      console.log('Transaction failed');
+    }
 
+    getHealthOrganization(healthOrganizationContract);
   }
 
   async function registerInsurance() {
