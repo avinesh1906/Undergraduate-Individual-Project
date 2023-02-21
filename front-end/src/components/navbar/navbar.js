@@ -4,7 +4,7 @@ import { useNavigate  } from "react-router-dom";
 
 const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false); // change state based on user's authentication status
-  const {address, connectWeb3} = useContext(Web3Context);
+  const {connectWeb3} = useContext(Web3Context);
   const [isWalletConnected, setIsWalletConnected] = useState(false);
   const navigate  = useNavigate();
 
