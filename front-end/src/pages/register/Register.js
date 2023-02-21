@@ -1,9 +1,10 @@
 import { ethers } from 'ethers';
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import IndividualContract from '../../contracts/individual.json';
+import contractAddresses from '../../config';
+import { Web3Context } from '../../Web3Context';
 
-const IndividualContractAddress = '0x628cA7926793a8b147657c212F84D924D4467C5d';
-let address, signer, provider;
+const IndividualContractAddress = contractAddresses.Individual;
 
 const Register = () => {
   const [memberType, setMemberType] = useState('individual');
@@ -14,26 +15,8 @@ const Register = () => {
   const [password, setPassword] = useState('');
   const [orgName, setOrgName] = useState('');
   const [insName, setInsName] = useState('');
+  const { provider, signer } = useContext(Web3Context);
 
-  const [isConnected, toggleConnected] = useState(0);
-
-  function setAddress(ethaddy) {
-    address = ethaddy;
-    if (address != null) {  toggleConnected ( !isConnected ); }
-    console.log("Account:", address);
-  }
-
-  async function connectWallet() {
-    // provider = new ethers.providers.Web3Provider(window.ethereum);
-    // Prompt user for account connections
-    // await provider.send("eth_requestAccounts", []);
-    provider = new ethers.providers.JsonRpcProvider('http://127.0.0.1:7545');
-    signer = provider.getSigner();
-    setAddress( await signer.getAddress() );
-    let balance = await signer.getBalance();
-    console.log(await ethers.utils.formatEther(balance));
-  }
-  
   async function getIndividual(individualContract) {
     const response = await individualContract.getIndividual(0);
     console.log(response);
@@ -61,11 +44,17 @@ const Register = () => {
     getIndividual(individualContract);
   }
 
+  async function registerHealthOrganization() {
+
+  }
+
+  async function registerInsurance() {
+
+  }
+
   const handleSubmit = (event) => {
     event.preventDefault();
     // Add logic to handle form submission
-    // if (!isConnected) {connectWallet()}
-    //   else {registerIndividual()}
     // handle form submission based on member type
     if (memberType === 'individual') {
       console.log('Individual member details:', {
@@ -75,18 +64,21 @@ const Register = () => {
         email,
         password,
       });
+      registerIndividual();
     } else if (memberType === 'health_organization') {
       console.log('Health organization member details:', {
         orgName,
         email,
         password,
       });
+      registerHealthOrganization();
     } else if (memberType === 'insurance') {
       console.log('Insurance member details:', {
         insName,
         email,
         password,
       });
+      registerInsurance();
     }
   }
   return (
