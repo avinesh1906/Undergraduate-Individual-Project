@@ -21,6 +21,9 @@ const Register = () => {
   const [insName, setInsName] = useState('');
   const { provider, signer } = useContext(Web3Context);
 
+  const [showInsuranceInput, setShowInsuranceInput] = useState(false);
+  const [showHealthOrganizationInput, setShowHealthOrganizationInput] = useState(false);
+
   async function getIndividual(individualContract) {
     const response = await individualContract.getIndividual(0);
     console.log(response);
@@ -102,6 +105,32 @@ const Register = () => {
     getInsurance(insuranceContract);
   }
 
+  function handleChange(e) {
+    handleMemberSelect(e.target.value);
+    setMemberType(e.target.value);
+  }
+
+
+  async function handleMemberSelect(value){
+    if (value === "health_organization"){
+      isHealthOrganizationRegistered();
+    } else if (value === "insurance"){
+      isInsuranceRegistered();
+    }
+  }
+
+  async function isHealthOrganizationRegistered(){
+    const healthOrganizationContract = new ethers.Contract(HealthOrganizationContractAddress, HealthOrganizationContract.abi, signer);
+    const response  = await healthOrganizationContract.isHealthOrganizationRegistered();
+    setShowHealthOrganizationInput(!response);   
+  }
+
+  async function isInsuranceRegistered(){
+    const insuranceContract = new ethers.Contract(InsuranceProviderAddress, InsuranceContract.abi, signer);
+    const response  = await insuranceContract.isInsuranceRegistered();
+    setShowInsuranceInput(!response);   
+  }
+
   const handleSubmit = (event) => {
     event.preventDefault();
     // Add logic to handle form submission
@@ -138,7 +167,7 @@ const Register = () => {
         <select
           id="memberType"
           value={memberType}
-          onChange={(e) => setMemberType(e.target.value)}
+          onChange={handleChange}
         >
           <option value="individual">Individual</option>
           <option value="health_organization">Health Organization</option>
@@ -176,7 +205,7 @@ const Register = () => {
           </div>
         </>
       )}
-      {(memberType === 'health_organization' || memberType === 'insurance') && (
+      {((memberType === 'health_organization' && showHealthOrganizationInput) || (memberType === 'insurance' && showInsuranceInput)) && (
         <>
           <div>
             <label htmlFor="name">Name:</label>
@@ -193,24 +222,28 @@ const Register = () => {
           </div>
         </>
       )}
-      <div>
-        <label htmlFor="email">Email:</label>
-        <input
-          id="email"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-      </div>
-      <div>
-        <label htmlFor="password">Password:</label>
-        <input
-          id="password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-      </div>
+      {((memberType === 'health_organization' && showHealthOrganizationInput) || memberType === 'individual' || (memberType === 'insurance' && showInsuranceInput)) && (
+        <>
+          <div>
+            <label htmlFor="email">Email:</label>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+          <div>
+            <label htmlFor="password">Password:</label>
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+        </>
+      )}
       <button type="submit">Submit</button>
     </form>
   );
