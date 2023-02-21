@@ -2,11 +2,12 @@ import { ethers } from 'ethers';
 import React, { useState, useContext } from 'react';
 import IndividualContract from '../../contracts/individual.json';
 import HealthOrganizationContract from '../../contracts/HealthOrganization.json';
+import InsuranceContract from '../../contracts/insuranceprovider.json';
 import contractAddresses from '../../config';
 import { Web3Context } from '../../Web3Context';
 
 const IndividualContractAddress = contractAddresses.Individual;
-const HealthOrganizationContractAddress = contractAddresses.HHealthOrganization;
+const HealthOrganizationContractAddress = contractAddresses.HealthOrganization;
 const InsuranceProviderAddress = contractAddresses.InsuranceProvider;
 
 const Register = () => {
@@ -26,10 +27,14 @@ const Register = () => {
   }
 
   async function getHealthOrganization(healthOrganizationContract) {
-    const response = await healthOrganizationContract.getHealthOrganization(0);
+    const response = await healthOrganizationContract.getHealthOrganization();
     console.log(response);
   }
 
+  async function getInsurance(insuranceContract) {
+    const response = await insuranceContract.getInsuranceProvider();
+    console.log(response);
+  }
 
   async function registerIndividual() {
     // Get the event signature
@@ -76,7 +81,25 @@ const Register = () => {
   }
 
   async function registerInsurance() {
+    // Get the event signature
+    const eventSignature = ethers.utils.id("NewProvider(string, string)");
+    const insuranceContract = new ethers.Contract(InsuranceProviderAddress, InsuranceContract.abi, signer);
+    const tx  = await insuranceContract.registerProvider(insName,email, password);
+    const receipt  = await  provider.waitForTransaction(tx.hash);
+    if (receipt.status === 1) {
+      console.log('Transaction successful');
+      // check the logs for the LogInsuredPersonRegistered event
+      receipt.logs.forEach(log => {
+        if (log.topics[0] === eventSignature) {
+          const event = insuranceContract.interface.parseLog(log);
+          console.log(event.args);
+        }
+      });
+    } else {
+      console.log('Transaction failed');
+    }
 
+    getInsurance(insuranceContract);
   }
 
   const handleSubmit = (event) => {
