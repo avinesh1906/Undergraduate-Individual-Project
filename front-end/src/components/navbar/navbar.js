@@ -24,9 +24,7 @@ const Navbar = () => {
     try {
       // connect to wallet here
       await connectWeb3();
-      if (address != null) { setIsWalletConnected (!isWalletConnected); }
-      // setIsWalletConnected(true);
-      console.log("Account:", address);
+      setIsWalletConnected(true);
     } catch (error) {
       console.log('Error connecting to wallet:', error);
       // handle error here
