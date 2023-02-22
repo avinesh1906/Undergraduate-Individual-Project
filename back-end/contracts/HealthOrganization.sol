@@ -36,4 +36,9 @@ contract HealthOrganization {
     function isHealthOrganizationRegistered() public view returns (bool) {
         return healthorganizationAddress != address(0);
     }
+
+    function authenticate(string memory _password) public view returns (bool) {
+        return hashPassword(_password) == password;
+    }
+
 }
