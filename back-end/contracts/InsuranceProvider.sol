@@ -39,4 +39,9 @@ contract InsuranceProvider {
     function isInsuranceRegistered() public view returns (bool) {
         return insuranceProviderAddress != address(0);
     }
+
+    function authenticate(string memory _password) public view returns (bool) {
+        return hashPassword(_password) == password;
+    }
+
 }
