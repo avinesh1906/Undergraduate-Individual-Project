@@ -81,4 +81,14 @@ contract Individual {
         return healthContractsAssigned[msg.sender];
 
     }   
+ 
+    function authenticate(string memory _username, string memory _password) public view returns (bool) {
+        uint32 individualId = individualsByUsername[_username];
+        if (individualId == 0) {
+            // Username does not exist
+            return false;
+        }
+        bytes32 hashedPassword = hashPassword(_password);
+        return individuals[individualId].password == hashedPassword;
+    }
 }

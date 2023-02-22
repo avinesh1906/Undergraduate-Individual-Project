@@ -20,13 +20,13 @@ contract('Individual', async accounts => {
         assert.equal(result.logs[0].args[0], 0);
         assert.equal(result.logs[0].args[1], username);
     
-        // Verify the provider was registered successfully by checking their information
-        let provider = await instance.individuals(0);
-        assert.equal(provider.first_name, firstname);
-        assert.equal(provider.last_name, lastname);
-        assert.equal(provider.username, username);
-        assert.equal(provider.email, email);
-        assert.notEqual(provider.password, password);
+        // Verify the individual was registered successfully by checking their information
+        let individual = await instance.individuals(0);
+        assert.equal(individual.first_name, firstname);
+        assert.equal(individual.last_name, lastname);
+        assert.equal(individual.username, username);
+        assert.equal(individual.email, email);
+        assert.notEqual(individual.password, password);
       });
 
       it("should check if the username is available", async function() { 
@@ -88,5 +88,37 @@ contract('Individual', async accounts => {
       } catch (error) {
           assert.include(error.message, 'You have already chosen a health contract.');
       }
+    });
+    it("should authenticate a registered individual with the correct password", async () => {
+      let username = "avi19061";
+      let password = "password";
+  
+      // Register the individual
+      await instance.registerIndividual("Avinesh", "culloo", username, "johndoe@example.com", password);
+  
+      // Authenticate the individual with the correct password
+      let isAuthenticated = await instance.authenticate(username, password);
+      assert.equal(isAuthenticated, true);
+    });
+  
+    it("should not authenticate a registered individual with an incorrect password", async () => {
+      let username = "avi19062";
+      let password = "password";
+  
+      // Register the individual
+      await instance.registerIndividual("Avinesh", "culloo", username, "johndoe@example.com", password);
+  
+      // Try to authenticate the individual with an incorrect password
+      let isAuthenticated = await instance.authenticate(username, "wrongpassword");
+      assert.equal(isAuthenticated, false);
+    });
+  
+    it("should not authenticate an unregistered individual", async () => {
+      let username = "avi19063";
+      let password = "password";
+  
+      // Try to authenticate an unregistered individual
+      let isAuthenticated = await instance.authenticate(username, password);
+      assert.equal(isAuthenticated, false);
     });
 });
