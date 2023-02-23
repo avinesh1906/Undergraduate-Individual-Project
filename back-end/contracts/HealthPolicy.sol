@@ -18,7 +18,7 @@ contract HealthPolicy {
 
     // Events
     event NewPolicy(uint256 healthContractId);
-    
+    event InsuranceAddressSetup(address);
 
     // Modifier to ensure only the contract owner can execute the function
     modifier onlyInsurance {
@@ -27,9 +27,10 @@ contract HealthPolicy {
     }
 
     // Functions
-    function setInsuranceCompanyAddress(address _insuranceCompanyAddress) public {
+    function setInsuranceCompanyAddress() public {
         require(insuranceCompanyAddress == address(0), "Insurance company address has already been set.");
-        insuranceCompanyAddress = _insuranceCompanyAddress;
+        insuranceCompanyAddress = msg.sender;
+        emit InsuranceAddressSetup(insuranceCompanyAddress);
     }
     
     function getInsuranceCompanyAddress() public view returns (address){

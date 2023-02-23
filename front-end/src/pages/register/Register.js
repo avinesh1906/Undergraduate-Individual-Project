@@ -3,12 +3,14 @@ import React, { useState, useContext } from 'react';
 import IndividualContract from '../../contracts/individual.json';
 import HealthOrganizationContract from '../../contracts/HealthOrganization.json';
 import InsuranceContract from '../../contracts/insuranceprovider.json';
+import HealthPolicyContract from '../../contracts/HealthPolicy.json'
 import contractAddresses from '../../config';
 import { Web3Context } from '../../Web3Context';
 
 const IndividualContractAddress = contractAddresses.Individual;
 const HealthOrganizationContractAddress = contractAddresses.HealthOrganization;
 const InsuranceProviderAddress = contractAddresses.InsuranceProvider;
+const HealthPolicyAddress = contractAddresses.HealthPolicy;
 
 const Register = () => {
   const [memberType, setMemberType] = useState('individual');
@@ -61,6 +63,25 @@ const Register = () => {
     getIndividual(individualContract);
   }
 
+  async function connectInsuranceAddress(){
+    const eventSignature = ethers.utils.id("InsuranceAddressSetup(address");
+    const healthContract = new ethers.Contract(HealthPolicyAddress, HealthPolicyContract.abi, signer);
+    const tx  = await healthContract.setInsuranceCompanyAddress();
+    const receipt  = await  provider.waitForTransaction(tx.hash);
+    if (receipt.status === 1) {
+      console.log('Transaction successful');
+      // check the logs for the LogInsuredPersonRegistered event
+      receipt.logs.forEach(log => {
+      if (log.topics[0] === eventSignature) {
+          const event = healthContract.interface.parseLog(log);
+          console.log(event.args);
+      }
+      });
+    } else {
+      console.log('Transaction failed');
+    }
+  }
+
   async function registerHealthOrganization() {
     // Get the event signature
     const eventSignature = ethers.utils.id("LogRegisterdHO(string)");
@@ -98,6 +119,7 @@ const Register = () => {
           console.log(event.args);
         }
       });
+      connectInsuranceAddress()
     } else {
       console.log('Transaction failed');
     }
