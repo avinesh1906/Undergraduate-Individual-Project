@@ -3,7 +3,7 @@ import Register from './pages/register/Register';
 import LoginForm from './pages/login/login';
 import Navbar from './components/navbar/navbar';
 import Footer from './components/footer/footer';
-import UploadContract from './pages/insurance/upload_contract';
+import UploadContract from './pages/health_contract/upload_contract';
 import { Web3Provider } from './Web3Context';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
