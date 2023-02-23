@@ -1,10 +1,39 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
+import { ethers } from 'ethers';
+import IndividualContract from '../../contracts/individual.json';
+import HealthOrganizationContract from '../../contracts/HealthOrganization.json';
+import InsuranceContract from '../../contracts/insuranceprovider.json';
+import contractAddresses from '../../config';
+import { Web3Context } from '../../Web3Context';
+const IndividualContractAddress = contractAddresses.Individual;
+const HealthOrganizationContractAddress = contractAddresses.HealthOrganization;
+const InsuranceProviderAddress = contractAddresses.InsuranceProvider;
+
 
 const LoginForm = () => {
   const [memberType, setMemberType] = useState('');
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const { signer } = useContext(Web3Context);
+
+  async function verifyIndividual(){
+    const individualContract = new ethers.Contract(IndividualContractAddress, IndividualContract.abi, signer);
+    const response = await individualContract.authenticate(username, password);
+    console.log(response);
+  }
+
+  async function verifyHealthOrganization(){
+    const healthOrganizationContract = new ethers.Contract(HealthOrganizationContractAddress, HealthOrganizationContract.abi, signer);
+    const response = await healthOrganizationContract.authenticate(password);
+    console.log(response);
+  }
+
+  async function verifyInsurance(){
+    const healthOrganizationContract = new ethers.Contract(InsuranceProviderAddress, InsuranceContract.abi, signer);
+    const response = await healthOrganizationContract.authenticate(password);
+    console.log(response);
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -14,11 +43,19 @@ const LoginForm = () => {
         username,
         password,
       });
-    } else if (memberType === 'health_organization' || memberType === 'insurance') {
-      console.log('Organization or Insurance login:', {
+      verifyIndividual();
+    } else if (memberType === 'health_organization') {
+      console.log('Organization login:', {
         email,
         password,
       });
+      verifyHealthOrganization();
+    } else {
+      console.log('Insurance login:', {
+        email,
+        password,
+      });
+      verifyInsurance();
     }
   };
 
