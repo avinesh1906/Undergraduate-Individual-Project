@@ -4,6 +4,7 @@ import IndividualContract from '../../contracts/individual.json';
 import HealthOrganizationContract from '../../contracts/HealthOrganization.json';
 import InsuranceContract from '../../contracts/insuranceprovider.json';
 import HealthPolicyContract from '../../contracts/HealthPolicy.json'
+import ClaimContract from '../../contracts/ClaimContract.json';
 import contractAddresses from '../../config';
 import { Web3Context } from '../../Web3Context';
 
@@ -11,6 +12,8 @@ const IndividualContractAddress = contractAddresses.Individual;
 const HealthOrganizationContractAddress = contractAddresses.HealthOrganization;
 const InsuranceProviderAddress = contractAddresses.InsuranceProvider;
 const HealthPolicyAddress = contractAddresses.HealthPolicy;
+const ClaimContractAddress = contractAddresses.ClaimContract;
+
 
 const Register = () => {
   const [memberType, setMemberType] = useState('individual');
@@ -70,10 +73,29 @@ const Register = () => {
     const receipt  = await  provider.waitForTransaction(tx.hash);
     if (receipt.status === 1) {
       console.log('Transaction successful');
-      // check the logs for the LogInsuredPersonRegistered event
+      // check the logs for the InsuranceAddressSetup event
       receipt.logs.forEach(log => {
       if (log.topics[0] === eventSignature) {
           const event = healthContract.interface.parseLog(log);
+          console.log(event.args);
+      }
+      });
+    } else {
+      console.log('Transaction failed');
+    }
+  }
+
+  async function connectHealthInsurance(){
+    const eventSignature = ethers.utils.id("HealthOrganizationAddressSetup(address");
+    const claimContract = new ethers.Contract(ClaimContractAddress, ClaimContract.abi, signer);
+    const tx  = await claimContract.setHealthOrganizationAddress();
+    const receipt  = await  provider.waitForTransaction(tx.hash);
+    if (receipt.status === 1) {
+      console.log('Transaction successful');
+      // check the logs for the HealthOrganizationAddressSetup event
+      receipt.logs.forEach(log => {
+      if (log.topics[0] === eventSignature) {
+          const event = claimContract.interface.parseLog(log);
           console.log(event.args);
       }
       });
@@ -97,6 +119,7 @@ const Register = () => {
           console.log(event.args);
         }
       });
+      connectHealthInsurance();
     } else {
       console.log('Transaction failed');
     }

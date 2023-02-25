@@ -21,6 +21,7 @@ contract Individual {
     mapping (string => uint32) public individualsByUsername;
     mapping (address => uint256) public healthContractsAssigned;
     mapping (address => uint32) public addressByIndiviudalID;
+    mapping (string => bool) public isUsernameExists;
 
     // Events
     event LogInsuredPersonRegistered(uint32, string username);
@@ -32,7 +33,7 @@ contract Individual {
     // Function to register a new provider
     function registerIndividual(string memory _firstname, string memory _lastname, string memory _username, string memory _email, string memory _password) public {
         // Check if username already exists
-        require(individualsByUsername[_username] == 0, "Username already exists");
+        require(!isUsernameExists[_username], "Username already exists");
 
         uint32 userId = individual_id++;
         individuals[userId].individualAddress = msg.sender;
@@ -42,11 +43,15 @@ contract Individual {
         individuals[userId].email = _email;
         individuals[userId].password = hashPassword(_password);
 
+        // Set the username as taken
+        isUsernameExists[_username] = true;
+
         // Add username to mapping
         individualsByUsername[_username] = userId;
+
         // Add address to mapping
         addressByIndiviudalID[msg.sender] = userId;
-
+       
         // Emit a NewProvider event
         emit LogInsuredPersonRegistered(userId, individuals[userId].username);
     }
@@ -84,11 +89,20 @@ contract Individual {
  
     function authenticate(string memory _username, string memory _password) public view returns (bool) {
         uint32 individualId = individualsByUsername[_username];
-        if (individualId == 0) {
+        if (!isUsernameExists[_username]) {
             // Username does not exist
             return false;
         }
         bytes32 hashedPassword = hashPassword(_password);
         return individuals[individualId].password == hashedPassword;
     }
+
+    function getAllIndividuals() public view returns (individual[] memory) {
+        individual[] memory result = new individual[](individual_id);
+        for (uint32 i = 0; i < individual_id; i++) {
+            result[i] = individuals[i];
+        }
+        return result;
+    }
+
 }

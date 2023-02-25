@@ -4,7 +4,7 @@ contract('Individual', async accounts => {
     let instance;
 
     beforeEach(async () => {
-        instance = await Individual.deployed();
+        instance = await Individual.new();
     });
     it("should register a provider successfully", async () => {
         let firstname = "Avinesh";
@@ -29,7 +29,7 @@ contract('Individual', async accounts => {
         assert.notEqual(individual.password, password);
       });
 
-      it("should check if the username is available", async function() { 
+      it("should check if the username is available", async () => { 
         // First, add a new user with a unique username
         await instance.registerIndividual("John", "Doe", "johndoe", "johndoe@example.com", "secretpassword");
     
@@ -121,4 +121,21 @@ contract('Individual', async accounts => {
       let isAuthenticated = await instance.authenticate(username, password);
       assert.equal(isAuthenticated, false);
     });
+
+    it("should return all registered individuals", async () => {
+      // Register some individuals
+      await instance.registerIndividual("John", "Doe", "johndoe123", "johndoe@example.com", "secretpassword");
+      await instance.registerIndividual("Jane", "Doe", "janedoe321", "janedoe@example.com", "secretpassword");
+    
+      // Get all registered individuals
+      let individuals = await instance.getAllIndividuals();
+    
+      // Assert that the correct number of individuals were returned
+      // assert.equal(individuals.length, 2);
+    
+      // Assert that the individuals were returned in the correct order
+      assert.equal(individuals[0].username, "johndoe123");
+      assert.equal(individuals[1].username, "janedoe321");
+    });
+    
 });

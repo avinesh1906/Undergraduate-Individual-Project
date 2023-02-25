@@ -42,10 +42,12 @@ contract ClaimContract is HealthPolicy {
     event returnClaimID(uint id);
     event LogClaimLimit(uint);
     event LogHOClaims(Claim[]);
+    event HealthOrganizationAddressSetup(address);
 
-    function setHealthOrganizationAddress(address _healthOrganizationAddress) public {
+    function setHealthOrganizationAddress() public {
         require(healthOrganizationAddress == address(0), "Health organization address has already been set.");
-        healthOrganizationAddress = _healthOrganizationAddress;
+        healthOrganizationAddress = msg.sender;
+        emit HealthOrganizationAddressSetup(healthOrganizationAddress);
     }
 
 
