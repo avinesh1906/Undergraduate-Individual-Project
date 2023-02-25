@@ -8,6 +8,7 @@ import ViewContracts from './pages/health_contract/view_contracts';
 import ChooseHealthContract from './pages/health_contract/sign_contract';
 import ViewSignedContract from './pages/health_contract/view_selected_contract';
 import SubmitClaim from './pages/claim/submit_claim';
+import RequestClaim from './pages/claim/request_claim';
 import { Web3Provider } from './Web3Context';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
@@ -24,6 +25,7 @@ function App() {
           <Route path="/choosecontract" element={<ChooseHealthContract />} />
           <Route path="/view_signed_contract" element={<ViewSignedContract />} />
           <Route path="/submit_claim" element={<SubmitClaim />} />
+          <Route path="/request_claim" element={<RequestClaim />} />
         </Routes>
         <Footer />
       </Router>
