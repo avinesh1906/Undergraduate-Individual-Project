@@ -76,7 +76,7 @@ contract ClaimContract is HealthPolicy {
     }
 
     // Function to request a claim by the individual
-    function requestClaim(uint32 _claimAmount, uint256 _healthContractID) public onlyIndividual {
+    function requestClaim(uint32 _claimAmount, uint256 _healthContractID) public {
         require(!claimExists[msg.sender], "This individual has already requested a claim.");
         claimExists[msg.sender] = true;
 
