@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import { Web3Context } from '../../Web3Context';
 import { useNavigate  } from "react-router-dom";
 import { Navbar, Nav } from 'react-bootstrap';
-import logo from '../../images/logo.png';
+import logo from '../../images/logo.jpg';
 import './styles.css';
 import { UserContext } from '../../UserContext';
 
@@ -40,9 +40,9 @@ const NavigationBar = () => {
   }
 
   return (
-      <Navbar expand="lg" bg="body-tertiary">
+      <Navbar expand="lg" bg="body-tertiary" className="sticky-top">
       <div className="container-fluid">
-        <Navbar.Brand href="#">
+        <Navbar.Brand href="/">
           <img src={logo} alt="Logo" width="30" height="24" className="d-inline-block align-text-top" />
           MediSure
         </Navbar.Brand>

@@ -3,9 +3,13 @@ import './styles.css';
 
 const Footer = () => {
    return (
-    <div class="footer-container">
-        <footer>Footer content here</footer>
-    </div>
+    <footer>
+      <div>
+        <p spellcheck="false">
+            AVINESH CULLOO
+        </p>
+      </div>
+    </footer>
     ); 
 };
 
