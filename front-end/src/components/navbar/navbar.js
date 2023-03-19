@@ -48,11 +48,6 @@ const NavigationBar = () => {
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="navbarScroll" />
         <Navbar.Collapse id="navbarScroll">
-          <Nav className="me-auto my-2 my-lg-0 navbar-nav-scroll" style={{ '--bs-scroll-height': '100px' }}>
-            <Nav.Link href="#" className="nav-link active" aria-current="page">Home</Nav.Link>
-            <Nav.Link href="#" className="nav-link">Health Contract</Nav.Link>
-            <Nav.Link href="#" className="nav-link">Claim</Nav.Link>
-          </Nav>
           
           {!isLoggedIn && !isWalletConnected && (
             <div className="connect-to-wallet">
@@ -67,6 +62,11 @@ const NavigationBar = () => {
           )}
           {isWalletConnected && !isLoggedIn && (
           <>
+          <Nav className="me-auto my-2 my-lg-0 navbar-nav-scroll" style={{ '--bs-scroll-height': '100px' }}>
+            <Nav.Link href="#" className="nav-link active" aria-current="page">Home</Nav.Link>
+            <Nav.Link href="#" className="nav-link">Health Contract</Nav.Link>
+            <Nav.Link href="#" className="nav-link">Claim</Nav.Link>
+          </Nav>
             <div className="disconnect-from-wallet">
               <button 
                 id="disconnect-button"
