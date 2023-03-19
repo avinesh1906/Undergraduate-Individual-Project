@@ -5,6 +5,8 @@ import HealthOrganizationContract from '../../contracts/HealthOrganization.json'
 import InsuranceContract from '../../contracts/insuranceprovider.json';
 import contractAddresses from '../../config';
 import { Web3Context } from '../../Web3Context';
+import { UserContext } from '../../UserContext';
+
 const IndividualContractAddress = contractAddresses.Individual;
 const HealthOrganizationContractAddress = contractAddresses.HealthOrganization;
 const InsuranceProviderAddress = contractAddresses.InsuranceProvider;
@@ -12,10 +14,10 @@ const InsuranceProviderAddress = contractAddresses.InsuranceProvider;
 
 const LoginForm = () => {
   const [memberType, setMemberType] = useState('');
-  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { signer } = useContext(Web3Context);
+  const { username, setUsername } = useContext(UserContext);
 
   async function verifyIndividual(){
     const individualContract = new ethers.Contract(IndividualContractAddress, IndividualContract.abi, signer);
