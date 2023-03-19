@@ -62,11 +62,6 @@ const NavigationBar = () => {
           )}
           {isWalletConnected && !isLoggedIn && (
           <>
-          <Nav className="me-auto my-2 my-lg-0 navbar-nav-scroll" style={{ '--bs-scroll-height': '100px' }}>
-            <Nav.Link href="#" className="nav-link active" aria-current="page">Home</Nav.Link>
-            <Nav.Link href="#" className="nav-link">Health Contract</Nav.Link>
-            <Nav.Link href="#" className="nav-link">Claim</Nav.Link>
-          </Nav>
             <div className="disconnect-from-wallet">
               <button 
                 id="disconnect-button"
@@ -89,17 +84,24 @@ const NavigationBar = () => {
           </>
         )}
         {isWalletConnected && isLoggedIn && (
-          <div className="nav-user-container">
+          <>
             <Nav className="me-auto my-2 my-lg-0 navbar-nav-scroll" style={{ '--bs-scroll-height': '100px' }}>
-              <Nav.Item>
-                Logged as
-                <span> {username}</span>
-              </Nav.Item>
-              <Nav.Item>
-                <button className="btn btn-outline-success" onClick={handleLogout}>Sign Out</button>
-              </Nav.Item>
-            </Nav>
-          </div>
+                      <Nav.Link href="#" className="nav-link active" aria-current="page">Home</Nav.Link>
+                      <Nav.Link href="#" className="nav-link">Health Contract</Nav.Link>
+                      <Nav.Link href="#" className="nav-link">Claim</Nav.Link>
+                    </Nav>
+            <div className="nav-user-container">
+              <Nav className="me-auto my-2 my-lg-0 navbar-nav-scroll" style={{ '--bs-scroll-height': '100px' }}>
+                <Nav.Item>
+                  Logged as
+                  <span> {username}</span>
+                </Nav.Item>
+                <Nav.Item>
+                  <button className="btn btn-outline-success" onClick={handleLogout}>Sign Out</button>
+                </Nav.Item>
+              </Nav>
+            </div>
+          </>      
         )}
           
         </Navbar.Collapse>
