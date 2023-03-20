@@ -7,6 +7,10 @@ import HealthPolicyContract from '../../contracts/HealthPolicy.json'
 import ClaimContract from '../../contracts/ClaimContract.json';
 import contractAddresses from '../../config';
 import { Web3Context } from '../../Web3Context';
+import { UserContext } from '../../UserContext';
+import { useNavigate  } from "react-router-dom";
+import register from '../../images/register.png';
+import './styles.css';
 
 const IndividualContractAddress = contractAddresses.Individual;
 const HealthOrganizationContractAddress = contractAddresses.HealthOrganization;
@@ -25,9 +29,19 @@ const Register = () => {
   const [orgName, setOrgName] = useState('');
   const [insName, setInsName] = useState('');
   const { provider, signer } = useContext(Web3Context);
+  const navigate  = useNavigate();
 
   const [showInsuranceInput, setShowInsuranceInput] = useState(false);
   const [showHealthOrganizationInput, setShowHealthOrganizationInput] = useState(false);
+
+  const {
+    isWalletConnected,
+    connectWallet,
+  } = useContext(UserContext);
+
+  const navigateToLogin = () => {
+    navigate("/login");
+  };
 
   async function getIndividual(individualContract) {
     const response = await individualContract.getIndividual(0);
@@ -206,91 +220,151 @@ const Register = () => {
     }
   }
   return (
-<form onSubmit={handleSubmit}>
-      <div>
-        <label htmlFor="memberType">Member Type:</label>
-        <select
-          id="memberType"
-          value={memberType}
-          onChange={handleChange}
-        >
-          <option value="individual">Individual</option>
-          <option value="health_organization">Health Organization</option>
-          <option value="insurance">Insurance</option>
-        </select>
-      </div>
-      {memberType === 'individual' && (
-        <>
-          <div>
-            <label htmlFor="firstName">First Name:</label>
-            <input
-              id="firstName"
-              type="text"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-            />
+<div className="u-body u-xl-mode">
+      <section className="u-align-center u-clearfix u-section-login" id="sec-05d1">
+        <div className="u-clearfix u-sheet u-sheet-1">
+          <div className="u-clearfix u-expanded-width u-layout-wrap u-layout-wrap-1">
+            <div className="u-layout">
+              <div className="u-layout-row">
+                <div className="u-align-center u-container-style u-layout-cell u-size-30 u-layout-cell-1">
+                  <div className="u-container-layout u-valign-middle u-container-layout-1">
+                    <img className="u-image u-image-contain u-image-default u-image-1" src={register} 
+                    alt="login" data-image-width="473" data-image-height="464" />
+                  </div>
+                </div>
+                <div className="u-align-center u-container-style u-layout-cell u-palette-1-base u-radius-50 u-shape-round u-size-30 u-layout-cell-2">
+                  <div className="u-container-layout u-valign-middle-lg u-valign-middle-md u-valign-middle-xl u-container-layout-2">
+                  {isWalletConnected ? (
+                    <>
+                      <div className="u-form u-login-control u-radius-50 u-white u-form-1">
+                      <form onSubmit={handleSubmit} className="u-clearfix u-form-custom-backend u-form-spacing-29 u-form-vertical u-inner-form" name="form" style={{padding: "30px"}}>
+                        <div className="u-form-group u-form-select u-form-group-2">
+                          <label htmlFor="memberType" className="u-label">Member Type</label>
+                          <div className="u-form-select-wrapper">
+                            <select id="memberType" name="select" value={memberType} onChange={handleChange} className="u-border-1 u-border-grey-30 u-input u-input-rectangle u-white" required="required">
+                              <option value="individual" data-calc="individual" defaultValue="selected">Individual</option>
+                              <option value="health_organization" data-calc="health_organization">Health Organization</option>
+                              <option value="insurance" data-calc="insurance">Insurance</option>
+                            </select>
+                            <svg className="u-caret u-caret-svg" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16" style={{fill: "currentColor"}} xmlSpace="preserve"><polygon className="st0" points="8,12 2,4 14,4 "></polygon></svg>
+                          </div>
+                        </div>
+                        {memberType === 'individual' && (
+                          <>
+                          <div className="u-form-group u-form-name">
+                              <label htmlFor="firstName" className="u-label">First Name *</label>
+                              <input 
+                                type="text" placeholder="Enter your first name" 
+                                id="firstName" onChange={(e) => setFirstName(e.target.value)}
+                                value={firstName} name="firstName" 
+                                className="u-input u-input-rectangle u-input-2" 
+                                required="" 
+                              />
+                            </div>
+                            <div className="u-form-group u-form-name">
+                              <label htmlFor="lastName" className="u-label">Last Name *</label>
+                              <input 
+                                type="text" placeholder="Enter your last name" 
+                                id="lastName" onChange={(e) => setLastName(e.target.value)}
+                                value={lastName} name="lastName" 
+                                className="u-input u-input-rectangle u-input-2" 
+                                required="" 
+                              />
+                            </div>
+                            <div className="u-form-group u-form-name">
+                              <label htmlFor="username" className="u-label">Username *</label>
+                              <input 
+                                type="text" placeholder="Enter your Username" 
+                                id="username" onChange={(e) => setUsername(e.target.value)}
+                                value={username} name="username" 
+                                className="u-input u-input-rectangle u-input-2" 
+                                required="" 
+                              />
+                            </div>
+                          </>
+                        )}
+                        {(memberType === 'health_organization' && !showHealthOrganizationInput) && (
+                          <>  
+                            <div className="no-more-registration">
+                              Already registered Health Organization
+                            </div>
+                          </>
+                        )}
+                        {(memberType === 'insurance' && !showInsuranceInput) && (
+                          <>  
+                            <div className="no-more-registration">
+                              Already registered Insurance
+                            </div>
+                          </>
+                        )}
+                        {((memberType === 'health_organization' && showHealthOrganizationInput) || (memberType === 'insurance' && showInsuranceInput)) && (
+                          <>
+                            <div className="u-form-group u-form-name">
+                              <label htmlFor="name" className="u-label">Name *</label>
+                              <input 
+                                type="text" placeholder="Enter your Name" 
+                                id="name"
+                                onChange={(e) =>
+                                  memberType === 'health_organization'
+                                    ? setOrgName(e.target.value)
+                                    : setInsName(e.target.value)
+                                }
+                                value={orgName || insName} 
+                                name="name" 
+                                className="u-input u-input-rectangle u-input-2" 
+                                required="" 
+                              />
+                            </div>
+                          </>
+                        )}
+                        {((memberType === 'health_organization' && showHealthOrganizationInput) || memberType === 'individual' || (memberType === 'insurance' && showInsuranceInput)) && (
+                          <>
+                            <div className="u-form-group u-form-name">
+                              <label htmlFor="email" className="u-label">Email *</label>
+                              <input 
+                                type="email" placeholder="Enter your Email" 
+                                id="email" onChange={(e) => setEmail(e.target.value)}
+                                value={email} name="email" 
+                                className="u-input u-input-rectangle u-input-2" 
+                                required="" 
+                              />
+                            </div>
+                            <div className="u-form-group u-form-password">
+                              <label htmlFor="password" className="u-label">Password *</label>
+                              <input 
+                                type="password" 
+                                placeholder="Enter your Password" id="password" 
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                name="password" className="u-input u-input-rectangle u-input-3" 
+                                required="" 
+                              />
+                            </div>
+                            <div className="u-align-left u-form-group u-form-submit">
+                            <button href="#" className="u-border-none u-btn u-btn-submit u-button-style u-palette-3-base u-btn-2">Login</button>
+                            <input type="submit" value="submit" className="u-form-control-hidden" />
+                          </div>
+                          </>
+                        )}
+                      </form>
+                    </div>
+                    <button onClick={navigateToLogin} className="u-border-active-palette-2-base u-border-hover-palette-1-base u-border-none u-btn u-button-style u-login-control u-login-create-account u-none u-text-hover-white u-text-palette-3-base u-btn-4">
+                      Sign In?
+                    </button>
+                  </>
+                  ) : (
+                    <button className="btn-connect-to-wallet" onClick={connectWallet}>
+                      Connect to wallet
+                    </button>
+                  )}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          <div>
-            <label htmlFor="lastName">Last Name:</label>
-            <input
-              id="lastName"
-              type="text"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-            />
-          </div>
-          <div>
-            <label htmlFor="username">Username:</label>
-            <input
-              id="username"
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-            />
-          </div>
-        </>
-      )}
-      {((memberType === 'health_organization' && showHealthOrganizationInput) || (memberType === 'insurance' && showInsuranceInput)) && (
-        <>
-          <div>
-            <label htmlFor="name">Name:</label>
-            <input
-              id="name"
-              type="text"
-              value={orgName || insName}
-              onChange={(e) =>
-                memberType === 'health_organization'
-                  ? setOrgName(e.target.value)
-                  : setInsName(e.target.value)
-              }
-            />
-          </div>
-        </>
-      )}
-      {((memberType === 'health_organization' && showHealthOrganizationInput) || memberType === 'individual' || (memberType === 'insurance' && showInsuranceInput)) && (
-        <>
-          <div>
-            <label htmlFor="email">Email:</label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-          <div>
-            <label htmlFor="password">Password:</label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-        </>
-      )}
-      <button type="submit">Submit</button>
-    </form>
+        </div>
+      </section>
+    </div>
   );
 };
 

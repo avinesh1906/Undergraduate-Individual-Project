@@ -4,7 +4,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Register from './pages/register/Register';
 import LoginForm from './pages/login/login';
 import Navbar from './components/navbar/navbar';
-import Footer from './components/footer/footer';
 import UploadContract from './pages/health_contract/upload_contract';
 import ViewContracts from './pages/health_contract/view_contracts';
 import ChooseHealthContract from './pages/health_contract/sign_contract';
@@ -33,7 +32,6 @@ function App() {
             <Route path="/submit_claim" element={<SubmitClaim />} />
             <Route path="/request_claim" element={<RequestClaim />} />
           </Routes>
-          <Footer />
         </Router>
       </UserContextProvider>
     </Web3Provider>
