@@ -1,4 +1,4 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 
 // Create a new context to store the provider, signer, and address variables
@@ -7,9 +7,15 @@ export const Web3Context = createContext();
 
 // Create a provider component that will wrap the App component
 export const Web3Provider = ({ children }) => {
-  const [provider, setProvider] = useState();
-  const [signer, setSigner] = useState();
-  const [address, setAddress] = useState();
+  const [provider, setProvider] = useState(localStorage.getItem('provider') || null);
+  const [signer, setSigner] = useState(localStorage.getItem('signer') || null);
+  const [address, setAddress] = useState(localStorage.getItem('address') || null);
+
+  useEffect(() => {
+    localStorage.setItem('provider', provider);
+    localStorage.setItem('signer', signer);
+    localStorage.setItem('address', address);
+  }, [provider, signer, address]);
 
 	// Connect to the Web3 provider and update the context state
 	const connectWeb3 = async () => {

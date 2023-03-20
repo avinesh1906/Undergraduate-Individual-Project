@@ -35,11 +35,15 @@ const NavigationBar = () => {
     disconnectWallet();
   }
 
+  const handleLogoClick = () => {
+    navigate("/");
+  }
+
   return (
       <Navbar expand="lg" bg="body-tertiary" className="sticky-top">
       <div className="container-fluid">
-        <Navbar.Brand href="/">
-          <img src={logo} alt="Logo" width="30" height="24" className="d-inline-block align-text-top" />
+        <Navbar.Brand>
+          <img src={logo} onClick={handleLogoClick} alt="Logo" width="30" height="24" className="d-inline-block align-text-top" />
           MediSure
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="navbarScroll" />
