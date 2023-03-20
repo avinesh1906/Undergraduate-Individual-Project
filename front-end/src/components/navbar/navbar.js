@@ -21,6 +21,11 @@ const NavigationBar = () => {
     navigate("/login");
   };
 
+  const handleRegister = () => {
+    // handle login action
+    navigate("/register");
+  };
+
   const handleLogout = () => {
     // handle logout action
     logout();
@@ -72,15 +77,28 @@ const NavigationBar = () => {
                 Disconnect from Wallet
               </button>
               </div>
-              <div className="sign-in">
-              <button 
-                id="signin-button"
-                onClick={handleLogin}
-                className="btn btn-success"
-              >
-                Sign In
-              </button>
-              </div>
+              {window.location.pathname === '/login' && (
+                <div className="sign-in">
+                  <button 
+                    id="signin-button"
+                    onClick={handleRegister}
+                    className="btn btn-success"
+                  >
+                    Register
+                  </button>
+                </div>
+              )}
+              {window.location.pathname === '/register' && (
+                <div className="sign-in">
+                  <button 
+                    id="signin-button"
+                    onClick={handleLogin}
+                    className="btn btn-success"
+                  >
+                    Sign In
+                  </button>
+                </div>
+              )}
           </>
         )}
         {isWalletConnected && isLoggedIn && (
