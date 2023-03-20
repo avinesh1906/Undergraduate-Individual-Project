@@ -5,20 +5,20 @@ export const UserContext = createContext();
 
 export const UserContextProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(
-    localStorage.getItem('isLoggedIn') === 'true' || false
+    sessionStorage.getItem('isLoggedIn') === 'true' || false
   );
   const [isWalletConnected, setIsWalletConnected] = useState(
-    localStorage.getItem('isWalletConnected') === 'true' || false
+    sessionStorage.getItem('isWalletConnected') === 'true' || false
   );
   const [username, setUsername] = useState(
-    localStorage.getItem('username') || ''
+    sessionStorage.getItem('username') || ''
   );
   const { connectWeb3 } = useContext(Web3Context);
 
   useEffect(() => {
-    localStorage.setItem('isLoggedIn', isLoggedIn);
-    localStorage.setItem('isWalletConnected', isWalletConnected);
-    localStorage.setItem('username', username);
+    sessionStorage.setItem('isLoggedIn', isLoggedIn);
+    sessionStorage.setItem('isWalletConnected', isWalletConnected);
+    sessionStorage.setItem('username', username);
   }, [isLoggedIn, isWalletConnected, username]);
 
   const login = () => {

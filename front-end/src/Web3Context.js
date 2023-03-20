@@ -7,14 +7,14 @@ export const Web3Context = createContext();
 
 // Create a provider component that will wrap the App component
 export const Web3Provider = ({ children }) => {
-  const [provider, setProvider] = useState(localStorage.getItem('provider') || null);
-  const [signer, setSigner] = useState(localStorage.getItem('signer') || null);
-  const [address, setAddress] = useState(localStorage.getItem('address') || null);
+  const [provider, setProvider] = useState(sessionStorage.getItem('provider') || null);
+  const [signer, setSigner] = useState(sessionStorage.getItem('signer') || null);
+  const [address, setAddress] = useState(sessionStorage.getItem('address') || null);
 
   useEffect(() => {
-    localStorage.setItem('provider', provider);
-    localStorage.setItem('signer', signer);
-    localStorage.setItem('address', address);
+    sessionStorage.setItem('provider', provider);
+    sessionStorage.setItem('signer', signer);
+    sessionStorage.setItem('address', address);
   }, [provider, signer, address]);
 
 	// Connect to the Web3 provider and update the context state
