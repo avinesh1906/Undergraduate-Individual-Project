@@ -165,7 +165,7 @@ const LoginForm = () => {
                       </button>
                     </>
                     ) : (
-                      <button class="btn-connect-to-wallet" onClick={connectWallet}>
+                      <button className="btn-connect-to-wallet" onClick={connectWallet}>
                         Connect to wallet
                       </button>
                     )}
