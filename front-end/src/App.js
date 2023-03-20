@@ -1,5 +1,5 @@
 import './App.css';
-import React, { useState} from 'react';
+import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Register from './pages/register/Register';
 import LoginForm from './pages/login/login';
@@ -13,17 +13,15 @@ import SubmitClaim from './pages/claim/submit_claim';
 import RequestClaim from './pages/claim/request_claim';
 import { Web3Provider } from './Web3Context';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { UserContext } from './UserContext';
+import { UserContextProvider } from './UserContext';
 import Home from './pages/home/home';
 
 function App() {
-  const [username, setUsername] = useState('');
-
   return (
     <Web3Provider>
-      <UserContext.Provider value={{ username, setUsername }}>
+      <UserContextProvider>
         <Router>
-          <Navbar  username={username}/>
+          <Navbar />
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/register" element={<Register />} />
@@ -37,10 +35,9 @@ function App() {
           </Routes>
           <Footer />
         </Router>
-      </UserContext.Provider>
+      </UserContextProvider>
     </Web3Provider>
   );
 }
-
 
 export default App;

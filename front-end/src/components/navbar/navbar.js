@@ -1,5 +1,4 @@
-import React, { useState, useContext } from 'react';
-import { Web3Context } from '../../Web3Context';
+import React, { useContext } from 'react';
 import { useNavigate  } from "react-router-dom";
 import { Navbar, Nav } from 'react-bootstrap';
 import logo from '../../images/logo.jpg';
@@ -7,36 +6,35 @@ import './styles.css';
 import { UserContext } from '../../UserContext';
 
 const NavigationBar = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // change state based on user's authentication status
-  const {connectWeb3} = useContext(Web3Context);
-  const [isWalletConnected, setIsWalletConnected] = useState(false);
   const navigate  = useNavigate();
-  const { username } = useContext(UserContext);
+  const {
+    isLoggedIn,
+    isWalletConnected,
+    username,
+    login,
+    logout,
+    connectWallet,
+    disconnectWallet,
+  } = useContext(UserContext);
+
   const handleLogin = () => {
     // handle login action
-    setIsLoggedIn(true);
+    login();
     navigate("/login");
   };
 
   const handleLogout = () => {
     // handle logout action
-    setIsLoggedIn(false);
+    logout();
   };
 
   const handleConnectWallet = async  () => {
     // handle connect wallet action
-    try {
-      // connect to wallet here
-      await connectWeb3();
-      setIsWalletConnected(true);
-    } catch (error) {
-      console.log('Error connecting to wallet:', error);
-      // handle error here
-    }
+    await connectWallet();
   };
 
   const handleDisconnectWallet = async () => {
-    setIsWalletConnected(false);
+    disconnectWallet();
   }
 
   return (

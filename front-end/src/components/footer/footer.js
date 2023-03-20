@@ -5,7 +5,7 @@ const Footer = () => {
    return (
     <footer>
       <div>
-        <p spellcheck="false">
+        <p>
             AVINESH CULLOO
         </p>
       </div>

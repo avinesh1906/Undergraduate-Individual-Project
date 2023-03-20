@@ -1,8 +1,13 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import './styles.css';
 import HomePageLogo from '../../images/homepage.jpg';
+import { UserContext } from '../../UserContext';
 
-const Home = () => {
+const Home = () => {  
+  const {
+    isWalletConnected,
+    connectWallet
+  } = useContext(UserContext);
   return (
     <div className="u-body u-xl-mode">
       <section className="u-align-center u-clearfix u-palette-5-light-2 u-section-1" id="carousel_6872">
@@ -19,7 +24,11 @@ const Home = () => {
                     <p className="u-align-justify u-text u-text-3"> Our innovative solution provides a secure and transparent system for managing your healthcare claims and data,&nbsp; giving you peace of mind and better healthcare outcomes. <br />
                       <br />Join us today and experience the future of medical insurance!
                     </p>
-                    <a href="/register" className="u-btn u-button-style u-grey-10 u-btn-1">SIGN UP</a>
+                    {isWalletConnected ? (
+                      <a href="/register" className="u-btn u-button-style u-grey-10 u-btn-1">SIGN UP</a>
+                    ) : (
+                      <button onClick={connectWallet} className="u-btn u-button-style u-grey-10 u-btn-1">Connect to wallet</button>
+                    )}
                   </div>
                 </div>
                 <div className="u-container-style u-layout-cell u-right-cell u-size-36 u-white u-layout-cell-2">
