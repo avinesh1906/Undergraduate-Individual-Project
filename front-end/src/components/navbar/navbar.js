@@ -11,7 +11,6 @@ const NavigationBar = () => {
     isLoggedIn,
     isWalletConnected,
     username,
-    login,
     logout,
     connectWallet,
     disconnectWallet,
@@ -19,7 +18,6 @@ const NavigationBar = () => {
 
   const handleLogin = () => {
     // handle login action
-    login();
     navigate("/login");
   };
 

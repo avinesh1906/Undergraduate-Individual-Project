@@ -2,12 +2,19 @@ import React, {useContext} from 'react';
 import './styles.css';
 import HomePageLogo from '../../images/homepage.jpg';
 import { UserContext } from '../../UserContext';
+import { useNavigate  } from "react-router-dom";
 
 const Home = () => {  
+  const navigate  = useNavigate();
   const {
     isWalletConnected,
     connectWallet
   } = useContext(UserContext);
+
+  const navigateToSignUp = () => {
+    navigate("/login");
+  };
+
   return (
     <div className="u-body u-xl-mode">
       <section className="u-align-center u-clearfix u-palette-5-light-2 u-section-1" id="carousel_6872">
@@ -25,7 +32,7 @@ const Home = () => {
                       <br />Join us today and experience the future of medical insurance!
                     </p>
                     {isWalletConnected ? (
-                      <a href="/register" className="u-btn u-button-style u-grey-10 u-btn-1">SIGN UP</a>
+                      <button onClick={navigateToSignUp} className="u-btn u-button-style u-grey-10 u-btn-1">SIGN UP</button>
                     ) : (
                       <button onClick={connectWallet} className="u-btn u-button-style u-grey-10 u-btn-1">Connect to wallet</button>
                     )}
