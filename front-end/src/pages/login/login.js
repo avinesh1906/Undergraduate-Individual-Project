@@ -15,12 +15,17 @@ const InsuranceProviderAddress = contractAddresses.InsuranceProvider;
 
 
 const LoginForm = () => {
-  const [memberType, setMemberType] = useState('');
+  const [memberType, setMemberType] = useState('individual');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const { signer } = useContext(Web3Context);
-  const { username, setUsername } = useContext(UserContext);
   const navigate  = useNavigate();
+
+  const {
+    isWalletConnected,
+    connectWallet,
+    username, setUsername
+  } = useContext(UserContext);
 
   async function verifyIndividual(){
     const individualContract = new ethers.Contract(IndividualContractAddress, IndividualContract.abi, signer);
@@ -82,12 +87,15 @@ const LoginForm = () => {
                   </div>
                   <div className="u-align-center u-container-style u-layout-cell u-palette-1-base u-radius-50 u-shape-round u-size-30 u-layout-cell-2">
                     <div className="u-container-layout u-valign-middle-lg u-valign-middle-md u-valign-middle-xl u-container-layout-2">
-                      <div className="u-form u-login-control u-radius-50 u-white u-form-1">
-                        <form action="#" className="u-clearfix u-form-custom-backend u-form-spacing-29 u-form-vertical u-inner-form" source="custom" name="form" style={{padding: "30px"}} method="post">
+                    {isWalletConnected ? (
+                      <>
+                        <div className="u-form u-login-control u-radius-50 u-white u-form-1">
+                        
+                        <form onSubmit={handleSubmit} className="u-clearfix u-form-custom-backend u-form-spacing-29 u-form-vertical u-inner-form" name="form" style={{padding: "30px"}}>
                           <div className="u-form-group u-form-select u-form-group-2">
-                            <label htmlFor="select-ca74" className="u-label">Member Type</label>
+                            <label htmlFor="memberType" className="u-label">Member Type</label>
                             <div className="u-form-select-wrapper">
-                              <select id="select-ca74" name="select" className="u-border-1 u-border-grey-30 u-input u-input-rectangle u-white" required="required">
+                              <select id="memberType" name="select" value={memberType} onChange={(e) => setMemberType(e.target.value)} className="u-border-1 u-border-grey-30 u-input u-input-rectangle u-white" required="required">
                                 <option value="individual" data-calc="individual" defaultValue="selected">Individual</option>
                                 <option value="health_organization" data-calc="health_organization">Health Organization</option>
                                 <option value="insurance" data-calc="insurance">Insurance</option>
@@ -95,14 +103,56 @@ const LoginForm = () => {
                               <svg className="u-caret u-caret-svg" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16" style={{fill: "currentColor"}} xmlSpace="preserve"><polygon className="st0" points="8,12 2,4 14,4 "></polygon></svg>
                             </div>
                           </div>
-                          <div className="u-form-group u-form-name">
-                            <label htmlFor="username-a30d" className="u-label">Username *</label>
-                            <input type="text" placeholder="Enter your Username" id="username-a30d" name="username" className="u-input u-input-rectangle u-input-2" required="" />
-                          </div>
-                          <div className="u-form-group u-form-password">
-                            <label htmlFor="password-a30d" className="u-label">Password *</label>
-                            <input type="text" placeholder="Enter your Password" id="password-a30d" name="password" className="u-input u-input-rectangle u-input-3" required="" />
-                          </div>
+                          {memberType === 'individual' && (
+                            <>
+                              <div className="u-form-group u-form-name">
+                                <label htmlFor="username" className="u-label">Username *</label>
+                                <input 
+                                  type="text" placeholder="Enter your Username" 
+                                  id="username" onChange={(e) => setUsername(e.target.value)}
+                                  value={username} name="username" 
+                                  className="u-input u-input-rectangle u-input-2" 
+                                  required="" 
+                                />
+                              </div>
+                              <div className="u-form-group u-form-password">
+                                <label htmlFor="password" className="u-label">Password *</label>
+                                <input 
+                                  type="password" 
+                                  placeholder="Enter your Password" id="password" 
+                                  value={password}
+                                  onChange={(e) => setPassword(e.target.value)}
+                                  name="password" className="u-input u-input-rectangle u-input-3" 
+                                  required="" 
+                                />
+                              </div>
+                            </>
+                          )}
+                          {(memberType === 'health_organization' || memberType === 'insurance') && (
+                            <>
+                              <div className="u-form-group u-form-name">
+                                <label htmlFor="email" className="u-label">Email *</label>
+                                <input 
+                                  type="email" placeholder="Enter your Email" 
+                                  id="email" onChange={(e) => setEmail(e.target.value)}
+                                  value={email} name="email" 
+                                  className="u-input u-input-rectangle u-input-2" 
+                                  required="" 
+                                />
+                              </div>
+                              <div className="u-form-group u-form-password">
+                                <label htmlFor="password" className="u-label">Password *</label>
+                                <input 
+                                  type="password" 
+                                  placeholder="Enter your Password" id="password" 
+                                  value={password}
+                                  onChange={(e) => setPassword(e.target.value)}
+                                  name="password" className="u-input u-input-rectangle u-input-3" 
+                                  required="" 
+                                />
+                              </div>
+                            </>
+                          )}
                           <div className="u-align-left u-form-group u-form-submit">
                             <button href="#" className="u-border-none u-btn u-btn-submit u-button-style u-palette-3-base u-btn-2">Login</button>
                             <input type="submit" value="submit" className="u-form-control-hidden" />
@@ -113,6 +163,12 @@ const LoginForm = () => {
                       <button onClick={navigateToRegister} className="u-border-active-palette-2-base u-border-hover-palette-1-base u-border-none u-btn u-button-style u-login-control u-login-create-account u-none u-text-hover-white u-text-palette-3-base u-btn-4">
                         Don't have an account?
                       </button>
+                    </>
+                    ) : (
+                      <button class="btn-connect-to-wallet" onClick={connectWallet}>
+                        Connect to wallet
+                      </button>
+                    )}
                     </div>
                   </div>
                 </div>
