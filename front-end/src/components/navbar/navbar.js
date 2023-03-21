@@ -121,13 +121,14 @@ const NavigationBar = () => {
                     </Nav>
             <div className="nav-user-container">
               <Nav className="me-auto my-2 my-lg-0 navbar-nav-scroll" style={{ '--bs-scroll-height': '100px' }}>
-                <Nav.Item>
+                <Nav.Link style={{ 'text-align': 'center' }}>
                   Logged as
+                  <br/>
                   <span> {username}</span>
-                </Nav.Item>
-                <Nav.Item>
+                </Nav.Link>
+                <Nav.Link>
                   <button className="btn btn-outline-success" onClick={handleLogout}>Sign Out</button>
-                </Nav.Item>
+                </Nav.Link>
               </Nav>
             </div>
           </>      
