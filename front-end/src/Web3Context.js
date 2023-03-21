@@ -10,7 +10,7 @@ export const Web3Provider = ({ children }) => {
   const [provider, setProvider] = useState(sessionStorage.getItem('provider') || null);
   const [signer, setSigner] = useState(sessionStorage.getItem('signer') || null);
   const [address, setAddress] = useState(sessionStorage.getItem('address') || null);
-
+  
   useEffect(() => {
     sessionStorage.setItem('provider', provider);
     sessionStorage.setItem('signer', signer);
@@ -31,8 +31,14 @@ export const Web3Provider = ({ children }) => {
 		setAddress(web3Address);
 	};
 
+  const disconnectWeb3  = async () => {
+    setProvider(null);
+    setSigner(null);
+    setAddress(null);
+  };
+
 	return (
-    <Web3Context.Provider value={{ provider, signer, address, connectWeb3 }}>
+    <Web3Context.Provider value={{ provider, signer, address, connectWeb3, disconnectWeb3 }}>
       {children}
     </Web3Context.Provider>
   );

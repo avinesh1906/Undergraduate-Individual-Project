@@ -13,7 +13,7 @@ export const UserContextProvider = ({ children }) => {
   const [username, setUsername] = useState(
     sessionStorage.getItem('username') || ''
   );
-  const { connectWeb3 } = useContext(Web3Context);
+  const { connectWeb3, disconnectWeb3 } = useContext(Web3Context);
 
   useEffect(() => {
     sessionStorage.setItem('isLoggedIn', isLoggedIn);
@@ -42,6 +42,7 @@ export const UserContextProvider = ({ children }) => {
   };
 
   const disconnectWallet = async () => {
+    await disconnectWeb3();
     setIsWalletConnected(false);
   };
 
