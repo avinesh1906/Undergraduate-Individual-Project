@@ -32,13 +32,13 @@ const Register = () => {
   const { provider, signer } = useContext(Web3Context);
   const navigate  = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
-  const [isWrongInput, setIsWrongInput] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const [showInsuranceInput, setShowInsuranceInput] = useState(false);
   const [showHealthOrganizationInput, setShowHealthOrganizationInput] = useState(false);
 
   useEffect(() => {
-    setIsWrongInput(false);
+    setErrors({});
   }, [memberType]);
 
   const {
@@ -46,6 +46,68 @@ const Register = () => {
     connectWallet,
     setUsername, login
   } = useContext(UserContext);
+
+  const validate = () => {
+    const errors = {};
+    
+    // First Name validation
+    if (!firstName) {
+      errors.firstName = 'First Name is required';
+    } else if (!/^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/.test(firstName)) {
+      errors.firstName = 'Please enter a valid first name';
+    }
+
+    // Last Name validation
+    if (!lastName) {
+      errors.lastName = 'Last Name is required';
+    } else if (!/^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/.test(lastName)) {
+      errors.lastName = 'Please enter a valid last name';
+    }
+
+    // Username validation
+    if (!usernameToBeAdded) {
+      errors.usernameToBeAdded = 'Username is required';
+    } else if (!/^[a-zA-Z0-9]+$/.test(usernameToBeAdded)) {
+      errors.usernameToBeAdded = 'Username can only contain letters and numbers';
+    }
+
+
+    // Email validation
+    if (!email) {
+      errors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      errors.email = 'Please enter a valid email address (e.g. johndoe@example.com)';
+    }
+    
+
+    // Password validation
+    if (!password) {
+      errors.password = 'Password is required';
+    } else if (password.length < 8) {
+      errors.password = 'Password must be at least 8 characters long';
+    } else if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+=[\]{}|\\:;"'<>,.?/~`]).{8,}/.test(password)) {
+      errors.password = 'Password must contain at least one lowercase letter, one uppercase letter, one number, and one special character';
+    }
+
+    // Organization Name validation
+    if (memberType === 'health_organization' && showHealthOrganizationInput && !orgName) {
+      errors.orgName = 'Organization Name is required';
+    } else if (orgName && !/^[a-zA-Z0-9\s\-#&]+$/i.test(orgName)) {
+      errors.orgName = 'Organization Name can only contain letters, numbers, spaces, hyphens, hash symbols (#), and ampersands (&)';
+    }
+
+    // Institution Name validation
+    // Institution Name validation
+    if (memberType === 'insurance' && showInsuranceInput && !insName) {
+      errors.insName = 'Institution Name is required';
+    } else if (insName && !/^[a-zA-Z0-9\s\-#&]+$/i.test(insName)) {
+      errors.insName = 'Institution Name can only contain letters, numbers, spaces, hyphens, hash symbols (#), and ampersands (&)';
+    }
+
+    setErrors(errors);
+    return errors;
+  };
+
 
   const navigateToLogin = () => {
     navigate("/login");
@@ -199,14 +261,17 @@ const Register = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    // Add logic to handle form submission
-    // handle form submission based on member type
-    if (memberType === 'individual') {
-      registerIndividual();
-    } else if (memberType === 'health_organization') {
-      registerHealthOrganization();
-    } else if (memberType === 'insurance') {
-      registerInsurance();
+    const errors = validate();
+    if (Object.keys(errors).length === 0) {
+      // Add logic to handle form submission
+      // handle form submission based on member type
+      if (memberType === 'individual') {
+        registerIndividual();
+      } else if (memberType === 'health_organization') {
+        registerHealthOrganization();
+      } else if (memberType === 'insurance') {
+        registerInsurance();
+      }
     }
   }
   return (
@@ -250,6 +315,7 @@ const Register = () => {
                                 className="u-input u-input-rectangle u-input-2" 
                                 required="" 
                               />
+                              {errors.firstName && <label className="u-label" style={{"color": "red"}}>{errors.firstName}</label>}
                             </div>
                             <div className="u-form-group u-form-name">
                               <label htmlFor="lastName" className="u-label">Last Name *</label>
@@ -260,6 +326,7 @@ const Register = () => {
                                 className="u-input u-input-rectangle u-input-2" 
                                 required="" 
                               />
+                              {errors.lastName  && <label className="u-label" style={{"color": "red"}}>{errors.lastName }</label>}
                             </div>
                             <div className="u-form-group u-form-name">
                               <label htmlFor="username" className="u-label">Username *</label>
@@ -270,6 +337,7 @@ const Register = () => {
                                 className="u-input u-input-rectangle u-input-2" 
                                 required="" 
                               />
+                              {errors.usernameToBeAdded && <label className="u-label" style={{"color": "red"}}>{errors.usernameToBeAdded  }</label>}
                             </div>
                           </>
                         )}
@@ -310,6 +378,7 @@ const Register = () => {
                                 className="u-input u-input-rectangle u-input-2" 
                                 required="" 
                               />
+                              {errors.orgName && <label className="u-label" style={{"color": "red"}}>{errors.orgName}</label>}
                             </div>
                           </>
                         )}
@@ -328,6 +397,7 @@ const Register = () => {
                                 className="u-input u-input-rectangle u-input-2" 
                                 required="" 
                               />
+                              {errors.insName && <label className="u-label" style={{"color": "red"}}>{errors.insName}</label>}
                             </div>
                           </>
                         )}
@@ -342,6 +412,7 @@ const Register = () => {
                                 className="u-input u-input-rectangle u-input-2" 
                                 required="" 
                               />
+                              {errors.email && <label className="u-label" style={{"color": "red"}}>{errors.email}</label>}
                             </div>
                             <div className="u-form-group u-form-password">
                               <label htmlFor="password" className="u-label">Password *</label>
@@ -353,6 +424,7 @@ const Register = () => {
                                 name="password" className="u-input u-input-rectangle u-input-3" 
                                 required="" 
                               />
+                              {errors.password && <label className="u-label" style={{"color": "red"}}>{errors.password}</label>}
                             </div>
                             <div 
                               className="u-align-left u-form-group u-form-submit"
