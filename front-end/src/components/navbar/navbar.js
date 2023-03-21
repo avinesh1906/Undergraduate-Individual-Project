@@ -121,7 +121,7 @@ const NavigationBar = () => {
                     </Nav>
             <div className="nav-user-container">
               <Nav className="me-auto my-2 my-lg-0 navbar-nav-scroll" style={{ '--bs-scroll-height': '100px' }}>
-                <Nav.Link style={{ 'text-align': 'center' }}>
+                <Nav.Link style={{ 'textAlign': 'center' }}>
                   Logged as
                   <br/>
                   <span> {username}</span>

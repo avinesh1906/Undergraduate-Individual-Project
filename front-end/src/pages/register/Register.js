@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import IndividualContract from '../../contracts/individual.json';
 import HealthOrganizationContract from '../../contracts/HealthOrganization.json';
 import InsuranceContract from '../../contracts/insuranceprovider.json';
@@ -11,6 +11,7 @@ import { UserContext } from '../../UserContext';
 import { useNavigate  } from "react-router-dom";
 import register from '../../images/register.png';
 import './styles.css';
+import Loader from '../../components/loader/loader';
 
 const IndividualContractAddress = contractAddresses.Individual;
 const HealthOrganizationContractAddress = contractAddresses.HealthOrganization;
@@ -23,102 +24,100 @@ const Register = () => {
   const [memberType, setMemberType] = useState('individual');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [username, setUsername] = useState('');
+  const [usernameToBeAdded, setUsernameToBeAdded] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [orgName, setOrgName] = useState('');
   const [insName, setInsName] = useState('');
   const { provider, signer } = useContext(Web3Context);
   const navigate  = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+  const [isWrongInput, setIsWrongInput] = useState(false);
 
   const [showInsuranceInput, setShowInsuranceInput] = useState(false);
   const [showHealthOrganizationInput, setShowHealthOrganizationInput] = useState(false);
 
+  useEffect(() => {
+    setIsWrongInput(false);
+  }, [memberType]);
+
   const {
     isWalletConnected,
     connectWallet,
+    setUsername, login
   } = useContext(UserContext);
 
   const navigateToLogin = () => {
     navigate("/login");
   };
-
-  async function getIndividual(individualContract) {
-    const response = await individualContract.getIndividual(0);
-    console.log(response);
-  }
-
-  async function getHealthOrganization(healthOrganizationContract) {
-    const response = await healthOrganizationContract.getHealthOrganization();
-    console.log(response);
-  }
-
-  async function getInsurance(insuranceContract) {
-    const response = await insuranceContract.getInsuranceProvider();
-    console.log(response);
-  }
-
   async function registerIndividual() {
+    setIsLoading(true);
     // Get the event signature
     const eventSignature = ethers.utils.id("LogInsuredPersonRegistered(uint32,string)");
     const individualContract = new ethers.Contract(IndividualContractAddress, IndividualContract.abi, signer);
-    const tx  = await individualContract.registerIndividual(firstName, lastName, username, email, password);
+    const tx  = await individualContract.registerIndividual(firstName, lastName, usernameToBeAdded, email, password);
     const receipt  = await  provider.waitForTransaction(tx.hash);
     if (receipt.status === 1) {
-      console.log('Transaction successful');
       // check the logs for the LogInsuredPersonRegistered event
       receipt.logs.forEach(log => {
         if (log.topics[0] === eventSignature) {
           const event = individualContract.interface.parseLog(log);
-          console.log(event.args);
+          setUsername(event.args[1])
+          login();
+          navigate("/individual");
+        } else {
+          console.log('Transaction failed');
         }
       });
     } else {
       console.log('Transaction failed');
     }
+    setIsLoading(false);
 
-    getIndividual(individualContract);
   }
 
-  async function connectInsuranceAddress(){
-    const eventSignature = ethers.utils.id("InsuranceAddressSetup(address");
-    const healthContract = new ethers.Contract(HealthPolicyAddress, HealthPolicyContract.abi, signer);
-    const tx  = await healthContract.setInsuranceCompanyAddress();
-    const receipt  = await  provider.waitForTransaction(tx.hash);
-    if (receipt.status === 1) {
-      console.log('Transaction successful');
-      // check the logs for the InsuranceAddressSetup event
-      receipt.logs.forEach(log => {
-      if (log.topics[0] === eventSignature) {
-          const event = healthContract.interface.parseLog(log);
-          console.log(event.args);
-      }
-      });
-    } else {
-      console.log('Transaction failed');
-    }
-  }
+  // async function connectInsuranceAddress(){
+  //   setIsLoading(true);
+  //   const eventSignature = ethers.utils.id("InsuranceAddressSetup(address");
+  //   const healthContract = new ethers.Contract(HealthPolicyAddress, HealthPolicyContract.abi, signer);
+  //   const tx  = await healthContract.setInsuranceCompanyAddress();
+  //   const receipt  = await  provider.waitForTransaction(tx.hash);
+  //   if (receipt.status === 1) {
+  //     console.log('Transaction successful');
+  //     // check the logs for the InsuranceAddressSetup event
+  //     receipt.logs.forEach(log => {
+  //     if (log.topics[0] === eventSignature) {
+  //         const event = healthContract.interface.parseLog(log);
+  //         console.log(event.args);
+  //     }
+  //     });
+  //   } else {
+  //     console.log('Transaction failed');
+  //   }
+  // }
 
-  async function connectHealthInsurance(){
-    const eventSignature = ethers.utils.id("HealthOrganizationAddressSetup(address");
-    const claimContract = new ethers.Contract(ClaimContractAddress, ClaimContract.abi, signer);
-    const tx  = await claimContract.setHealthOrganizationAddress();
-    const receipt  = await  provider.waitForTransaction(tx.hash);
-    if (receipt.status === 1) {
-      console.log('Transaction successful');
-      // check the logs for the HealthOrganizationAddressSetup event
-      receipt.logs.forEach(log => {
-      if (log.topics[0] === eventSignature) {
-          const event = claimContract.interface.parseLog(log);
-          console.log(event.args);
-      }
-      });
-    } else {
-      console.log('Transaction failed');
-    }
-  }
+  // async function connectHealthInsurance(){
+  //   setIsLoading(true);
+  //   const eventSignature = ethers.utils.id("HealthOrganizationAddressSetup(address");
+  //   const claimContract = new ethers.Contract(ClaimContractAddress, ClaimContract.abi, signer);
+  //   const tx  = await claimContract.setHealthOrganizationAddress();
+  //   const receipt  = await  provider.waitForTransaction(tx.hash);
+  //   if (receipt.status === 1) {
+  //     console.log('Transaction successful');
+  //     // check the logs for the HealthOrganizationAddressSetup event
+  //     receipt.logs.forEach(log => {
+  //     if (log.topics[0] === eventSignature) {
+  //         const event = claimContract.interface.parseLog(log);
+  //         console.log(event.args);
+  //     }
+  //     });
+  //   } else {
+  //     console.log('Transaction failed');
+  //   }
+  // }
 
   async function registerHealthOrganization() {
+    setIsLoading(true);
     // Get the event signature
     const eventSignature = ethers.utils.id("LogRegisterdHO(string)");
     const healthOrganizationContract = new ethers.Contract(HealthOrganizationContractAddress, HealthOrganizationContract.abi, signer);
@@ -131,37 +130,37 @@ const Register = () => {
         if (log.topics[0] === eventSignature) {
           const event = healthOrganizationContract.interface.parseLog(log);
           console.log(event.args);
+          setUsername(event.args[0]);
+          login();
+          navigate("/individual");
+        } else {
+          console.log('Transaction failed');
         }
       });
-      connectHealthInsurance();
     } else {
       console.log('Transaction failed');
     }
-
-    getHealthOrganization(healthOrganizationContract);
+    setIsLoading(false);
   }
 
   async function registerInsurance() {
+    setIsLoading(true);
     // Get the event signature
-    const eventSignature = ethers.utils.id("NewProvider(string, string)");
     const insuranceContract = new ethers.Contract(InsuranceProviderAddress, InsuranceContract.abi, signer);
     const tx  = await insuranceContract.registerProvider(insName,email, password);
     const receipt  = await  provider.waitForTransaction(tx.hash);
     if (receipt.status === 1) {
-      console.log('Transaction successful');
-      // check the logs for the LogInsuredPersonRegistered event
+      // check the logs for the NewProvider event
       receipt.logs.forEach(log => {
-        if (log.topics[0] === eventSignature) {
-          const event = insuranceContract.interface.parseLog(log);
-          console.log(event.args);
-        }
+        const event = insuranceContract.interface.parseLog(log);
+        setUsername(event.args[0]);
+        login();
+        navigate("/individual");
       });
-      connectInsuranceAddress()
     } else {
       console.log('Transaction failed');
     }
-
-    getInsurance(insuranceContract);
+    setIsLoading(false);
   }
 
   function handleChange(e) {
@@ -195,27 +194,10 @@ const Register = () => {
     // Add logic to handle form submission
     // handle form submission based on member type
     if (memberType === 'individual') {
-      console.log('Individual member details:', {
-        firstName,
-        lastName,
-        username,
-        email,
-        password,
-      });
       registerIndividual();
     } else if (memberType === 'health_organization') {
-      console.log('Health organization member details:', {
-        orgName,
-        email,
-        password,
-      });
       registerHealthOrganization();
     } else if (memberType === 'insurance') {
-      console.log('Insurance member details:', {
-        insName,
-        email,
-        password,
-      });
       registerInsurance();
     }
   }
@@ -275,8 +257,8 @@ const Register = () => {
                               <label htmlFor="username" className="u-label">Username *</label>
                               <input 
                                 type="text" placeholder="Enter your Username" 
-                                id="username" onChange={(e) => setUsername(e.target.value)}
-                                value={username} name="username" 
+                                id="username" onChange={(e) => setUsernameToBeAdded(e.target.value)}
+                                value={usernameToBeAdded} name="username" 
                                 className="u-input u-input-rectangle u-input-2" 
                                 required="" 
                               />
@@ -356,10 +338,16 @@ const Register = () => {
                                 required="" 
                               />
                             </div>
-                            <div className="u-align-left u-form-group u-form-submit">
-                            <button href="#" className="u-border-none u-btn u-btn-submit u-button-style u-palette-3-base u-btn-2">Register</button>
-                            <input type="submit" value="submit" className="u-form-control-hidden" />
-                          </div>
+                            <div 
+                              className="u-align-left u-form-group u-form-submit"
+                              style={{ display: isLoading ? "none" : "block" }}
+                            >
+                              <button href="#" className="u-border-none u-btn u-btn-submit u-button-style u-palette-3-base u-btn-2">Register</button>
+                              <input type="submit" value="submit" className="u-form-control-hidden" />
+                            </div>
+                            <div className="loader-div" style={{ display: isLoading ? "block" : "none" }}>  
+                              <Loader/>
+                            </div>
                           </>
                         )}
                       </form>
