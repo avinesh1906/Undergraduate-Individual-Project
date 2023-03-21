@@ -12,7 +12,7 @@ const Home = () => {
   } = useContext(UserContext);
 
   const navigateToSignUp = () => {
-    navigate("/login");
+    navigate("/register");
   };
 
   return (

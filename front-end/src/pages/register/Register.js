@@ -297,19 +297,35 @@ const Register = () => {
                             </div>
                           </>
                         )}
-                        {((memberType === 'health_organization' && showHealthOrganizationInput) || (memberType === 'insurance' && showInsuranceInput)) && (
+                        {(memberType === 'health_organization' && showHealthOrganizationInput) && (
                           <>
                             <div className="u-form-group u-form-name">
                               <label htmlFor="name" className="u-label">Name *</label>
                               <input 
-                                type="text" placeholder="Enter your Name" 
+                                type="text" placeholder="Enter the organization name" 
                                 id="name"
                                 onChange={(e) =>
-                                  memberType === 'health_organization'
-                                    ? setOrgName(e.target.value)
-                                    : setInsName(e.target.value)
+                                   setOrgName(e.target.value)
                                 }
-                                value={orgName || insName} 
+                                value={orgName} 
+                                name="name" 
+                                className="u-input u-input-rectangle u-input-2" 
+                                required="" 
+                              />
+                            </div>
+                          </>
+                        )}
+                        { (memberType === 'insurance' && showInsuranceInput) && (
+                          <>
+                            <div className="u-form-group u-form-name">
+                              <label htmlFor="name" className="u-label">Name *</label>
+                              <input 
+                                type="text" placeholder="Enter the insurance name" 
+                                id="name"
+                                onChange={(e) =>
+                                  setInsName(e.target.value) 
+                                }
+                                value={insName} 
                                 name="name" 
                                 className="u-input u-input-rectangle u-input-2" 
                                 required="" 
