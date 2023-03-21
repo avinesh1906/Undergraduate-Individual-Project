@@ -173,3 +173,12 @@
   background-color: #F1F1F6;
   color: #BE9FE1;
 }
+
+.wrong-credential-label {
+  color: red;
+}
+
+.loader-div {
+  margin-left: auto;
+  margin-right: auto;
+}

@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext,  useEffect } from 'react';
 import { ethers } from 'ethers';
 import IndividualContract from '../../contracts/individual.json';
 import HealthOrganizationContract from '../../contracts/HealthOrganization.json';
@@ -8,7 +8,8 @@ import { Web3Context } from '../../Web3Context';
 import { UserContext } from '../../UserContext';
 import { useNavigate  } from "react-router-dom";
 import './styles.css';
-import login from '../../images/login.png'
+import loginPicture from '../../images/login.png'
+import Loader from '../../components/loader/loader';
 
 const IndividualContractAddress = contractAddresses.Individual;
 const HealthOrganizationContractAddress = contractAddresses.HealthOrganization;
@@ -22,34 +23,58 @@ const LoginForm = () => {
   const { signer } = useContext(Web3Context);
   const navigate  = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [isWrongCredential, setIsWrongCredential] = useState(false);
+
+  useEffect(() => {
+    setIsWrongCredential(false);
+  }, [memberType]);
 
   const {
     isWalletConnected,
     connectWallet,
-    username, setUsername
+    username, setUsername,
+    login
   } = useContext(UserContext);
 
   async function verifyIndividual(){
     setIsLoading(true);
     const individualContract = new ethers.Contract(IndividualContractAddress, IndividualContract.abi, signer);
     const response = await individualContract.authenticate(username, password);
-    console.log(response);
+    if (response[0]) {
+      setUsername(response[1]);
+      login();
+      navigate("/individual");
+    } else {
+      setIsWrongCredential(true);
+    }
     setIsLoading(false);
   }
 
   async function verifyHealthOrganization(){
     setIsLoading(true);
     const healthOrganizationContract = new ethers.Contract(HealthOrganizationContractAddress, HealthOrganizationContract.abi, signer);
-    const response = await healthOrganizationContract.authenticate(password);
-    console.log(response);
+    const response = await healthOrganizationContract.authenticate(email, password);
+    if (response[0]) {
+      setUsername(response[1]);
+      login();
+      navigate("/individual");
+    } else {
+      setIsWrongCredential(true);
+    }
     setIsLoading(false);
   }
 
   async function verifyInsurance(){
     setIsLoading(true);
     const healthOrganizationContract = new ethers.Contract(InsuranceProviderAddress, InsuranceContract.abi, signer);
-    const response = await healthOrganizationContract.authenticate(password);
-    console.log(response);
+    const response = await healthOrganizationContract.authenticate(email, password);
+    if (response[0]) {
+      setUsername(response[1]);
+      login();
+      navigate("/insurance");
+    } else {
+      setIsWrongCredential(true);
+    }
     setIsLoading(false);
   }
 
@@ -90,7 +115,7 @@ const LoginForm = () => {
               <div className="u-layout-row">
                 <div className="u-align-center u-container-style u-layout-cell u-size-30 u-layout-cell-1">
                   <div className="u-container-layout u-valign-middle u-container-layout-1">
-                    <img className="u-image u-image-contain u-image-default u-image-1" src={login} 
+                    <img className="u-image u-image-contain u-image-default u-image-1" src={loginPicture} 
                     alt="login" data-image-width="473" data-image-height="464" />
                   </div>
                 </div>
@@ -99,7 +124,6 @@ const LoginForm = () => {
                   {isWalletConnected ? (
                     <>
                       <div className="u-form u-login-control u-radius-50 u-white u-form-1">
-
                       <form onSubmit={handleSubmit} className="u-clearfix u-form-custom-backend u-form-spacing-29 u-form-vertical u-inner-form" name="form" style={{padding: "30px"}}>
                         <div className="u-form-group u-form-select u-form-group-2">
                           <label htmlFor="memberType" className="u-label">Member Type</label>
@@ -112,6 +136,16 @@ const LoginForm = () => {
                             <svg className="u-caret u-caret-svg" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16" style={{fill: "currentColor"}} xmlSpace="preserve"><polygon className="st0" points="8,12 2,4 14,4 "></polygon></svg>
                           </div>
                         </div>
+                        {isWrongCredential  && (
+                          <>
+                            <div
+                            style={{ display: isLoading ? "none" : "block" }}>
+                              <div className="u-form-group wrong-credential-label">
+                                <label>Wrong Credential</label>
+                              </div>
+                            </div>
+                          </>
+                        )}
                         {memberType === 'individual' && (
                           <>
                             <div className="u-form-group u-form-name">
@@ -169,9 +203,9 @@ const LoginForm = () => {
                           <button href="#" className="u-border-none u-btn u-btn-submit u-button-style u-palette-3-base u-btn-2">Login</button>
                           <input type="submit" value="submit" className="u-form-control-hidden" />
                         </div>
-                        <div style={{ display: isLoading ? "block" : "none" }} className="lds-roller">
-                          <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
-                        </div>
+                        <div className="loader-div" style={{ display: isLoading ? "block" : "none" }}>  
+                          <Loader/>
+                         </div>
                         <input type="hidden" value="" name="recaptchaResponse" />
                       </form>
                     </div>

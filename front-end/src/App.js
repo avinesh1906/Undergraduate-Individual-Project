@@ -14,6 +14,7 @@ import { Web3Provider } from './Web3Context';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { UserContextProvider } from './UserContext';
 import Home from './pages/home/home';
+import Individual from './pages/individual/individual';
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
             <Route path="/view_signed_contract" element={<ViewSignedContract />} />
             <Route path="/submit_claim" element={<SubmitClaim />} />
             <Route path="/request_claim" element={<RequestClaim />} />
+            <Route path="/individual" element={<Individual />} />
           </Routes>
         </Router>
       </UserContextProvider>
