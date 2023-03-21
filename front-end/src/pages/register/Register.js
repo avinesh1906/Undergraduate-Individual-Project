@@ -344,10 +344,16 @@ const Register = () => {
                         {(memberType === 'health_organization' && !showHealthOrganizationInput) && (
                           <>  
                             <div className="no-more-registration"
-                            style={{ display: isLoading ? "none" : "block" }}>
+                              style={{ 
+                              display: isLoading ? "none" : "block", 
+                              color: "red" 
+                            }}
+                            >
                               Already registered Health Organization
                             </div>
-                            <div className="loader-div" style={{ display: isLoading ? "block" : "none" }}>  
+                            <div className="loader-div" 
+                            style={{ display: isLoading ? "block" : "none" }}
+                            >  
                               <Loader/>
                             </div>
                           </>
@@ -355,10 +361,16 @@ const Register = () => {
                         {(memberType === 'insurance' && !showInsuranceInput) && (
                           <>  
                             <div className="no-more-registration"
-                            style={{ display: isLoading ? "none" : "block" }}>
+                              style={{ 
+                                display: isLoading ? "none" : "block", 
+                                color: "red" 
+                              }}
+                            >
                               Already registered Insurance
                             </div>
-                            <div className="loader-div" style={{ display: isLoading ? "block" : "none" }}>  
+                            <div className="loader-div" 
+                            style={{ display: isLoading ? "block" : "none" }}
+                            >  
                               <Loader/>
                             </div>
                           </>
