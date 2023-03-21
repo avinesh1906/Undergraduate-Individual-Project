@@ -136,16 +136,6 @@ const LoginForm = () => {
                             <svg className="u-caret u-caret-svg" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16" style={{fill: "currentColor"}} xmlSpace="preserve"><polygon className="st0" points="8,12 2,4 14,4 "></polygon></svg>
                           </div>
                         </div>
-                        {isWrongCredential  && (
-                          <>
-                            <div
-                            style={{ display: isLoading ? "none" : "block" }}>
-                              <div className="u-form-group wrong-credential-label">
-                                <label>Wrong Credential</label>
-                              </div>
-                            </div>
-                          </>
-                        )}
                         {memberType === 'individual' && (
                           <>
                             <div className="u-form-group u-form-name">
@@ -168,6 +158,15 @@ const LoginForm = () => {
                                 name="password" className="u-input u-input-rectangle u-input-3" 
                                 required="" 
                               />
+                              {isWrongCredential  && (
+                                <>
+                                  <label 
+                                    style={{ display: isLoading ? "none" : "block" }}
+                                    className="u-label wrong-credential-label">
+                                    Authentication failed: invalid username or password
+                                  </label>
+                                </>
+                              )}
                             </div>
                           </>
                         )}
@@ -193,6 +192,15 @@ const LoginForm = () => {
                                 name="password" className="u-input u-input-rectangle u-input-3" 
                                 required="" 
                               />
+                              {isWrongCredential  && (
+                                <>
+                                  <label 
+                                    style={{ display: isLoading ? "none" : "block" }}
+                                    className="u-label wrong-credential-label">
+                                    Authentication failed: invalid email or password
+                                  </label>
+                                </>
+                              )}
                             </div>
                           </>
                         )}
