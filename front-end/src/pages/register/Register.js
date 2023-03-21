@@ -76,45 +76,48 @@ const Register = () => {
 
   }
 
-  // async function connectInsuranceAddress(){
-  //   setIsLoading(true);
-  //   const eventSignature = ethers.utils.id("InsuranceAddressSetup(address");
-  //   const healthContract = new ethers.Contract(HealthPolicyAddress, HealthPolicyContract.abi, signer);
-  //   const tx  = await healthContract.setInsuranceCompanyAddress();
-  //   const receipt  = await  provider.waitForTransaction(tx.hash);
-  //   if (receipt.status === 1) {
-  //     console.log('Transaction successful');
-  //     // check the logs for the InsuranceAddressSetup event
-  //     receipt.logs.forEach(log => {
-  //     if (log.topics[0] === eventSignature) {
-  //         const event = healthContract.interface.parseLog(log);
-  //         console.log(event.args);
-  //     }
-  //     });
-  //   } else {
-  //     console.log('Transaction failed');
-  //   }
-  // }
+  async function connectInsuranceAddress(){
+    const eventSignature = ethers.utils.id("InsuranceAddressSetup(address");
+    const healthContract = new ethers.Contract(HealthPolicyAddress, HealthPolicyContract.abi, signer);
+    const tx  = await healthContract.setInsuranceCompanyAddress();
+    const receipt  = await  provider.waitForTransaction(tx.hash);
+    if (receipt.status === 1) {
+      console.log('Transaction successful');
 
-  // async function connectHealthInsurance(){
-  //   setIsLoading(true);
-  //   const eventSignature = ethers.utils.id("HealthOrganizationAddressSetup(address");
-  //   const claimContract = new ethers.Contract(ClaimContractAddress, ClaimContract.abi, signer);
-  //   const tx  = await claimContract.setHealthOrganizationAddress();
-  //   const receipt  = await  provider.waitForTransaction(tx.hash);
-  //   if (receipt.status === 1) {
-  //     console.log('Transaction successful');
-  //     // check the logs for the HealthOrganizationAddressSetup event
-  //     receipt.logs.forEach(log => {
-  //     if (log.topics[0] === eventSignature) {
-  //         const event = claimContract.interface.parseLog(log);
-  //         console.log(event.args);
-  //     }
-  //     });
-  //   } else {
-  //     console.log('Transaction failed');
-  //   }
-  // }
+      // check the logs for the InsuranceAddressSetup event
+      receipt.logs.forEach(log => {
+      const event = healthContract.interface.parseLog(log);
+      console.log(event.args);
+      if (log.topics[0] === eventSignature) {
+          const event = healthContract.interface.parseLog(log);
+          console.log(event.args);
+      }
+      });
+    } else {
+      console.log('Transaction failed');
+    }
+  }
+
+  async function connectHealthInsurance(){
+    const eventSignature = ethers.utils.id("HealthOrganizationAddressSetup(address");
+    const claimContract = new ethers.Contract(ClaimContractAddress, ClaimContract.abi, signer);
+    const tx  = await claimContract.setHealthOrganizationAddress();
+    const receipt  = await  provider.waitForTransaction(tx.hash);
+    if (receipt.status === 1) {
+      console.log('Transaction successful');
+      // check the logs for the HealthOrganizationAddressSetup event
+      receipt.logs.forEach(log => {
+      const event = claimContract.interface.parseLog(log);
+      console.log(event.args);
+      if (log.topics[0] === eventSignature) {
+          const event = claimContract.interface.parseLog(log);
+          console.log(event.args);
+      }
+      });
+    } else {
+      console.log('Transaction failed');
+    }
+  }
 
   async function registerHealthOrganization() {
     setIsLoading(true);
@@ -129,7 +132,7 @@ const Register = () => {
       receipt.logs.forEach(log => {
         if (log.topics[0] === eventSignature) {
           const event = healthOrganizationContract.interface.parseLog(log);
-          console.log(event.args);
+          connectHealthInsurance();
           setUsername(event.args[0]);
           login();
           navigate("/individual");
@@ -153,6 +156,7 @@ const Register = () => {
       // check the logs for the NewProvider event
       receipt.logs.forEach(log => {
         const event = insuranceContract.interface.parseLog(log);
+        connectInsuranceAddress();
         setUsername(event.args[0]);
         login();
         navigate("/individual");
@@ -178,15 +182,19 @@ const Register = () => {
   }
 
   async function isHealthOrganizationRegistered(){
+    setIsLoading(true);
     const healthOrganizationContract = new ethers.Contract(HealthOrganizationContractAddress, HealthOrganizationContract.abi, signer);
     const response  = await healthOrganizationContract.isHealthOrganizationRegistered();
     setShowHealthOrganizationInput(!response);   
+    setIsLoading(false);
   }
 
   async function isInsuranceRegistered(){
+    setIsLoading(true);
     const insuranceContract = new ethers.Contract(InsuranceProviderAddress, InsuranceContract.abi, signer);
     const response  = await insuranceContract.isInsuranceRegistered();
     setShowInsuranceInput(!response);   
+    setIsLoading(false);
   }
 
   const handleSubmit = (event) => {
@@ -267,15 +275,23 @@ const Register = () => {
                         )}
                         {(memberType === 'health_organization' && !showHealthOrganizationInput) && (
                           <>  
-                            <div className="no-more-registration">
+                            <div className="no-more-registration"
+                            style={{ display: isLoading ? "none" : "block" }}>
                               Already registered Health Organization
+                            </div>
+                            <div className="loader-div" style={{ display: isLoading ? "block" : "none" }}>  
+                              <Loader/>
                             </div>
                           </>
                         )}
                         {(memberType === 'insurance' && !showInsuranceInput) && (
                           <>  
-                            <div className="no-more-registration">
+                            <div className="no-more-registration"
+                            style={{ display: isLoading ? "none" : "block" }}>
                               Already registered Insurance
+                            </div>
+                            <div className="loader-div" style={{ display: isLoading ? "block" : "none" }}>  
+                              <Loader/>
                             </div>
                           </>
                         )}
