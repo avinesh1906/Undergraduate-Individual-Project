@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { useNavigate  } from "react-router-dom";
 import { Navbar, Nav } from 'react-bootstrap';
 import logo from '../../images/logo.jpg';
@@ -37,7 +37,7 @@ const NavigationBar = () => {
   };
 
   const handleDisconnectWallet = async () => { 
-    disconnectWallet();
+    await disconnectWallet();
   }
 
   const handleLogoClick = () => {

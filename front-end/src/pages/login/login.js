@@ -9,6 +9,7 @@ import { UserContext } from '../../UserContext';
 import { useNavigate  } from "react-router-dom";
 import './styles.css';
 import login from '../../images/login.png'
+
 const IndividualContractAddress = contractAddresses.Individual;
 const HealthOrganizationContractAddress = contractAddresses.HealthOrganization;
 const InsuranceProviderAddress = contractAddresses.InsuranceProvider;
@@ -20,6 +21,7 @@ const LoginForm = () => {
   const [password, setPassword] = useState('');
   const { signer } = useContext(Web3Context);
   const navigate  = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
 
   const {
     isWalletConnected,
@@ -28,21 +30,27 @@ const LoginForm = () => {
   } = useContext(UserContext);
 
   async function verifyIndividual(){
+    setIsLoading(true);
     const individualContract = new ethers.Contract(IndividualContractAddress, IndividualContract.abi, signer);
     const response = await individualContract.authenticate(username, password);
     console.log(response);
+    setIsLoading(false);
   }
 
   async function verifyHealthOrganization(){
+    setIsLoading(true);
     const healthOrganizationContract = new ethers.Contract(HealthOrganizationContractAddress, HealthOrganizationContract.abi, signer);
     const response = await healthOrganizationContract.authenticate(password);
     console.log(response);
+    setIsLoading(false);
   }
 
   async function verifyInsurance(){
+    setIsLoading(true);
     const healthOrganizationContract = new ethers.Contract(InsuranceProviderAddress, InsuranceContract.abi, signer);
     const response = await healthOrganizationContract.authenticate(password);
     console.log(response);
+    setIsLoading(false);
   }
 
   const handleSubmit = (e) => {
@@ -154,9 +162,15 @@ const LoginForm = () => {
                             </div>
                           </>
                         )}
-                        <div className="u-align-left u-form-group u-form-submit">
+                        <div className="u-align-left u-form-group u-form-submit" 
+                          id='login-container'
+                          style={{ display: isLoading ? "none" : "block" }}
+                        >
                           <button href="#" className="u-border-none u-btn u-btn-submit u-button-style u-palette-3-base u-btn-2">Login</button>
                           <input type="submit" value="submit" className="u-form-control-hidden" />
+                        </div>
+                        <div style={{ display: isLoading ? "block" : "none" }} className="lds-roller">
+                          <div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div>
                         </div>
                         <input type="hidden" value="" name="recaptchaResponse" />
                       </form>

@@ -17227,22 +17227,6 @@ div.u-video,
   right: 0;
   left: 0;
 }
-.u-offcanvas-unshifted-left .u-body > *,
-.u-offcanvas-unshifted-left.u-body > * {
-  animation: menu-unshift-left 500ms normal forwards ease;
-}
-.u-offcanvas-opened.u-offcanvas-shifted-left .u-body > *,
-.u-offcanvas-opened.u-offcanvas-shifted-left.u-body > * {
-  animation: menu-shift-left 500ms normal forwards ease;
-}
-.u-offcanvas-unshifted-right .u-body > *,
-.u-offcanvas-unshifted-right.u-body > * {
-  animation: menu-unshift-right 500ms normal forwards ease;
-}
-.u-offcanvas-opened.u-offcanvas-shifted-right .u-body > *,
-.u-offcanvas-opened.u-offcanvas-shifted-right.u-body > * {
-  animation: menu-shift-right 500ms normal forwards ease;
-}
 .u-flip-horizontal {
   transform: scaleX(-1);
 }
@@ -18835,12 +18819,7 @@ a.pswp__share--download:hover {
 .pswp--css_animation .pswp__preloader--active {
   opacity: 1;
 }
-.pswp--css_animation .pswp__preloader--active .pswp__preloader__icn {
-  animation: clockwise 500ms linear infinite;
-}
-.pswp--css_animation .pswp__preloader--active .pswp__preloader__donut {
-  animation: donut-rotate 1000ms cubic-bezier(0.4, 0, 0.22, 1) infinite;
-}
+
 .pswp--css_animation .pswp__preloader__icn {
   background: none;
   opacity: 0.75;
@@ -18988,74 +18967,7 @@ a.pswp__share--download:hover {
  *
  * Copyright (c) 2018 Daniel Eden
  */
-.u-body {
-  --animation-fade_in-opacity: 0;
-  --animation-fade_in_up-opacity: 0;
-  --animation-fade_in_left-opacity: 0;
-  --animation-fade_in_right-opacity: 0;
-  --animation-fade_in_down-opacity: 0;
-  --animation-fade_in_up_big-opacity: 0;
-  --animation-fade_in_left_big-opacity: 0;
-  --animation-fade_in_right_big-opacity: 0;
-  --animation-fade_in_down_big-opacity: 0;
-  --animation-fade_out-opacity: 0;
-  --animation-fade_out_up-opacity: 0;
-  --animation-fade_out_left-opacity: 0;
-  --animation-fade_out_right-opacity: 0;
-  --animation-fade_out_down-opacity: 0;
-  --animation-fade_out_up_big-opacity: 0;
-  --animation-fade_out_left_big-opacity: 0;
-  --animation-fade_out_right_big-opacity: 0;
-  --animation-fade_out_down_big-opacity: 0;
-  --animation-rotate_in-rotate: -200deg;
-  --animation-rotate_in_down_left-rotate: -45deg;
-  --animation-rotate_in_down_right-rotate: 45deg;
-  --animation-rotate_in_up_left-rotate: 45deg;
-  --animation-rotate_in_up_right-rotate: -90deg;
-  --animation-rotate_out-rotate: 200deg;
-  --animation-rotate_out_down_left-rotate: 45deg;
-  --animation-rotate_out_down_right-rotate: -45deg;
-  --animation-rotate_out_up_left-rotate: -45deg;
-  --animation-rotate_out_up_right-rotate: 90deg;
-  --animation-roll_in-rotate: -120deg;
-  --animation-roll_in-translate_x: -100%;
-  --animation-roll_out-rotate: 120deg;
-  --animation-roll_out-translate_x: 100%;
-  --animation-zoom_in-scale: 0.3;
-  --animation-zoom_in_down-scale: 0.475;
-  --animation-zoom_in_down-translate_y: 60px;
-  --animation-zoom_in_up-scale: 0.475;
-  --animation-zoom_in_up-translate_y: -60px;
-  --animation-zoom_in_left-scale: 0.475;
-  --animation-zoom_in_left-translate_x: 10px;
-  --animation-zoom_in_right-scale: 0.475;
-  --animation-zoom_in_right-translate_x: -10px;
-  --animation-zoom_out-scale: 0.3;
-  --animation-zoom_out_down-scale: 0.475;
-  --animation-zoom_out_down-translate_y: -60px;
-  --animation-zoom_out_up-scale: 0.475;
-  --animation-zoom_out_up-translate_y: 60px;
-  --animation-zoom_out_left-scale: 0.475;
-  --animation-zoom_out_left-translate_x: 42px;
-  --animation-zoom_out_right-scale: 0.475;
-  --animation-zoom_out_right-translate_x: -42px;
-  --animation-slide_in_down-translate_y: -100%;
-  --animation-slide_in_up-translate_y: 100%;
-  --animation-slide_in_left-translate_x: -100%;
-  --animation-slide_in_right-translate_x: 100%;
-  --animation-slide_out_down-translate_y: 100%;
-  --animation-slide_out_up-translate_y: -100%;
-  --animation-slide_out_left-translate_x: -100%;
-  --animation-slide_out_right-translate_x: 100%;
-  --animation-custom_in-translate_x: 0px;
-  --animation-custom_in-translate_y: 0px;
-  --animation-custom_in-scale: 1;
-  --animation-custom_in-rotate: 0deg;
-  --animation-custom_in-opacity: 0;
-  
-  
-  
-}
+
 @keyframes bounce {
   from,
   20%,
