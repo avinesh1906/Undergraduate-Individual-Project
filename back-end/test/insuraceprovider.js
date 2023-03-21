@@ -67,7 +67,7 @@ contract("InsuranceProvider", () => {
             await insuranceProvider.registerProvider(name, email, password);
     
             const isAuthenticated = await insuranceProvider.authenticate(email, "wrong_password");
-            assert.isFalse(isAuthenticated[0], "The password was authenticated correctly when it should not have been");
+            assert.isFalse(isAuthenticated[0], "The email was authenticated correctly when it should not have been");
             assert.equal(isAuthenticated[1], "", "The insurance name should be an empty string");
         });
         it("should return false if the email is incorrect", async () => {

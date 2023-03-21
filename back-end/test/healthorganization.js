@@ -63,21 +63,40 @@ contract("HealthOrganization", async (accounts) => {
   
     assert.equal(isNowRegistered, true, "Health organization should be registered after the registration process");
   });
-  it("should authenticate health organization", async () => {
-    const name = "Health Org";
-    const email = "healthorg@email.com";
-    const password = "secret";
-  
-    await healthOrganization.registerHealthOrganization(name, email, password);
-  
-    const isRegistered = await healthOrganization.isHealthOrganizationRegistered();
-    assert.equal(isRegistered, true, "Health organization should be registered");
-  
-    const isAuthenticated = await healthOrganization.authenticate(password);
-    assert.equal(isAuthenticated, true, "Authentication should succeed with correct password");
-  
-    const wrongPassword = "wrongsecret";
-    const isNotAuthenticated = await healthOrganization.authenticate(wrongPassword);
-    assert.equal(isNotAuthenticated, false, "Authentication should fail with incorrect password");
+  describe("authenticate", () => {
+    it("should authenticate health organization", async () => {
+      const name = "Health Org";
+      const email = "healthorg@email.com";
+      const password = "secret";
+    
+      await healthOrganization.registerHealthOrganization(name, email, password);
+    
+      const isAuthenticated = await healthOrganization.authenticate(email, password);
+      assert.isTrue(isAuthenticated[0], "The password was not authenticated correctly");
+      assert.equal(isAuthenticated[1], name, "The health organization name is incorrect");
+    });
+    it("should return false if the password is incorrect", async () => {
+      const name = "Health Org";
+      const email = "healthorg@email.com";
+      const password = "secret";
+    
+      await healthOrganization.registerHealthOrganization(name, email, password);
+    
+      const isAuthenticated = await healthOrganization.authenticate(email, "wrong_password");
+      assert.isFalse(isAuthenticated[0], "The password was authenticated correctly when it should not have been");
+      assert.equal(isAuthenticated[1], "", "The insurance name should be an empty string");
+    });
+    it("should return false if the email is incorrect", async () => {
+      const name = "Health Org";
+      const email = "healthorg@email.com";
+      const password = "secret";
+    
+      await healthOrganization.registerHealthOrganization(name, email, password);
+    
+      const isAuthenticated = await healthOrganization.authenticate("email", password);
+      assert.isFalse(isAuthenticated[0], "The email was authenticated correctly when it should not have been");
+      assert.equal(isAuthenticated[1], "", "The insurance name should be an empty string");
+    });
   });
+  
 });

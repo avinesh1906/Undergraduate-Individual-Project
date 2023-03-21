@@ -37,8 +37,14 @@ contract HealthOrganization {
         return healthorganizationAddress != address(0);
     }
 
-    function authenticate(string memory _password) public view returns (bool) {
-        return hashPassword(_password) == password;
+    function authenticate(string memory _email, string memory _password) public view returns (bool, string memory) {
+        if (compareEmail(_email) && hashPassword(_password) == password){
+            return (true, name);
+        }
+        return (false, "");
     }
 
+    function compareEmail(string memory a ) public view returns (bool) {
+        return keccak256(abi.encodePacked(a)) == keccak256(abi.encodePacked(email));
+    }
 }
