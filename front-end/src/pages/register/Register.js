@@ -341,7 +341,7 @@ const Register = () => {
                               />
                             </div>
                             <div className="u-align-left u-form-group u-form-submit">
-                            <button href="#" className="u-border-none u-btn u-btn-submit u-button-style u-palette-3-base u-btn-2">Login</button>
+                            <button href="#" className="u-border-none u-btn u-btn-submit u-button-style u-palette-3-base u-btn-2">Register</button>
                             <input type="submit" value="submit" className="u-form-control-hidden" />
                           </div>
                           </>

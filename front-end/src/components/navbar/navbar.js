@@ -99,6 +99,17 @@ const NavigationBar = () => {
                   </button>
                 </div>
               )}
+              {window.location.pathname === '/' && (
+                <div className="sign-in">
+                  <button 
+                    id="signin-button"
+                    onClick={handleLogin}
+                    className="btn btn-success"
+                  >
+                    Sign In
+                  </button>
+                </div>
+              )}
           </>
         )}
         {isWalletConnected && isLoggedIn && (
