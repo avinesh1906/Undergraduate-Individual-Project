@@ -13,7 +13,7 @@ contract("ClaimContract", async accounts => {
     individualAddress = accounts[1];
     
 
-    await contract.setInsuranceCompanyAddress(accounts[2]);
+    await contract.setInsuranceCompanyAddress({ from: accounts[2] });
     const coverageType = "Diamond";
     const coverageLimit = 1000;
     const premium = 10;
@@ -21,7 +21,7 @@ contract("ClaimContract", async accounts => {
     await contract.uploadPolicy(coverageType, coverageLimit, premium, { from: accounts[2] });
     const policy = await contract.getHealthContract(1,  { from: accounts[2] });
     healthContractId = parseInt(policy.healthcontractID);
-    await contract.setHealthOrganizationAddress(healthOrganizationAddress);
+    await contract.setHealthOrganizationAddress({ from: healthOrganizationAddress});
   });
 
   it("should submit a claim by the health organization", async () => {
