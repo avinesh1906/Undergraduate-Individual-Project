@@ -13,7 +13,7 @@ contract HealthPolicy {
 
     HealthContract[] public healthContracts;
     // mapping(uint256 => HealthContract) public healthContracts;
-    mapping(string => uint256) public coverageTypeByHealthContract;
+    mapping(string => bool) public iscoverageTypeExists;
     address insuranceCompanyAddress;
 
     // Events
@@ -48,7 +48,7 @@ contract HealthPolicy {
 
     // Function to upload the health insurance policy
     function uploadPolicy(string memory _coverageType, uint32 _coverageLimit, uint32 _premium) public  onlyInsurance {
-        require(coverageTypeByHealthContract[_coverageType] == 0, "Coverage already exits");
+        require(!iscoverageTypeExists[_coverageType], "Coverage already exits");
 
         HealthContract memory newHealthContract;
         // Assign the policy information
@@ -57,6 +57,8 @@ contract HealthPolicy {
         newHealthContract.coverageLimit = _coverageLimit;
         newHealthContract.coverageType = _coverageType;
         newHealthContract.premium = _premium;
+
+        iscoverageTypeExists[_coverageType] = true;
 
         healthContracts.push(newHealthContract);
         emit NewPolicy(policyId);
