@@ -117,23 +117,32 @@ const Register = () => {
     // Get the event signature
     const eventSignature = ethers.utils.id("LogInsuredPersonRegistered(uint32,string)");
     const individualContract = new ethers.Contract(IndividualContractAddress, IndividualContract.abi, signer);
-    const tx  = await individualContract.registerIndividual(firstName, lastName, usernameToBeAdded, email, password);
-    const receipt  = await  provider.waitForTransaction(tx.hash);
-    if (receipt.status === 1) {
-      // check the logs for the LogInsuredPersonRegistered event
-      receipt.logs.forEach(log => {
-        if (log.topics[0] === eventSignature) {
-          const event = individualContract.interface.parseLog(log);
-          setUsername(event.args[1])
-          login();
-          navigate("/individual");
-        } else {
-          console.log('Transaction failed');
-        }
-      });
-    } else {
-      console.log('Transaction failed');
+    try {
+      const tx  = await individualContract.registerIndividual(firstName, lastName, usernameToBeAdded, email, password);
+      const receipt  = await  provider.waitForTransaction(tx.hash);
+      if (receipt.status === 1) {
+        // check the logs for the LogInsuredPersonRegistered event
+        receipt.logs.forEach(log => {
+          if (log.topics[0] === eventSignature) {
+            const event = individualContract.interface.parseLog(log);
+            setUsername(event.args[1])
+            login();
+            navigate("/individual");
+          } else {
+            console.log('Transaction failed');
+          }
+        });
+      } else {
+        console.log('Transaction failed');
+      }
+    } catch (error) {
+      const newErrorMessage = "Username already exists.";
+      setErrors(prevState => ({
+        ...prevState,
+        username: newErrorMessage
+      }));
     }
+    
     setIsLoading(false);
 
   }
@@ -212,20 +221,26 @@ const Register = () => {
     setIsLoading(true);
     // Get the event signature
     const insuranceContract = new ethers.Contract(InsuranceProviderAddress, InsuranceContract.abi, signer);
-    const tx  = await insuranceContract.registerProvider(insName,email, password);
-    const receipt  = await  provider.waitForTransaction(tx.hash);
-    if (receipt.status === 1) {
-      // check the logs for the NewProvider event
-      receipt.logs.forEach(log => {
-        const event = insuranceContract.interface.parseLog(log);
-        connectInsuranceAddress();
-        setUsername(event.args[0]);
-        login();
-        navigate("/individual");
-      });
-    } else {
-      console.log('Transaction failed');
+    try {
+      const tx  = await insuranceContract.registerProvider(insName,email, password);
+      const receipt  = await  provider.waitForTransaction(tx.hash);
+      if (receipt.status === 1) {
+        // check the logs for the NewProvider event
+        receipt.logs.forEach(log => {
+          const event = insuranceContract.interface.parseLog(log);
+          connectInsuranceAddress();
+          setUsername(event.args[0]);
+          login();
+          navigate("/individual");
+        });
+      } else {
+        console.log('Transaction failed');
+      }
+    } catch(error){
+      console.log("Username already exists")
     }
+    
+    
     setIsLoading(false);
   }
 
@@ -338,6 +353,7 @@ const Register = () => {
                                 required="" 
                               />
                               {errors.usernameToBeAdded && <label className="u-label" style={{"color": "red"}}>{errors.usernameToBeAdded  }</label>}
+                              {errors.username  && <label className="u-label" style={{"color": "red"}}>{errors.username }</label>}
                             </div>
                           </>
                         )}
