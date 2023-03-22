@@ -49,16 +49,44 @@ const UploadContract = () => {
             <div className="u-form u-gradient u-radius-9 u-form-1">
               <form onSubmit={handleSubmit} className="u-clearfix u-form-spacing-10 u-form-vertical u-inner-form" source="email" name="form" style={{ padding: '30px' }}>
                 <div className="u-form-group u-form-name u-label-top">
-                  <label htmlFor="name-61fc" className="u-label u-text-body-alt-color u-label-1">Coverage Type</label>
-                  <input type="text" id="name-61fc" name="coverage_type" className="u-border-white u-input u-input-rectangle u-text-grey-70 u-input-1" required spellCheck={false} placeholder="Enter your coverage type (e.g. Diamond)" />
+                  <label htmlFor="coverageType" className="u-label u-text-body-alt-color u-label-1">Coverage Type</label>
+                  <input 
+                    type="text" 
+                    id="coverageType" 
+                    name="coverage_type" 
+                    className="u-border-white u-input u-input-rectangle u-text-grey-70 u-input-1" 
+                    required 
+                    spellCheck={false} 
+                    placeholder="Enter your coverage type (e.g. Diamond)" 
+                    value={coverageType}
+                    onChange={(e) => setCoverageType(e.target.value)}
+                  />
                 </div>
                 <div className="u-form-group u-label-top u-form-group-2">
-                  <label htmlFor="phone-0bf6" className="u-label u-text-body-alt-color u-label-2">Coverage Limit</label>
-                  <input type="text" pattern="\+?\d{0,3}[\s\(\-]?([0-9]{2,3})[\s\)\-]?([\s\-]?)([0-9]{3})[\s\-]?([0-9]{2})[\s\-]?([0-9]{2})" placeholder="Enter your coverage limit (e.g. 10 000)" id="phone-0bf6" name="coverage_limit" className="u-border-white u-input u-input-rectangle u-text-grey-70 u-input-2" required />
+                  <label htmlFor="coverageLimit" className="u-label u-text-body-alt-color u-label-2">Coverage Limit</label>
+                  <input 
+                    type="number" 
+                    placeholder="Enter your coverage limit (e.g. 10 000)" 
+                    id="coverageLimit" 
+                    name="coverage_limit" 
+                    className="u-border-white u-input u-input-rectangle u-text-grey-70 u-input-2" 
+                    required 
+                    value={coverageLimit}
+                    onChange={(e) => setCoverageLimit(e.target.value)}
+                  />
                 </div>
                 <div className="u-form-group u-label-top">
-                  <label htmlFor="message-61fc" className="u-label u-text-body-alt-color u-label-3">Premium</label>
-                  <input placeholder="Enter your premium percentage (e.g. 10)" rows="4" cols="50" id="message-61fc" name="premium" className="u-border-white u-input u-input-rectangle u-text-grey-70 u-input-3" required spellCheck={false} type="text" />
+                  <label htmlFor="premium" className="u-label u-text-body-alt-color u-label-3">Premium</label>
+                  <input 
+                    placeholder="Enter your premium percentage (e.g. 10)" 
+                    id="premium" 
+                    name="premium" 
+                    value={premium}
+                    onChange={(e) => setPremium(e.target.value)}
+                    className="u-border-white u-input u-input-rectangle u-text-grey-70 u-input-3" 
+                    required spellCheck={false} 
+                    type="number"
+                  />
                 </div>
                 <div className="u-align-left u-form-group u-form-submit u-label-top">
                   <input type="submit" value="submit" className="u-form-control-hidden" />
