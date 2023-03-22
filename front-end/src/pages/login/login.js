@@ -74,7 +74,7 @@ const LoginForm = () => {
       setUsername(response[1]);
       setLoggedMemberType(memberType);
       login();
-      navigate("/insurance");
+      navigate("/upload_health_contract");
     } else {
       setIsWrongCredential(true);
     }

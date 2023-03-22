@@ -4,7 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Register from './pages/register/Register';
 import LoginForm from './pages/login/login';
 import Navbar from './components/navbar/navbar';
-import UploadContract from './pages/insurance/upload_contract';
+import UploadContract from './pages/insurance/upload_contract/upload_contract';
 import ViewContracts from './pages/health_contract/view_contracts';
 import ChooseHealthContract from './pages/health_contract/sign_contract';
 import ViewSignedContract from './pages/health_contract/view_selected_contract';

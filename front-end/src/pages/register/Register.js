@@ -49,37 +49,36 @@ const Register = () => {
 
   const validate = () => {
     const errors = {};
-    
-    // First Name validation
-    if (!firstName) {
-      errors.firstName = 'First Name is required';
-    } else if (!/^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/.test(firstName)) {
-      errors.firstName = 'Please enter a valid first name';
+    if (memberType === 'individual'){
+      // First Name validation
+      if (!firstName) {
+        errors.firstName = 'First Name is required';
+      } else if (!/^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/.test(firstName)) {
+        errors.firstName = 'Please enter a valid first name';
+      }
+
+      // Last Name validation
+      if (!lastName) {
+        errors.lastName = 'Last Name is required';
+      } else if (!/^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/.test(lastName)) {
+        errors.lastName = 'Please enter a valid last name';
+      }
+
+      // Username validation
+      if (!usernameToBeAdded) {
+        errors.usernameToBeAdded = 'Username is required';
+      } else if (!/^[a-zA-Z0-9]+$/.test(usernameToBeAdded)) {
+        errors.usernameToBeAdded = 'Username can only contain letters and numbers';
+      }
     }
-
-    // Last Name validation
-    if (!lastName) {
-      errors.lastName = 'Last Name is required';
-    } else if (!/^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/.test(lastName)) {
-      errors.lastName = 'Please enter a valid last name';
-    }
-
-    // Username validation
-    if (!usernameToBeAdded) {
-      errors.usernameToBeAdded = 'Username is required';
-    } else if (!/^[a-zA-Z0-9]+$/.test(usernameToBeAdded)) {
-      errors.usernameToBeAdded = 'Username can only contain letters and numbers';
-    }
-
-
+  
     // Email validation
     if (!email) {
       errors.email = 'Email is required';
     } else if (!/\S+@\S+\.\S+/.test(email)) {
       errors.email = 'Please enter a valid email address (e.g. johndoe@example.com)';
     }
-    
-
+  
     // Password validation
     if (!password) {
       errors.password = 'Password is required';
@@ -231,7 +230,7 @@ const Register = () => {
           connectInsuranceAddress();
           setUsername(event.args[0]);
           login();
-          navigate("/individual");
+          navigate("/upload_health_contract");
         });
       } else {
         console.log('Transaction failed');
