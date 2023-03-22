@@ -6,6 +6,7 @@ import contractAddresses from '../../../config';
 import './styles.css';
 import picture from '../../../images/upload_contract/logo.png'
 import Loader from "../../../components/loader/loader";
+import { useNavigate } from "react-router-dom";
 
 const HealthPolicyAddress = contractAddresses.HealthPolicy;
 
@@ -16,6 +17,7 @@ const UploadContract = () => {
     const { provider, signer } = useContext(Web3Context);
     const [isLoading, setIsLoading] = useState(false);
     const [errors, setErrors] = useState({});
+    const navigate  = useNavigate();
 
     const validate = () => {
       const errors = {};
@@ -48,7 +50,6 @@ const UploadContract = () => {
     
     async function uploadHealthContract() {
       setIsLoading(true);
-      const eventSignature = ethers.utils.id("NewPolicy(uint256");
       const healthContract = new ethers.Contract(HealthPolicyAddress, HealthPolicyContract.abi, signer);
       try {
         const tx  = await healthContract.uploadPolicy(coverageType, coverageLimit, premium);
@@ -59,10 +60,7 @@ const UploadContract = () => {
             receipt.logs.forEach(log => {
               const event = healthContract.interface.parseLog(log);
               console.log(event.args);
-            if (log.topics[0] === eventSignature) {
-                const event = healthContract.interface.parseLog(log);
-                console.log(event.args);
-            }
+              navigate("/view_health_contracts");
             });
         } else {
             console.log('Transaction failed');

@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { useNavigate  } from "react-router-dom";
+import { useNavigate, Link  } from "react-router-dom";
 import { Navbar, Nav } from 'react-bootstrap';
 import logo from '../../images/logo.jpg';
 import './styles.css';
@@ -116,26 +116,26 @@ const NavigationBar = () => {
         {isWalletConnected && isLoggedIn && (
           <>
             <Nav className="me-auto my-2 my-lg-0 navbar-nav-scroll" style={{ '--bs-scroll-height': '100px' }}>
-                      {loggedMemberType === 'insurance' && (
-                        <>
-                          <Nav.Link href="/view_all" className="nav-link active" aria-current="page">Home</Nav.Link>
-                          <Nav.Link href="/view_health_contracts" className="nav-link"> View Health Contracts</Nav.Link>
-                          <Nav.Link href="/upload_health_contract" className="nav-link"> Upload Health Contract</Nav.Link>
-                        </>
-                      )}
-                      {loggedMemberType === 'individual' && (
-                        <>
-                          <Nav.Link href="/view_selected_contract" className="nav-link active" aria-current="page">Home</Nav.Link>
-                          <Nav.Link href="/sign_health_contract" className="nav-link">Sign Health Contract</Nav.Link>
-                          <Nav.Link href="/submit_claim" className="nav-link">Submit Claim</Nav.Link>
-                        </>
-                      )}
-                      {loggedMemberType === 'health_organization' && (
-                        <>
-                          <Nav.Link href="/request_claim" className="nav-link">Request Claim</Nav.Link>
-                        </>
-                      )}
-                    </Nav>
+              {loggedMemberType === 'insurance' && (
+                <>
+                  <Link to="/view_all" className="nav-link" aria-current="page">Home</Link>
+                  <Link to="/view_health_contracts" className="nav-link"> View Health Contracts</Link>
+                  <Link to="/upload_health_contract" className="nav-link"> Upload Health Contract</Link>
+                </>
+              )}
+              {loggedMemberType === 'individual' && (
+                <>
+                  <Link to="/view_selected_contract" className="nav-link" aria-current="page">Home</Link>
+                  <Link to="/sign_health_contract" className="nav-link">Sign Health Contract</Link>
+                  <Link to="/submit_claim" className="nav-link">Submit Claim</Link>
+                </>
+              )}
+              {loggedMemberType === 'health_organization' && (
+                <>
+                  <Link to="/request_claim" className="nav-link">Request Claim</Link>
+                </>
+              )}
+            </Nav>
             <div className="nav-user-container">
               <Nav className="me-auto my-2 my-lg-0 navbar-nav-scroll" style={{ '--bs-scroll-height': '100px' }}>
                 <Nav.Link style={{ 'textAlign': 'center' }}>
