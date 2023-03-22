@@ -4,7 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import Register from './pages/register/Register';
 import LoginForm from './pages/login/login';
 import Navbar from './components/navbar/navbar';
-import UploadContract from './pages/health_contract/upload_contract';
+import UploadContract from './pages/insurance/upload_contract';
 import ViewContracts from './pages/health_contract/view_contracts';
 import ChooseHealthContract from './pages/health_contract/sign_contract';
 import ViewSignedContract from './pages/health_contract/view_selected_contract';
@@ -26,7 +26,7 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/register" element={<Register />} />
               <Route path="/login" element={<LoginForm />}/>
-              <Route path="/uploadcontract" element={<UploadContract />} />
+              <Route path="/upload_health_contract" element={<UploadContract />} />
               <Route path="/viewcontracts" element={<ViewContracts />} />
               <Route path="/choosecontract" element={<ChooseHealthContract />} />
               <Route path="/view_signed_contract" element={<ViewSignedContract />} />

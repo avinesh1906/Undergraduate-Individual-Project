@@ -14,13 +14,17 @@ export const UserContextProvider = ({ children }) => {
   const [username, setUsername] = useState(
     sessionStorage.getItem('username') || ''
   );
+  const [loggedMemberType, setLoggedMemberType] = useState(
+    sessionStorage.getItem('memberType') || ''
+  );
   const { connectWeb3, disconnectWeb3 } = useContext(Web3Context);
 
   useEffect(() => {
     sessionStorage.setItem('isLoggedIn', isLoggedIn);
     sessionStorage.setItem('isWalletConnected', isWalletConnected);
     sessionStorage.setItem('username', username);
-  }, [isLoggedIn, isWalletConnected, username]);
+    sessionStorage.setItem('memberType', loggedMemberType)
+  }, [isLoggedIn, isWalletConnected, username, loggedMemberType]);
 
   const login = () => {
     setIsLoggedIn(true);
@@ -28,6 +32,7 @@ export const UserContextProvider = ({ children }) => {
 
   const logout = () => {
     setIsLoggedIn(false);
+    setLoggedMemberType('');
     navigate("/");
   };
 
@@ -50,7 +55,7 @@ export const UserContextProvider = ({ children }) => {
 
   return (
     <UserContext.Provider
-      value={{ isLoggedIn, isWalletConnected, username, login, logout, connectWallet, disconnectWallet, setUsername }}
+      value={{ isLoggedIn, isWalletConnected, username, loggedMemberType, login, logout, connectWallet, disconnectWallet, setUsername, setLoggedMemberType }}
     >
       {children}
     </UserContext.Provider>

@@ -14,6 +14,7 @@ const NavigationBar = () => {
     logout,
     connectWallet,
     disconnectWallet,
+    loggedMemberType
   } = useContext(UserContext);
 
   const handleLogin = () => {
@@ -115,9 +116,25 @@ const NavigationBar = () => {
         {isWalletConnected && isLoggedIn && (
           <>
             <Nav className="me-auto my-2 my-lg-0 navbar-nav-scroll" style={{ '--bs-scroll-height': '100px' }}>
-                      <Nav.Link href="#" className="nav-link active" aria-current="page">Home</Nav.Link>
-                      <Nav.Link href="#" className="nav-link">Health Contract</Nav.Link>
-                      <Nav.Link href="#" className="nav-link">Claim</Nav.Link>
+                      {loggedMemberType === 'insurance' && (
+                        <>
+                          <Nav.Link href="/view_all" className="nav-link active" aria-current="page">Home</Nav.Link>
+                          <Nav.Link href="/view_health_contracts" className="nav-link"> View Health Contracts</Nav.Link>
+                          <Nav.Link href="/upload_health_contract" className="nav-link"> Upload Health Contract</Nav.Link>
+                        </>
+                      )}
+                      {loggedMemberType === 'individual' && (
+                        <>
+                          <Nav.Link href="/view_selected_contract" className="nav-link active" aria-current="page">Home</Nav.Link>
+                          <Nav.Link href="/sign_health_contract" className="nav-link">Sign Health Contract</Nav.Link>
+                          <Nav.Link href="/submit_claim" className="nav-link">Submit Claim</Nav.Link>
+                        </>
+                      )}
+                      {loggedMemberType === 'health_organization' && (
+                        <>
+                          <Nav.Link href="/request_claim" className="nav-link">Request Claim</Nav.Link>
+                        </>
+                      )}
                     </Nav>
             <div className="nav-user-container">
               <Nav className="me-auto my-2 my-lg-0 navbar-nav-scroll" style={{ '--bs-scroll-height': '100px' }}>

@@ -33,7 +33,7 @@ const LoginForm = () => {
     isWalletConnected,
     connectWallet,
     username, setUsername,
-    login
+    login, setLoggedMemberType
   } = useContext(UserContext);
 
   async function verifyIndividual(){
@@ -42,6 +42,7 @@ const LoginForm = () => {
     const response = await individualContract.authenticate(username, password);
     if (response[0]) {
       setUsername(response[1]);
+      setLoggedMemberType(memberType);
       login();
       navigate("/individual");
     } else {
@@ -56,6 +57,7 @@ const LoginForm = () => {
     const response = await healthOrganizationContract.authenticate(email, password);
     if (response[0]) {
       setUsername(response[1]);
+      setLoggedMemberType(memberType);
       login();
       navigate("/individual");
     } else {
@@ -70,6 +72,7 @@ const LoginForm = () => {
     const response = await healthOrganizationContract.authenticate(email, password);
     if (response[0]) {
       setUsername(response[1]);
+      setLoggedMemberType(memberType);
       login();
       navigate("/insurance");
     } else {
