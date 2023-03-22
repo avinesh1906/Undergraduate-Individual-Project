@@ -18,25 +18,25 @@ import Individual from './pages/individual/individual';
 
 function App() {
   return (
-    <Web3Provider>
-      <UserContextProvider>
-        <Router>
-          <Navbar />
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/login" element={<LoginForm />}/>
-            <Route path="/uploadcontract" element={<UploadContract />} />
-            <Route path="/viewcontracts" element={<ViewContracts />} />
-            <Route path="/choosecontract" element={<ChooseHealthContract />} />
-            <Route path="/view_signed_contract" element={<ViewSignedContract />} />
-            <Route path="/submit_claim" element={<SubmitClaim />} />
-            <Route path="/request_claim" element={<RequestClaim />} />
-            <Route path="/individual" element={<Individual />} />
-          </Routes>
-        </Router>
-      </UserContextProvider>
-    </Web3Provider>
+    <Router>
+      <Web3Provider>
+        <UserContextProvider>
+            <Navbar />
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/login" element={<LoginForm />}/>
+              <Route path="/uploadcontract" element={<UploadContract />} />
+              <Route path="/viewcontracts" element={<ViewContracts />} />
+              <Route path="/choosecontract" element={<ChooseHealthContract />} />
+              <Route path="/view_signed_contract" element={<ViewSignedContract />} />
+              <Route path="/submit_claim" element={<SubmitClaim />} />
+              <Route path="/request_claim" element={<RequestClaim />} />
+              <Route path="/individual" element={<Individual />} />
+            </Routes>  
+        </UserContextProvider>
+      </Web3Provider>
+    </Router>
   );
 }
 

@@ -1,9 +1,10 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { Web3Context } from './Web3Context';
-
+import { useNavigate } from 'react-router-dom';
 export const UserContext = createContext();
 
 export const UserContextProvider = ({ children }) => {
+  const navigate  = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(
     sessionStorage.getItem('isLoggedIn') === 'true' || false
   );
@@ -27,6 +28,7 @@ export const UserContextProvider = ({ children }) => {
 
   const logout = () => {
     setIsLoggedIn(false);
+    navigate("/");
   };
 
   const connectWallet = async () => {

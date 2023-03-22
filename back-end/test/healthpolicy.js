@@ -8,13 +8,13 @@ contract('HealthPolicy', (accounts) => {
     });
   
     it('should set the insurance company address', async () => {
-      await instance.setInsuranceCompanyAddress(accounts[0]);
+      await instance.setInsuranceCompanyAddress({ from: accounts[0] });
       const insuranceCompanyAddress = await instance.getInsuranceCompanyAddress();
       assert.equal(insuranceCompanyAddress, accounts[0], 'Insurance company address does not match');
     });
   
     it("should upload a health insurance policy", async () => {
-        await instance.setInsuranceCompanyAddress(accounts[0]);
+        await instance.setInsuranceCompanyAddress({ from: accounts[0] });
         const coverageType = "Diamond";
         const coverageLimit = 1000000;
         const premium = 500;
@@ -30,7 +30,7 @@ contract('HealthPolicy', (accounts) => {
     });
   
     it('should not upload a policy if coverage already exists', async () => {
-      await instance.setInsuranceCompanyAddress(accounts[0]);
+      await instance.setInsuranceCompanyAddress({ from: accounts[0] });
       const coverageType = 'Diamond';
       const coverageLimit = 100;
       const premium = 10;
