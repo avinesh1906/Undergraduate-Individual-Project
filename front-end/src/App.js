@@ -6,7 +6,7 @@ import LoginForm from './pages/login/login';
 import Navbar from './components/navbar/navbar';
 import UploadContract from './pages/insurance/upload_contract/upload_contract';
 import ViewContracts from './pages/insurance/view_health_contracts/view_health_contracts';
-import ChooseHealthContract from './pages/health_contract/sign_contract';
+import ChooseHealthContract from './pages/individual/sign_contract/sign_contract';
 import ViewSignedContract from './pages/health_contract/view_selected_contract';
 import SubmitClaim from './pages/claim/submit_claim';
 import RequestClaim from './pages/claim/request_claim';
@@ -29,7 +29,7 @@ function App() {
               <Route path="/login" element={<LoginForm />}/>
               <Route path="/upload_health_contract" element={<UploadContract />} />
               <Route path="/view_health_contracts" element={<ViewContracts />} />
-              <Route path="/choosecontract" element={<ChooseHealthContract />} />
+              <Route path="/sign_health_contract" element={<ChooseHealthContract />} />
               <Route path="/view_signed_contract" element={<ViewSignedContract />} />
               <Route path="/submit_claim" element={<SubmitClaim />} />
               <Route path="/request_claim" element={<RequestClaim />} />

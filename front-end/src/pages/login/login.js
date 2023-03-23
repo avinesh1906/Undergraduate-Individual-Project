@@ -40,7 +40,8 @@ const LoginForm = () => {
     setIsLoading(true);
     const individualContract = new ethers.Contract(IndividualContractAddress, IndividualContract.abi, signer);
     const response = await individualContract.authenticate(username, password);
-    if (response[0]) {
+    console.log(response);
+    if (response) {
       setUsername(response[1]);
       setLoggedMemberType(memberType);
       login();

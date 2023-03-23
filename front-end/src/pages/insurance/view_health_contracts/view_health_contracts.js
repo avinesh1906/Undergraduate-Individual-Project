@@ -103,9 +103,7 @@ const ViewContracts = () => {
                     <Loader/>
                 </div>
             </div>
-            
         </>
-
     );
 };
   
