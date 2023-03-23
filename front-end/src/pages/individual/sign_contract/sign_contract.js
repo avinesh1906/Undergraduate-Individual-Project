@@ -59,7 +59,7 @@ const ChooseHealthContract = () => {
   };
 
   const viewSelectedContract = () => {
-    navigate("/view_selected_contract");
+    navigate("/view_signed_contract");
   };
 
   const submit = async () => {
@@ -70,7 +70,7 @@ const ChooseHealthContract = () => {
         await individualContract.signHealthContract(selectedContract);
         // Do something after the contract is signed, like redirecting to a dashboard
         console.log("Signed");
-        navigate("/view_selected_contract");
+        navigate("/view_signed_contract");
     } catch (error) {
         console.log(error);
     }

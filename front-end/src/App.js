@@ -7,7 +7,7 @@ import Navbar from './components/navbar/navbar';
 import UploadContract from './pages/insurance/upload_contract/upload_contract';
 import ViewContracts from './pages/insurance/view_health_contracts/view_health_contracts';
 import ChooseHealthContract from './pages/individual/sign_contract/sign_contract';
-import ViewSignedContract from './pages/health_contract/view_selected_contract';
+import ViewSignedContract from './pages/individual/view_signed_contract/view_signed_contract';
 import SubmitClaim from './pages/claim/submit_claim';
 import RequestClaim from './pages/claim/request_claim';
 import { Web3Provider } from './Web3Context';

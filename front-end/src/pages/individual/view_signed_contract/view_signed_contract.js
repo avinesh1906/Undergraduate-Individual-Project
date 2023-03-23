@@ -1,9 +1,9 @@
 import { ethers } from "ethers";
 import React, { useState, useContext } from 'react';
-import { Web3Context } from '../../Web3Context';
-import HealthPolicyContract from '../../contracts/HealthPolicy.json'
-import contractAddresses from '../../config';
-import IndividualContract from '../../contracts/individual.json';
+import { Web3Context } from '../../../Web3Context';
+import HealthPolicyContract from '../../../contracts/HealthPolicy.json'
+import contractAddresses from '../../../config';
+import IndividualContract from '../../../contracts/individual.json';
 
 const HealthPolicyAddress = contractAddresses.HealthPolicy;
 const IndividualContractAddress = contractAddresses.Individual;

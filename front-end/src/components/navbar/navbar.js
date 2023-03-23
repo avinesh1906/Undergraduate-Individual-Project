@@ -125,7 +125,7 @@ const NavigationBar = () => {
               )}
               {loggedMemberType === 'individual' && (
                 <>
-                  <Link to="/view_selected_contract" className="nav-link" aria-current="page">Home</Link>
+                  <Link to="/view_signed_contract" className="nav-link" aria-current="page">Home</Link>
                   <Link to="/sign_health_contract" className="nav-link">Sign Health Contract</Link>
                   <Link to="/submit_claim" className="nav-link">Submit Claim</Link>
                 </>
