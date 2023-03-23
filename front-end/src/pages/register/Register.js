@@ -236,7 +236,7 @@ const Register = () => {
           setUsername(event.args[0]);
           setLoggedMemberType(memberType);
           login();
-          navigate("/upload_health_contract");
+          navigate("/view_all");
         });
       } else {
         console.log('Transaction failed');
