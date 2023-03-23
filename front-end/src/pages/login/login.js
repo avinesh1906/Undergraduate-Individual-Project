@@ -42,7 +42,7 @@ const LoginForm = () => {
     const response = await individualContract.authenticate(username, password);
     console.log(response);
     if (response) {
-      setUsername(response[1]);
+      setUsername(username);
       setLoggedMemberType(memberType);
       login();
       navigate("/individual");

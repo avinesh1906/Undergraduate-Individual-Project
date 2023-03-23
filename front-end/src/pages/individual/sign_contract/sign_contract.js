@@ -22,44 +22,40 @@ const ChooseHealthContract = () => {
   const [selectedContractId, setSelectedContractId] = useState(null);
   const navigate = useNavigate();
   
-  const loadContracts = useCallback(async () => {
+    const checkIfSigned = useCallback(async () => {
         try {
-            const contract = new ethers.Contract(
-                HealthPolicyAddress,
-                HealthPolicyContract.abi,
-                signer
-            );
-            const allContracts = await contract.getAllHealthContracts();
-            setHealthContracts(allContracts);
+            const individualContract = new ethers.Contract(IndividualContractAddress, IndividualContract.abi, signer);
+            await individualContract.getHealthContract();
+            setIsSigned(true);
         } catch (error) {
-            console.log(error);
-        }  
+            setIsSigned(false);  
+        } 
     }, [signer]);
 
     useEffect(() => {
-        const checkIfSigned = async () => {
+        const loadContracts = async () => {
             setIsLoading(true);
             try {
-                const individualContract = new ethers.Contract(IndividualContractAddress, IndividualContract.abi, signer);
-                await individualContract.getHealthContract();
-                loadContracts();
-                setIsSigned(true);
+                const contract = new ethers.Contract(
+                    HealthPolicyAddress,
+                    HealthPolicyContract.abi,
+                    signer
+                );
+                const allContracts = await contract.getAllHealthContracts();
+                setHealthContracts(allContracts);
+                checkIfSigned();
             } catch (error) {
-                setIsSigned(false);  
-            } 
+                console.log(error);
+            }  
             setIsLoading(false);
-        }
-        checkIfSigned();
-    }, [signer, loadContracts]);
+        };
+        loadContracts();
+    }, [signer, checkIfSigned]);
 
 
   const selectContract = (contractId) => {
     console.log(contractId);
     setSelectedContract(contractId);
-  };
-
-  const viewSelectedContract = () => {
-    navigate("/view_signed_contract");
   };
 
   const submit = async () => {
@@ -80,20 +76,6 @@ const ChooseHealthContract = () => {
   return (
     <>  
         <div style={{ display: isLoading ? "none" : "block" }}>
-        {isSigned ? (
-            <div className="u-body u-xl-mode" data-lang="en">
-                <section className="u-align-center u-clearfix u-section-5" id="sec-f685">
-                    <div className="u-clearfix u-sheet u-sheet-1">
-                        <h2 className="u-custom-font u-text u-text-palette-1-base u-text-1" spellCheck="false">A contract has already been signed<br /></h2>
-                        <p className="u-text u-text-palette-1-dark-1 u-text-2" spellCheck="false">If you have already signed a contract for your health insurance, you do not need to select or sign another one.
-                        </p>
-                        <button onClick={viewSelectedContract} className="u-active-palette-1-base u-border-none u-btn u-button-style u-hover-palette-1-base u-palette-1-light-1 u-text-active-white u-text-body-alt-color u-text-hover-white u-btn-1">View Selected Contract</button>
-                        <p  style={{ display: "none" }} className="u-text u-text-3">Image from <button  className="u-active-none u-border-2 u-border-no-left u-border-no-right u-border-no-top u-border-palette-2-base u-btn u-button-link u-button-style u-hover-none u-none u-text-body-color u-btn-2" target="_blank">Freepik</button><br /></p>    
-                        <img  style={{ display: "none" }} className="u-image u-image-contain u-image-default u-image-2" src={notFound} alt="" data-image-width="1298" data-image-height="598" />
-                    </div>
-                </section>
-             </div>
-        ):(
             <>
                 {healthContracts.length > 0 ? (
                     <div className="u-body u-xl-mode" data-lang="en">
@@ -125,25 +107,31 @@ const ChooseHealthContract = () => {
                                                         <p className="u-text u-text-5" spellCheck={false}>
                                                             Rs{" "}<span style={{ fontWeight: 700 }}>{contract.coverageLimit.toLocaleString()}</span> Coverage Limit
                                                         </p>
-                                                        <button 
-                                                            className="u-active-palette-1-base u-border-2 u-border-active-white u-border-hover-white u-border-white u-btn u-btn-round u-button-style u-hover-palette-1-base u-radius-10 u-text-active-white u-text-hover-white u-white u-btn-1"
-                                                            onClick={() => {
-                                                                if (selectedContractId === contract.healthcontractID) {
-                                                                    submit();
-                                                                } else {
-                                                                    selectContract(contract.healthcontractID);
-                                                                    setSelectedContractId(contract.healthcontractID);
-                                                                }
-                                                            }}
-                                                            style={{
-                                                                display: isSubmitLoading ? "none" : "block"
-                                                            }}
-                                                        >
-                                                            {selectedContractId === contract.healthcontractID ? "Sign" : "Select"}
-                                                        </button>
-                                                        <div className="loader-div" style={{ display: isSubmitLoading ? "block" : "none" }}>  
-                                                            <Loader/>
-                                                        </div>
+                                                        {isSigned ? (
+                                                            <h2 className="u-custom-font" spellCheck="false" style={{"color": "#D27685"}}>A contract has already been signed<br /></h2>
+                                                        ): (
+                                                            <>
+                                                                <button 
+                                                                    className="u-active-palette-1-base u-border-2 u-border-active-white u-border-hover-white u-border-white u-btn u-btn-round u-button-style u-hover-palette-1-base u-radius-10 u-text-active-white u-text-hover-white u-white u-btn-1"
+                                                                    onClick={() => {
+                                                                        if (selectedContractId === contract.healthcontractID) {
+                                                                            submit();
+                                                                        } else {
+                                                                            selectContract(contract.healthcontractID);
+                                                                            setSelectedContractId(contract.healthcontractID);
+                                                                        }
+                                                                    }}
+                                                                    style={{
+                                                                        display: isSubmitLoading ? "none" : "block"
+                                                                    }}
+                                                                >
+                                                                    {selectedContractId === contract.healthcontractID ? "Sign" : "Select"}
+                                                                </button>
+                                                                <div className="loader-div" style={{ display: isSubmitLoading ? "block" : "none" }}>  
+                                                                    <Loader/>
+                                                                </div>
+                                                            </>
+                                                        )}
                                                     </div>
                                                 </div>
                                             ))}
@@ -168,8 +156,7 @@ const ChooseHealthContract = () => {
                     </div>
                 )}
             </>
-        )}
-         </div>
+        </div>
         <div className="loader-div-view-health-contracts">
             <div style={{ display: isLoading ? "block" : "none" }}>  
                 <Loader/>
