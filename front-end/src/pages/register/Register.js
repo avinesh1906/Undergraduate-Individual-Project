@@ -44,7 +44,7 @@ const Register = () => {
   const {
     isWalletConnected,
     connectWallet,
-    setUsername, login
+    setUsername, login, setLoggedMemberType
   } = useContext(UserContext);
 
   const validate = () => {
@@ -124,7 +124,8 @@ const Register = () => {
         receipt.logs.forEach(log => {
           if (log.topics[0] === eventSignature) {
             const event = individualContract.interface.parseLog(log);
-            setUsername(event.args[1])
+            setUsername(event.args[1]);
+            setLoggedMemberType(memberType);
             login();
             navigate("/individual");
           } else {
@@ -147,7 +148,6 @@ const Register = () => {
   }
 
   async function connectInsuranceAddress(){
-    const eventSignature = ethers.utils.id("InsuranceAddressSetup(address");
     const healthContract = new ethers.Contract(HealthPolicyAddress, HealthPolicyContract.abi, signer);
     const tx  = await healthContract.setInsuranceCompanyAddress();
     const receipt  = await  provider.waitForTransaction(tx.hash);
@@ -158,10 +158,19 @@ const Register = () => {
       receipt.logs.forEach(log => {
       const event = healthContract.interface.parseLog(log);
       console.log(event.args);
-      if (log.topics[0] === eventSignature) {
-          const event = healthContract.interface.parseLog(log);
-          console.log(event.args);
-      }
+      });
+    } else {
+      console.log('Transaction failed');
+    }
+    const claimContract = new ethers.Contract(ClaimContractAddress, ClaimContract.abi, signer);
+    const tx2  = await claimContract.setInsuranceCompanyAddress();
+    const receipt2  = await  provider.waitForTransaction(tx2.hash);
+    if (receipt2.status === 1) {
+      console.log('Transaction successful');
+      // check the logs for the HealthOrganizationAddressSetup event
+      receipt2.logs.forEach(log => {
+      const event = claimContract.interface.parseLog(log);
+      console.log(event.args);
       });
     } else {
       console.log('Transaction failed');
@@ -169,7 +178,6 @@ const Register = () => {
   }
 
   async function connectHealthInsurance(){
-    const eventSignature = ethers.utils.id("HealthOrganizationAddressSetup(address");
     const claimContract = new ethers.Contract(ClaimContractAddress, ClaimContract.abi, signer);
     const tx  = await claimContract.setHealthOrganizationAddress();
     const receipt  = await  provider.waitForTransaction(tx.hash);
@@ -179,10 +187,6 @@ const Register = () => {
       receipt.logs.forEach(log => {
       const event = claimContract.interface.parseLog(log);
       console.log(event.args);
-      if (log.topics[0] === eventSignature) {
-          const event = claimContract.interface.parseLog(log);
-          console.log(event.args);
-      }
       });
     } else {
       console.log('Transaction failed');
@@ -204,6 +208,7 @@ const Register = () => {
           const event = healthOrganizationContract.interface.parseLog(log);
           connectHealthInsurance();
           setUsername(event.args[0]);
+          setLoggedMemberType(memberType);
           login();
           navigate("/individual");
         } else {
@@ -229,6 +234,7 @@ const Register = () => {
           const event = insuranceContract.interface.parseLog(log);
           connectInsuranceAddress();
           setUsername(event.args[0]);
+          setLoggedMemberType(memberType);
           login();
           navigate("/upload_health_contract");
         });

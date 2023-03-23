@@ -61,7 +61,7 @@ const ViewContracts = () => {
                                                 contracts.map((contract, index) => (
                                                 <div
                                                 key={index}
-                                                className={`u-align-center u-container-style u-layout-cell u-color-${((index % 3) + 1)}-base u-size-20 u-size-20-md u-layout-cell-2`}
+                                                className={`u-align-center u-container-style u-layout-cell u-modified-color-${((index % 3) + 1)}-base u-size-20 u-size-20-md u-layout-cell-2`}
                                                 >
                                                 <div className="u-container-layout u-container-layout-2">
                                                     <h3 className="u-align-center-xl u-align-center-xs u-text u-text-3" style={{"color": "#191825"}} >
