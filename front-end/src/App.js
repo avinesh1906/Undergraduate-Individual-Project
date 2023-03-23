@@ -8,8 +8,7 @@ import UploadContract from './pages/insurance/upload_contract/upload_contract';
 import ViewContracts from './pages/insurance/view_health_contracts/view_health_contracts';
 import ChooseHealthContract from './pages/individual/sign_contract/sign_contract';
 import ViewSignedContract from './pages/individual/view_signed_contract/view_signed_contract';
-import SubmitClaim from './pages/claim/submit_claim';
-import RequestClaim from './pages/claim/request_claim';
+import RequestClaim from './pages/individual/request_claim/request_claim';
 import { Web3Provider } from './Web3Context';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { UserContextProvider } from './UserContext';
@@ -31,7 +30,6 @@ function App() {
               <Route path="/view_health_contracts" element={<ViewContracts />} />
               <Route path="/sign_health_contract" element={<ChooseHealthContract />} />
               <Route path="/view_signed_contract" element={<ViewSignedContract />} />
-              <Route path="/submit_claim" element={<SubmitClaim />} />
               <Route path="/request_claim" element={<RequestClaim />} />
               <Route path="/individual" element={<Individual />} />
               <Route path="/view_all" element={<ViewAllClaims />} />

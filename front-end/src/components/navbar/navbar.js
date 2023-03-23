@@ -128,12 +128,12 @@ const NavigationBar = () => {
                   <Link to="/view_claim" className="nav-link" aria-current="page">Claim</Link>
                   <Link to="/view_signed_contract" className="nav-link" aria-current="page">Signed Contract</Link>
                   <Link to="/sign_health_contract" className="nav-link">Health Contract</Link>
-                  <Link to="/submit_claim" className="nav-link">Submit Claim</Link>
+                  <Link to="/request_claim" className="nav-link">Request Claim</Link>
                 </>
               )}
               {loggedMemberType === 'health_organization' && (
                 <>
-                  <Link to="/request_claim" className="nav-link">Request Claim</Link>
+                  <Link to="/submit_claim" className="nav-link">Submit Claim</Link>
                 </>
               )}
             </Nav>
