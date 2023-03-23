@@ -17,6 +17,8 @@ const ViewSignedContract = () => {
   const { signer } = useContext(Web3Context);
   const [contract, setContract] = useState();
   const [isLoading, setIsLoading] = useState(false);
+  const [isSignedContact, setIsSignedContact] = useState(false);
+
   const navigate  = useNavigate();
 
   useEffect(() => {
@@ -31,8 +33,10 @@ const ViewSignedContract = () => {
         const individualContract = new ethers.Contract(IndividualContractAddress, IndividualContract.abi, signer);
         const individualByContractID =  individualContract.getHealthContract();
         const signedContract = await contract.getHealthContract(individualByContractID);
+        setIsSignedContact(true);
         setContract(signedContract);
       } catch (error) {
+        setIsSignedContact(false);
         console.log(error);
       }
       setIsLoading(false);
@@ -47,7 +51,7 @@ const ViewSignedContract = () => {
   return (
     <>
       <div style={{ display: isLoading ? "none" : "block" }}>
-        {contract ? (
+        {isSignedContact ? (
           <div className="u-body u-xl-mode" data-lang="en">
             <section className="u-align-center u-clearfix u-section-8" id="carousel_4c41">
               <div className="u-clearfix u-sheet u-sheet-1">

@@ -19,7 +19,7 @@ contract Individual {
     mapping (uint32 => individual) public individuals;
     // Mappiing of the individual by username
     mapping (string => uint32) public individualsByUsername;
-    mapping (address => uint256) public healthContractsAssigned;
+    mapping (string => uint256) public healthContractsAssigned;
     mapping (address => uint32) public addressByIndiviudalID;
     mapping (string => bool) public isUsernameExists;
 
@@ -72,18 +72,18 @@ contract Individual {
         return individualsByUsername[_username];
     }
 
-    function signHealthContract(uint256 _healthContractId) public {
-        require(healthContractsAssigned[msg.sender] == 0, "You have already chosen a health contract.");
-        healthContractsAssigned[msg.sender] = _healthContractId;
+    function signHealthContract(string memory _username, uint256 _healthContractId) public {
+        require(healthContractsAssigned[_username] == 0, "You have already chosen a health contract.");
+        healthContractsAssigned[_username] = _healthContractId;
 
         uint32 _individual_id = addressByIndiviudalID[msg.sender];
         individuals[_individual_id].healthContractId = _healthContractId;
-        emit LogHealthContractAssigned(msg.sender,true, healthContractsAssigned[msg.sender]);
+        emit LogHealthContractAssigned(msg.sender,true, healthContractsAssigned[_username]);
     }
 
-    function getHealthContract() public view returns (uint256) {
-        require(healthContractsAssigned[msg.sender] != 0, "No health contract has been assigned to this individual.");
-        return healthContractsAssigned[msg.sender];
+    function getHealthContract(string memory _username) public view returns (uint256) {
+        require(healthContractsAssigned[_username] != 0, "No health contract has been assigned to this individual.");
+        return healthContractsAssigned[_username];
 
     }   
  

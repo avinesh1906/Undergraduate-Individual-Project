@@ -8,6 +8,7 @@ import './styles.css';
 import Loader from "../../../components/loader/loader";
 import notFound from '../../../images/view_contract/notFound.jpg'
 import { useNavigate } from "react-router-dom";
+import { UserContext } from '../../../UserContext';
 
 const HealthPolicyAddress = contractAddresses.HealthPolicy;
 const IndividualContractAddress = contractAddresses.Individual;
@@ -21,16 +22,17 @@ const ChooseHealthContract = () => {
   const [isSubmitLoading, setIsSubmitLoading] = useState(false);
   const [selectedContractId, setSelectedContractId] = useState(null);
   const navigate = useNavigate();
-  
+  const {username} = useContext(UserContext)
+
   const checkIfSigned = useCallback(async () => {
         try {
             const individualContract = new ethers.Contract(IndividualContractAddress, IndividualContract.abi, signer);
-            await individualContract.getHealthContract();
+            await individualContract.getHealthContract(username);
             setIsSigned(true);
         } catch (error) {
             setIsSigned(false);  
         } 
-    }, [signer]);
+    }, [signer, username]);
 
     useEffect(() => {
         const loadContracts = async () => {
@@ -64,7 +66,7 @@ const ChooseHealthContract = () => {
 
     try {
         const individualContract = new ethers.Contract(IndividualContractAddress, IndividualContract.abi, signer);
-        await individualContract.signHealthContract(selectedContract);
+        await individualContract.signHealthContract(username, selectedContract);
         // Do something after the contract is signed, like redirecting to a dashboard
         console.log("Signed");
         navigate("/view_signed_contract");

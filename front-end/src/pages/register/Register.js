@@ -203,10 +203,10 @@ const Register = () => {
     if (receipt.status === 1) {
       console.log('Transaction successful');
       // check the logs for the LogInsuredPersonRegistered event
-      receipt.logs.forEach(log => {
+      receipt.logs.forEach(async log => {
         if (log.topics[0] === eventSignature) {
           const event = healthOrganizationContract.interface.parseLog(log);
-          connectHealthInsurance();
+          await connectHealthInsurance();
           setUsername(event.args[0]);
           setLoggedMemberType(memberType);
           login();
@@ -230,9 +230,9 @@ const Register = () => {
       const receipt  = await  provider.waitForTransaction(tx.hash);
       if (receipt.status === 1) {
         // check the logs for the NewProvider event
-        receipt.logs.forEach(log => {
+        receipt.logs.forEach(async log => {
           const event = insuranceContract.interface.parseLog(log);
-          connectInsuranceAddress();
+          await connectInsuranceAddress();
           setUsername(event.args[0]);
           setLoggedMemberType(memberType);
           login();
