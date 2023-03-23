@@ -22,13 +22,28 @@ export const Web3Provider = ({ children }) => {
 		// provider = new ethers.providers.Web3Provider(window.ethereum);
     // Prompt user for account connections
     // await provider.send("eth_requestAccounts", []);
-		const web3Provider = new ethers.providers.JsonRpcProvider('http://127.0.0.1:7545');
-    const web3Signer = web3Provider.getSigner();
-		const web3Address = await web3Signer.getAddress();
+		// const web3Provider = new ethers.providers.JsonRpcProvider('http://127.0.0.1:7545');
+    // const web3Signer = web3Provider.getSigner();
+		// const web3Address = await web3Signer.getAddress();
 
-		setProvider(web3Provider);
-		setSigner(web3Signer);
-		setAddress(web3Address);
+    // check if MetaMask is installed
+    if (window.ethereum) {
+      const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
+
+      // request access to the user's MetaMask account
+      await window.ethereum.request({ method: 'eth_requestAccounts' });
+
+      // get the user's selected account
+      const web3Signer = web3Provider.getSigner();
+      const web3Address = await web3Signer.getAddress();
+
+      console.log('Connected to MetaMask with address:', web3Address);
+      setProvider(web3Provider);
+      setSigner(web3Signer);
+      setAddress(web3Address);
+    } else {
+      window.alert('Please install MetaMask to use this app');
+    }
 	};
 
   const disconnectWeb3  = async () => {

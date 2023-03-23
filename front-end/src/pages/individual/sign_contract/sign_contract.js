@@ -22,7 +22,7 @@ const ChooseHealthContract = () => {
   const [selectedContractId, setSelectedContractId] = useState(null);
   const navigate = useNavigate();
   
-    const checkIfSigned = useCallback(async () => {
+  const checkIfSigned = useCallback(async () => {
         try {
             const individualContract = new ethers.Contract(IndividualContractAddress, IndividualContract.abi, signer);
             await individualContract.getHealthContract();
@@ -42,7 +42,7 @@ const ChooseHealthContract = () => {
                     signer
                 );
                 const allContracts = await contract.getAllHealthContracts();
-                setHealthContracts(allContracts);
+                await setHealthContracts(allContracts); // Wait for setHealthContracts to finish executing
                 checkIfSigned();
             } catch (error) {
                 console.log(error);
@@ -51,6 +51,7 @@ const ChooseHealthContract = () => {
         };
         loadContracts();
     }, [signer, checkIfSigned]);
+
 
 
   const selectContract = (contractId) => {
