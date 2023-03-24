@@ -1,14 +1,14 @@
 import { ethers } from "ethers";
 import React, { useState, useContext } from 'react';
 import { Web3Context } from '../../../Web3Context';
-import HealthPolicyContract from '../../../contracts/HealthPolicy.json'
+import ClaimContract from '../../../contracts/ClaimContract.json'
 import contractAddresses from '../../../config';
 import './styles.css';
 import picture from '../../../images/upload_contract/logo.png'
 import Loader from "../../../components/loader/loader";
 import { useNavigate } from "react-router-dom";
 
-const HealthPolicyAddress = contractAddresses.HealthPolicy;
+const ClaimContractAddress = contractAddresses.ClaimContract;
 
 const UploadContract = () => {
     const [coverageType, setCoverageType] = useState('');
@@ -50,7 +50,7 @@ const UploadContract = () => {
     
     async function uploadHealthContract() {
       setIsLoading(true);
-      const healthContract = new ethers.Contract(HealthPolicyAddress, HealthPolicyContract.abi, signer);
+      const healthContract = new ethers.Contract(ClaimContractAddress, ClaimContract.abi, signer);
       try {
         const tx  = await healthContract.uploadPolicy(coverageType, coverageLimit, premium);
         const receipt  = await  provider.waitForTransaction(tx.hash);

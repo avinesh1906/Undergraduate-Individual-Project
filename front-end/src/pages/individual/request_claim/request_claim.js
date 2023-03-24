@@ -4,7 +4,6 @@ import { Web3Context } from "../../../Web3Context";
 import IndividualContract from '../../../contracts/individual.json';
 import contractAddresses from "../../../config";
 import ClaimContract from '../../../contracts/ClaimContract.json';
-import HealthPolicyContract from "../../../contracts/HealthPolicy.json";
 import './styles.css';
 import { UserContext } from '../../../UserContext';
 import Loader from "../../../components/loader/loader";
@@ -13,8 +12,6 @@ import { useNavigate } from "react-router-dom";
 
 const ClaimContractAddress = contractAddresses.ClaimContract;
 const IndividualContractAddress = contractAddresses.Individual;
-const HealthPolicyAddress = contractAddresses.HealthPolicy;
-
 
 const RequestClaim = () => {
   const { signer, provider } = useContext(Web3Context);
@@ -33,12 +30,12 @@ const RequestClaim = () => {
     const individualContract = new ethers.Contract(IndividualContractAddress, IndividualContract.abi, signer);
     try {
       const indiviualHealthContractID = await individualContract.getHealthContract(username);
-      const healthContract = new ethers.Contract(
-        HealthPolicyAddress,
-        HealthPolicyContract.abi,
+      const claimContract = new ethers.Contract(
+        ClaimContractAddress,
+        ClaimContract.abi,
         signer
       );
-      const healthContractById = await healthContract.getHealthContract(indiviualHealthContractID);
+      const healthContractById = await claimContract.getHealthContract(indiviualHealthContractID);
       console.log(healthContractById);
       setCoverageLimit(healthContractById[1]);
       setPremium(healthContractById[2]);

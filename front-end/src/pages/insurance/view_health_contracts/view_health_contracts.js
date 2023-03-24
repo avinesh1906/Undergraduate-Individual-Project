@@ -1,14 +1,14 @@
 import { ethers } from "ethers";
 import React, { useState, useContext, useEffect} from 'react';
 import { Web3Context } from '../../../Web3Context';
-import HealthPolicyContract from '../../../contracts/HealthPolicy.json'
+import ClaimContract from '../../../contracts/ClaimContract.json'
 import contractAddresses from '../../../config';
 import Loader from "../../../components/loader/loader";
 import './styles.css';
 import notFound from '../../../images/view_contract/notFound.jpg'
 import { useNavigate } from "react-router-dom";
 
-const HealthPolicyAddress = contractAddresses.HealthPolicy;
+const ClaimContractAddress = contractAddresses.ClaimContract;
 
 const ViewContracts = () => {
     const { signer } = useContext(Web3Context);
@@ -20,8 +20,8 @@ const ViewContracts = () => {
             setIsLoading(true);
             try {
                 const contract = new ethers.Contract(
-                HealthPolicyAddress,
-                HealthPolicyContract.abi,
+                ClaimContractAddress,
+                ClaimContract.abi,
                 signer
                 );
         

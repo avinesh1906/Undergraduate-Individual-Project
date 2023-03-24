@@ -20,11 +20,25 @@ const ViewAllClaims = () => {
             const claimContract = new ethers.Contract(ClaimContractAddress, ClaimContract.abi, signer);
             const claims = await claimContract.getAllClaims();
             setClaims(claims);
+            console.log(claims);
             setIsLoading(false);
         };
         retrieveAllClaims();
     }, [signer]);
 
+    const determineEmail = (username) => {
+        
+    }
+
+    const determineStatus = (status) => {
+        if (status === 0){
+            return "Submitted";
+        } else if (status === 1) {
+            return "Approved";
+        } else if (status === 2) {
+            return "Denied";
+        }
+    }
     return (
     <>
         <div style={{ display: isLoading ? "none" : "block" }}> 
@@ -46,7 +60,7 @@ const ViewAllClaims = () => {
                                     <thead className="u-align-center u-table-header u-table-header-1">
                                     <tr style={{ height: '29px' }}>
                                         <th className="u-table-cell"></th>
-                                        <th className="u-table-cell" spellCheck="false">Claimaint</th>
+                                        <th className="u-table-cell" spellCheck="false">Claimant</th>
                                         <th className="u-table-cell">Requester</th>
                                         <th className="u-table-cell">Health Contract<br/></th>
                                         <th className="u-table-cell">Status</th>
@@ -56,25 +70,29 @@ const ViewAllClaims = () => {
                                     <tbody className="u-align-center u-table-body">
                                         {claims.length > 0 &&
                                             claims.map((claim, index) => (
-                                                <tr key={index}>
-                                                    <td className="u-black u-first-column u-table-cell u-table-cell-7">1</td>
-                                                    <td className="u-table-cell">Josh Anderson,<br/>josh-info@gmail.com</td>
-                                                    <td className="u-table-cell">avineshculloo@gmail.com</td>
-                                                    <td className="u-table-cell">Silver</td>
-                                                    <td className="u-table-cell">Submitted</td>
-                                                    <td className="u-table-cell">Rs 10, 000<br/></td>
+                                                index % 2 === 0 ? (
+                                                    <tr key={index}>
+                                                        <td className="u-black u-first-column u-table-cell u-table-cell-7">{index + 1}</td>
+                                                        <td className="u-table-cell">{claim["claimant"]},<br/>email</td>
+                                                        <td className="u-table-cell">{claim["requester"]}</td>
+                                                        <td className="u-table-cell">{claim["healthContract"]["coverageType"]}</td>
+                                                        <td className="u-table-cell">{determineStatus(claim["status"])}</td>
+                                                        <td className="u-table-cell">Rs{" "} {claim["claimAmount"].toLocaleString()}<br/></td>
+                                                    </tr>
+                                                ) : (
+                                                    <tr>
+                                                    <td className="u-black u-first-column u-table-cell u-table-cell-13">{index + 1}</td>
+                                                    <td className="u-palette-5-light-1 u-table-cell u-table-cell-14">{claim["claimant"]},<br/>lina-h@gmail.com</td>
+                                                    <td className="u-palette-5-light-1 u-table-cell u-table-cell-15">{claim["requester"]}</td>
+                                                    <td className="u-palette-5-light-1 u-table-cell u-table-cell-16">{claim["healthContract"]["coverageType"]}</td>
+                                                    <td className="u-palette-5-light-1 u-table-cell u-table-cell-17">{determineStatus(claim["status"])}</td>
+                                                    <td className="u-palette-5-light-1 u-table-cell u-table-cell-18">Rs{" "} {claim["claimAmount"].toLocaleString()}<br/></td>
                                                 </tr>
+                                                )
+
                                                 )
                                             )
                                         }
-                                        <tr>
-                                            <td className="u-black u-first-column u-table-cell u-table-cell-13">2</td>
-                                            <td className="u-palette-5-light-1 u-table-cell u-table-cell-14">Lina Hudson,<br/>lina-h@gmail.com</td>
-                                            <td className="u-palette-5-light-1 u-table-cell u-table-cell-15">keshavculloo@gmail.com</td>
-                                            <td className="u-palette-5-light-1 u-table-cell u-table-cell-16">Bronze</td>
-                                            <td className="u-palette-5-light-1 u-table-cell u-table-cell-17">Approved</td>
-                                            <td className="u-palette-5-light-1 u-table-cell u-table-cell-18">Rs 36, 000<br/></td>
-                                        </tr>
                                     </tbody>
                                 </table>
                             </div>

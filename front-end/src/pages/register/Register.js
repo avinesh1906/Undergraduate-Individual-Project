@@ -3,8 +3,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import IndividualContract from '../../contracts/individual.json';
 import HealthOrganizationContract from '../../contracts/HealthOrganization.json';
 import InsuranceContract from '../../contracts/insuranceprovider.json';
-import HealthPolicyContract from '../../contracts/HealthPolicy.json'
-import ClaimContract from '../../contracts/ClaimContract.json';
+import ClaimContract from '../../contracts/ClaimContract.json'
 import contractAddresses from '../../config';
 import { Web3Context } from '../../Web3Context';
 import { UserContext } from '../../UserContext';
@@ -16,7 +15,6 @@ import Loader from '../../components/loader/loader';
 const IndividualContractAddress = contractAddresses.Individual;
 const HealthOrganizationContractAddress = contractAddresses.HealthOrganization;
 const InsuranceProviderAddress = contractAddresses.InsuranceProvider;
-const HealthPolicyAddress = contractAddresses.HealthPolicy;
 const ClaimContractAddress = contractAddresses.ClaimContract;
 
 
@@ -148,20 +146,6 @@ const Register = () => {
   }
 
   async function connectInsuranceAddress(){
-    const healthContract = new ethers.Contract(HealthPolicyAddress, HealthPolicyContract.abi, signer);
-    const tx  = await healthContract.setInsuranceCompanyAddress();
-    const receipt  = await  provider.waitForTransaction(tx.hash);
-    if (receipt.status === 1) {
-      console.log('Transaction successful');
-
-      // check the logs for the InsuranceAddressSetup event
-      receipt.logs.forEach(log => {
-      const event = healthContract.interface.parseLog(log);
-      console.log(event.args);
-      });
-    } else {
-      console.log('Transaction failed');
-    }
     const claimContract = new ethers.Contract(ClaimContractAddress, ClaimContract.abi, signer);
     const tx2  = await claimContract.setInsuranceCompanyAddress();
     const receipt2  = await  provider.waitForTransaction(tx2.hash);
