@@ -22,7 +22,7 @@ const ChooseHealthContract = () => {
   const [isSubmitLoading, setIsSubmitLoading] = useState(false);
   const [selectedContractId, setSelectedContractId] = useState(null);
   const navigate = useNavigate();
-  const {username} = useContext(UserContext)
+  const {username} = useContext(UserContext);
 
   const checkIfSigned = useCallback(async () => {
         try {

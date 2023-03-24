@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useEffect, useCallback } from "react";
 import { Web3Context } from "../../../Web3Context";
 import IndividualContract from '../../../contracts/individual.json';
 import contractAddresses from "../../../config";
@@ -8,7 +8,7 @@ import HealthPolicyContract from "../../../contracts/HealthPolicy.json";
 import './styles.css';
 import { UserContext } from '../../../UserContext';
 import Loader from "../../../components/loader/loader";
-import notFound from '../../../images/view_contract/notFound.jpg'
+import notFound from '../../../images/view_contract/notFound.jpg';
 import { useNavigate } from "react-router-dom";
 
 const ClaimContractAddress = contractAddresses.ClaimContract;
@@ -26,32 +26,41 @@ const RequestClaim = () => {
   const [hasContract, setHasContract] = useState(false);
   const {username} = useContext(UserContext);
   const navigate = useNavigate();
+  const [hasClaim, setHasClaim] = useState(false);
+
+  const loadHealthContractID = useCallback(async () => {
+    setIsLoading(true);
+    const individualContract = new ethers.Contract(IndividualContractAddress, IndividualContract.abi, signer);
+    try {
+      const indiviualHealthContractID = await individualContract.getHealthContract(username);
+      const healthContract = new ethers.Contract(
+        HealthPolicyAddress,
+        HealthPolicyContract.abi,
+        signer
+      );
+      const healthContractById = await healthContract.getHealthContract(indiviualHealthContractID);
+      console.log(healthContractById);
+      setCoverageLimit(healthContractById[1]);
+      setPremium(healthContractById[2]);
+      setCoverageType(healthContractById[3]);
+      setHasContract(true);
+    } catch (error) {
+      setHasContract(false);
+    }
+  }, [signer, username]);
 
   useEffect(() => {
-    const loadHealthContractID = async () => {
+    const hasIndividualClaim = async () => {
       setIsLoading(true);
-      const individualContract = new ethers.Contract(IndividualContractAddress, IndividualContract.abi, signer);
-      try {
-        const indiviualHealthContractID = await individualContract.getHealthContract(username);
-        const healthContract = new ethers.Contract(
-          HealthPolicyAddress,
-          HealthPolicyContract.abi,
-          signer
-        );
-        const healthContractById = await healthContract.getHealthContract(indiviualHealthContractID);
-        console.log(healthContractById);
-        setCoverageLimit(healthContractById[1]);
-        setPremium(healthContractById[2]);
-        setCoverageType(healthContractById[3]);
-        setHasContract(true);
-      } catch (error) {
-        setHasContract(false);
-      }
-      
+      const claimContract = new ethers.Contract(ClaimContractAddress, ClaimContract.abi, signer);
+      const hasClaim  = await claimContract.hasIndividualClaim(username);
+      setHasClaim(hasClaim);
+      console.log(hasClaim);
+      loadHealthContractID();
       setIsLoading(false);
-    }
-    loadHealthContractID();
-  }, [signer, username]);
+    } 
+    hasIndividualClaim();
+  }, [signer, username, loadHealthContractID]);
 
 	
   const handleRequestClaim = async () => {
@@ -60,7 +69,7 @@ const RequestClaim = () => {
 
     const eventSignature = ethers.utils.id("returnClaimID(uint)");		
     const claimContract = new ethers.Contract(ClaimContractAddress, ClaimContract.abi, signer);
-    const tx  = await claimContract.requestClaim(claimAmount, indiviualHealthContractID);
+    const tx  = await claimContract.requestClaim(username, claimAmount, indiviualHealthContractID);
     const receipt  = await provider.waitForTransaction(tx.hash);
     if (receipt.status === 1) {
       // check the logs for the LogInsuredPersonRegistered event
@@ -122,11 +131,8 @@ const RequestClaim = () => {
                           <div className="u-container-style u-expanded-width-sm u-expanded-width-xs u-group u-radius-20 u-shape-round u-white u-group-1">
                             <div className="u-container-layout u-container-layout-3">
                               <div className="u-form u-form-1">
-                                <form
-                                  action="https://forms.nicepagesrv.com/v2/form/process"
+                                <div
                                   className="u-clearfix u-form-spacing-10 u-form-vertical u-inner-form"
-                                  source="email"
-                                  name="form"
                                   style={{ padding: "10px" }}
                                 >
                                   <div className="u-form-group u-form-name">
@@ -147,12 +153,11 @@ const RequestClaim = () => {
                                     />
                                   </div>
                                   <div className="u-align-right u-form-group u-form-submit">
-                                    <button onClick={handleRequestClaim} className="u-btn u-btn-submit u-button-style">
+                                    <button onClick={handleRequestClaim} className="u-border-none u-btn u-btn-submit u-button-style u-hover-palette-1-dark-1 u-palette-1-light-1 u-btn-1">
                                       Submit
                                     </button>
-                                    <input type="submit" value="submit" className="u-form-control-hidden" />
                                   </div>
-                                  </form>
+                                  </div>
                                 </div>
                               </div>
                             </div>

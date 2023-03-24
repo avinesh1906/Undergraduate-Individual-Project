@@ -9,6 +9,7 @@ import "./styles.css";
 import Loader from "../../../components/loader/loader";
 import notFound from '../../../images/view_contract/notFound.jpg'
 import signedContract from '../../../images/view_contract/signedContract.png'
+import { UserContext } from '../../../UserContext';
 
 const HealthPolicyAddress = contractAddresses.HealthPolicy;
 const IndividualContractAddress = contractAddresses.Individual;
@@ -20,7 +21,7 @@ const ViewSignedContract = () => {
   const [isSignedContact, setIsSignedContact] = useState(false);
 
   const navigate  = useNavigate();
-
+  const {username} = useContext(UserContext);
   useEffect(() => {
     const loadContract = async () => {
       setIsLoading(true);
@@ -31,7 +32,7 @@ const ViewSignedContract = () => {
           signer
         );
         const individualContract = new ethers.Contract(IndividualContractAddress, IndividualContract.abi, signer);
-        const individualByContractID =  individualContract.getHealthContract();
+        const individualByContractID =  individualContract.getHealthContract(username);
         const signedContract = await contract.getHealthContract(individualByContractID);
         setIsSignedContact(true);
         setContract(signedContract);
@@ -42,7 +43,7 @@ const ViewSignedContract = () => {
       setIsLoading(false);
     };
     loadContract();
-  }, [signer]);
+  }, [signer, username]);
   
   const signContract = () => {
     navigate("/sign_health_contract");

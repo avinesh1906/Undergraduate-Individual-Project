@@ -9,7 +9,7 @@ contract ClaimContract is HealthPolicy {
     // Enumeration for claim status
     enum ClaimStatus { Submitted, Approved, Denied }
 
-    mapping (address => bool) public claimExists;
+    mapping (string => bool) public claimExists;
 
     // Variables to store the claims
     Claim[] public claims;
@@ -20,8 +20,8 @@ contract ClaimContract is HealthPolicy {
     // Struct to store the claim details
     struct Claim {
         uint id;
-        address requester;
-        address claimant;
+        string requester;
+        string claimant;
         HealthContract healthContract;
         ClaimStatus status;
         uint32 claimAmount;
@@ -50,9 +50,12 @@ contract ClaimContract is HealthPolicy {
         emit HealthOrganizationAddressSetup(healthOrganizationAddress);
     }
 
+    function hasIndividualClaim(string memory _username) public view returns (bool){
+        return claimExists[_username];
+    }
 
     // Function to submit a claim by the health organization
-    function submitClaim(address _individual, uint32 _claimAmount, uint256 _healthContractID) public onlyHealthOrganization {
+    function submitClaim(string memory _username, string memory _individual, uint32 _claimAmount, uint256 _healthContractID) public onlyHealthOrganization {
         require(!claimExists[_individual], "This claim has already been submitted.");
         claimExists[_individual] = true;
 
@@ -63,7 +66,7 @@ contract ClaimContract is HealthPolicy {
         // Create a new claim
         Claim memory newClaim = Claim({
             id: claimID,
-            requester: msg.sender,
+            requester: _username,
             claimant: _individual,
             healthContract: _healthContract,
             claimAmount: _claimAmount,
@@ -76,9 +79,9 @@ contract ClaimContract is HealthPolicy {
     }
 
     // Function to request a claim by the individual
-    function requestClaim(uint32 _claimAmount, uint256 _healthContractID) public onlyIndividual {
-        require(!claimExists[msg.sender], "This individual has already requested a claim.");
-        claimExists[msg.sender] = true;
+    function requestClaim(string memory _username, uint32 _claimAmount, uint256 _healthContractID) public {
+        require(!claimExists[_username], "This individual has already requested a claim.");
+        claimExists[_username] = true;
 
         HealthContract memory _healthContract = getHealthContract(_healthContractID);
         
@@ -87,8 +90,8 @@ contract ClaimContract is HealthPolicy {
         // Create a new claim
         Claim memory newClaim = Claim({
             id: claimID,
-            requester: msg.sender,
-            claimant: msg.sender,
+            requester: _username,
+            claimant: _username,
             healthContract: _healthContract,
             claimAmount: _claimAmount,
             status: ClaimStatus.Submitted
@@ -130,17 +133,17 @@ contract ClaimContract is HealthPolicy {
     }
 
     // function for the health organization to get all claims related to him
-    function getOrganizationClaims() public onlyHealthOrganization view returns (Claim[] memory) {
+    function getOrganizationClaims(string memory _username) public onlyHealthOrganization view returns (Claim[] memory) {
         uint count = 0;
         for (uint i = 0; i < claims.length; i++) {
-            if (claims[i].requester == healthOrganizationAddress) {
+            if (compareString(claims[i].requester, _username)) {
                 count++;
             }
         }
         Claim[] memory result = new Claim[](count);
         uint index = 0;
         for (uint i = 0; i < claims.length; i++) {
-            if (claims[i].requester== healthOrganizationAddress) {
+            if (compareString(claims[i].requester, _username)) {
                 result[index] = claims[i];
                 index++;
             }
@@ -148,22 +151,27 @@ contract ClaimContract is HealthPolicy {
         return result;
     }
 
+
     // function for the individual to get all claims related to him
-    function getIndividualClaims() public onlyIndividual view returns (Claim[] memory) {
+    function getIndividualClaims(string memory _username) public onlyIndividual view returns (Claim[] memory) {
         uint count = 0;
         for (uint i = 0; i < claims.length; i++) {
-            if (claims[i].requester == msg.sender) {
+            if (compareString(claims[i].requester, _username)) {
                 count++;
             }
         }
         Claim[] memory result = new Claim[](count);
         uint index = 0;
         for (uint i = 0; i < claims.length; i++) {
-            if (claims[i].requester== msg.sender) {
+            if (compareString(claims[i].requester, _username)) {
                 result[index] = claims[i];
                 index++;
             }
         }
         return result;
+    }
+
+    function compareString(string memory a, string memory b) private pure returns (bool) {
+        return keccak256(abi.encodePacked(a)) == keccak256(abi.encodePacked(b));
     }
 }
