@@ -183,10 +183,10 @@ const RequestClaim = () => {
         </>
       </div>
       <div className="loader-div-view-health-contracts">
-            <div style={{ display: isLoading ? "block" : "none" }}>  
-                <Loader/>
-            </div>
+        <div style={{ display: isLoading ? "block" : "none" }}>  
+            <Loader/>
         </div>
+      </div>
     </>
   );     
 };
