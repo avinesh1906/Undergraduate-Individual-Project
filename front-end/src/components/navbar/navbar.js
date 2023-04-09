@@ -133,7 +133,8 @@ const NavigationBar = () => {
               )}
               {loggedMemberType === 'health_organization' && (
                 <>
-                  <Link to="/submit_claim" className="nav-link">Submit Claim</Link>
+                  <Link to="/hio/view_claims" className="nav-link">Claim</Link>
+                  <Link to="/hio/submit_claim" className="nav-link">Submit Claim</Link>
                 </>
               )}
             </Nav>
