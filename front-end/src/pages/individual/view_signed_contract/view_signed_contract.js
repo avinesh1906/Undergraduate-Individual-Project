@@ -46,7 +46,7 @@ const ViewSignedContract = () => {
   }, [signer, username]);
   
   const signContract = () => {
-    navigate("/sign_health_contract");
+    navigate("/individual/sign_health_contract");
   }
   
   return (

@@ -36,7 +36,7 @@ const ViewContracts = () => {
     }, [signer]);
 
     const uploadContract = () => {
-        navigate("/upload_health_contract");
+        navigate("/insurance/upload_health_contract");
     }
     
     return (

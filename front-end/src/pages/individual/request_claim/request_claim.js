@@ -54,7 +54,6 @@ const RequestClaim = () => {
       setHasClaim(hasClaim);
       console.log(hasClaim);
       loadHealthContractID();
-      setIsLoading(false);
     } 
     hasIndividualClaim();
   }, [signer, username, loadHealthContractID]);
@@ -85,7 +84,7 @@ const RequestClaim = () => {
   }
 	
   const signHealthContract = () => {
-    navigate("/sign_health_contract");
+    navigate("/individual/sign_health_contract");
   }
 
   return (

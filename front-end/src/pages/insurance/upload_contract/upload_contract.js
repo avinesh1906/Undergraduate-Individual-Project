@@ -60,7 +60,7 @@ const UploadContract = () => {
             receipt.logs.forEach(log => {
               const event = healthContract.interface.parseLog(log);
               console.log(event.args);
-              navigate("/view_health_contracts");
+              navigate("/insurance/view_health_contracts");
             });
         } else {
             console.log('Transaction failed');
