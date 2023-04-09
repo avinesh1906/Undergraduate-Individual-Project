@@ -26,10 +26,6 @@ const ViewAllClaims = () => {
         retrieveAllClaims();
     }, [signer]);
 
-    const determineEmail = (username) => {
-        
-    }
-
     const determineStatus = (status) => {
         if (status === 0){
             return "Submitted";
@@ -73,7 +69,7 @@ const ViewAllClaims = () => {
                                                 index % 2 === 0 ? (
                                                     <tr key={index}>
                                                         <td className="u-black u-first-column u-table-cell u-table-cell-7">{index + 1}</td>
-                                                        <td className="u-table-cell">{claim["claimant"]},<br/>email</td>
+                                                        <td className="u-table-cell">{claim["claimant"]}</td>
                                                         <td className="u-table-cell">{claim["requester"]}</td>
                                                         <td className="u-table-cell">{claim["healthContract"]["coverageType"]}</td>
                                                         <td className="u-table-cell">{determineStatus(claim["status"])}</td>
@@ -82,7 +78,7 @@ const ViewAllClaims = () => {
                                                 ) : (
                                                     <tr>
                                                     <td className="u-black u-first-column u-table-cell u-table-cell-13">{index + 1}</td>
-                                                    <td className="u-palette-5-light-1 u-table-cell u-table-cell-14">{claim["claimant"]},<br/>lina-h@gmail.com</td>
+                                                    <td className="u-palette-5-light-1 u-table-cell u-table-cell-14">{claim["claimant"]}</td>
                                                     <td className="u-palette-5-light-1 u-table-cell u-table-cell-15">{claim["requester"]}</td>
                                                     <td className="u-palette-5-light-1 u-table-cell u-table-cell-16">{claim["healthContract"]["coverageType"]}</td>
                                                     <td className="u-palette-5-light-1 u-table-cell u-table-cell-17">{determineStatus(claim["status"])}</td>

@@ -118,17 +118,17 @@ const NavigationBar = () => {
             <Nav className="me-auto my-2 my-lg-0 navbar-nav-scroll" style={{ '--bs-scroll-height': '100px' }}>
               {loggedMemberType === 'insurance' && (
                 <>
-                  <Link to="/view_all" className="nav-link" aria-current="page">Home</Link>
-                  <Link to="/view_health_contracts" className="nav-link"> View Health Contracts</Link>
-                  <Link to="/upload_health_contract" className="nav-link"> Upload Health Contract</Link>
+                  <Link to="/insurance/view_claims" className="nav-link" aria-current="page">Home</Link>
+                  <Link to="/insurance/view_health_contracts" className="nav-link"> View Health Contracts</Link>
+                  <Link to="/insurance/upload_health_contract" className="nav-link"> Upload Health Contract</Link>
                 </>
               )}
               {loggedMemberType === 'individual' && (
                 <>
-                  <Link to="/view_claim" className="nav-link" aria-current="page">Claim</Link>
-                  <Link to="/view_signed_contract" className="nav-link" aria-current="page">Signed Contract</Link>
-                  <Link to="/sign_health_contract" className="nav-link">Health Contract</Link>
-                  <Link to="/request_claim" className="nav-link">Request Claim</Link>
+                  <Link to="/individual/view_claims" className="nav-link" aria-current="page">Claim</Link>
+                  <Link to="/individual/view_signed_contract" className="nav-link" aria-current="page">Signed Contract</Link>
+                  <Link to="/individual/sign_health_contract" className="nav-link">Health Contract</Link>
+                  <Link to="/individual/request_claim" className="nav-link">Request Claim</Link>
                 </>
               )}
               {loggedMemberType === 'health_organization' && (

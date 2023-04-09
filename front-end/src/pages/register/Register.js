@@ -125,7 +125,7 @@ const Register = () => {
             setUsername(event.args[1]);
             setLoggedMemberType(memberType);
             login();
-            navigate("/individual");
+            navigate("/individual/view_claims");
           } else {
             console.log('Transaction failed');
           }
@@ -194,7 +194,7 @@ const Register = () => {
           setUsername(event.args[0]);
           setLoggedMemberType(memberType);
           login();
-          navigate("/individual");
+          navigate("");
         } else {
           console.log('Transaction failed');
         }
@@ -220,7 +220,7 @@ const Register = () => {
           setUsername(event.args[0]);
           setLoggedMemberType(memberType);
           login();
-          navigate("/view_all");
+          navigate("/insurance/view_claims");
         });
       } else {
         console.log('Transaction failed');

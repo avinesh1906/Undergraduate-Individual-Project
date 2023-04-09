@@ -60,7 +60,7 @@ const LoginForm = () => {
       setUsername(response[1]);
       setLoggedMemberType(memberType);
       login();
-      navigate("/individual");
+      navigate("/individual/view_claims");
     } else {
       setIsWrongCredential(true);
     }
@@ -75,7 +75,7 @@ const LoginForm = () => {
       setUsername(response[1]);
       setLoggedMemberType(memberType);
       login();
-      navigate("/view_all");
+      navigate("/insurance/view_claims");
     } else {
       setIsWrongCredential(true);
     }

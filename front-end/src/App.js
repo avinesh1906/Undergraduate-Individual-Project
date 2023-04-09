@@ -15,6 +15,7 @@ import { UserContextProvider } from './UserContext';
 import Home from './pages/home/home';
 import Individual from './pages/individual/individual';
 import ViewAllClaims from './pages/insurance/view_all/view_all';
+import ViewIndividualClaim from './pages/individual/view_claim/view_claim';
 
 function App() {
   return (
@@ -26,13 +27,14 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/register" element={<Register />} />
               <Route path="/login" element={<LoginForm />}/>
-              <Route path="/upload_health_contract" element={<UploadContract />} />
-              <Route path="/view_health_contracts" element={<ViewContracts />} />
-              <Route path="/sign_health_contract" element={<ChooseHealthContract />} />
-              <Route path="/view_signed_contract" element={<ViewSignedContract />} />
-              <Route path="/request_claim" element={<RequestClaim />} />
+              <Route path="/insurance/upload_health_contract" element={<UploadContract />} />
+              <Route path="/insurance/view_health_contracts" element={<ViewContracts />} />
+              <Route path="/individual/sign_health_contract" element={<ChooseHealthContract />} />
+              <Route path="/individual/view_signed_contract" element={<ViewSignedContract />} />
+              <Route path="/individual/request_claim" element={<RequestClaim />} />
+              <Route path="/individual/view_claims" element={<ViewIndividualClaim />} />
               <Route path="/individual" element={<Individual />} />
-              <Route path="/view_all" element={<ViewAllClaims />} />
+              <Route path="/insurance/view_claims" element={<ViewAllClaims />} />
             </Routes>  
         </UserContextProvider>
       </Web3Provider>
