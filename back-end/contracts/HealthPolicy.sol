@@ -9,6 +9,10 @@ contract HealthPolicy {
         uint32 coverageLimit;
         uint32 premium;
         string coverageType;
+        uint32 dental;
+        uint32 eyeCare;
+        uint32 generalCare;
+        bool approval;
     }
 
     HealthContract[] public healthContracts;
@@ -43,7 +47,7 @@ contract HealthPolicy {
                 return healthContracts[i];
             }
         }
-        return HealthContract(0,0,0,"empty");
+        return HealthContract(0,0,0,"empty",0,0,0,false);
     }
 
     // Function to upload the health insurance policy
