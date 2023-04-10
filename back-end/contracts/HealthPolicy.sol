@@ -2,11 +2,10 @@
 pragma solidity ^0.8.0;
 
 contract HealthPolicy {
-    uint256 healthContractId = 1;
+    uint32 healthContractId = 1;
 
     struct HealthContract {
-        uint256 healthcontractID;
-        uint32 coverageLimit;
+        uint32 healthcontractID;
         uint32 premium;
         string coverageType;
         uint32 dental;
@@ -16,12 +15,12 @@ contract HealthPolicy {
     }
 
     HealthContract[] public healthContracts;
-    // mapping(uint256 => HealthContract) public healthContracts;
+    // mapping(uint32 => HealthContract) public healthContracts;
     mapping(string => bool) public iscoverageTypeExists;
     address insuranceCompanyAddress;
 
     // Events
-    event NewPolicy(uint256 healthContractId);
+    event NewPolicy(uint32 healthContractId);
     event InsuranceAddressSetup(address);
 
     // Modifier to ensure only the contract owner can execute the function
@@ -41,26 +40,29 @@ contract HealthPolicy {
         return insuranceCompanyAddress;
     }
     
-    function getHealthContract(uint256 _healthContractId) public view returns (HealthContract memory) {
-        for (uint256 i = 0; i < healthContracts.length; i++) {
+    function getHealthContract(uint32 _healthContractId) public view returns (HealthContract memory) {
+        for (uint32 i = 0; i < healthContracts.length; i++) {
             if (healthContracts[i].healthcontractID == _healthContractId) {
                 return healthContracts[i];
             }
         }
-        return HealthContract(0,0,0,"empty",0,0,0,false);
+        return HealthContract(0,0,"empty",0,0,0,false);
     }
 
     // Function to upload the health insurance policy
-    function uploadPolicy(string memory _coverageType, uint32 _coverageLimit, uint32 _premium) public  onlyInsurance {
+    function uploadPolicy(string memory _coverageType, uint32 _premium, uint32 _dental, uint32 _eyeCare, uint32 _generalCare, bool _approval) public  onlyInsurance {
         require(!iscoverageTypeExists[_coverageType], "Coverage already exits");
 
         HealthContract memory newHealthContract;
         // Assign the policy information
-        uint256 policyId = healthContractId++;
+        uint32 policyId = healthContractId++;
         newHealthContract.healthcontractID = policyId;
-        newHealthContract.coverageLimit = _coverageLimit;
         newHealthContract.coverageType = _coverageType;
         newHealthContract.premium = _premium;
+        newHealthContract.dental = _dental;
+        newHealthContract.eyeCare = _eyeCare;
+        newHealthContract.generalCare = _generalCare;
+        newHealthContract.approval = _approval;
 
         iscoverageTypeExists[_coverageType] = true;
 

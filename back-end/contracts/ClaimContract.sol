@@ -4,12 +4,12 @@ pragma solidity ^0.8.0;
 import "./HealthPolicy.sol";
 
 contract ClaimContract is HealthPolicy {
-    uint ClaimContractCount = 0;
+    uint32 ClaimContractCount = 0;
 
     // Enumeration for claim status
     enum ClaimStatus { Submitted, Approved, Denied }
 
-    mapping (string => bool) public claimExists;
+    mapping(string => mapping(uint32 => string[])) public individualByClaim;
 
     // Variables to store the claims
     Claim[] public claims;
@@ -19,12 +19,13 @@ contract ClaimContract is HealthPolicy {
 
     // Struct to store the claim details
     struct Claim {
-        uint id;
+        uint32 id;
         string requester;
         string claimant;
         HealthContract healthContract;
         ClaimStatus status;
         uint32 claimAmount;
+        string claimType;
     }
 
     // Modifier to ensure only the health organization can execute the function
@@ -50,18 +51,22 @@ contract ClaimContract is HealthPolicy {
         emit HealthOrganizationAddressSetup(healthOrganizationAddress);
     }
 
-    function hasIndividualClaim(string memory _username) public view returns (bool){
-        return claimExists[_username];
+    function hasIndividualClaim(string memory _username, uint32 _healthContractID, string memory _claimType) public view returns (bool){
+        return checkClaimType(_username, _healthContractID, _claimType);
     }
 
     // Function to submit a claim by the health organization
-    function submitClaim(string memory _username, string memory _individual, uint32 _claimAmount, uint256 _healthContractID) public onlyHealthOrganization {
-        require(!claimExists[_individual], "This claim has already been submitted.");
-        claimExists[_individual] = true;
+    function submitClaim(string memory _username, string memory _individual, uint32 _claimAmount, uint32 _healthContractID, string memory _claimType) public onlyHealthOrganization {
+        if (checkHealthContractMapping(_individual,  _healthContractID)){
+            require(!checkClaimType(_individual, _healthContractID, _claimType), "You have already submitted a claim for this claim type.");
+        } else {
+            individualByClaim[_individual][_healthContractID] = new string[](0);
+        }
+        individualByClaim[_individual][_healthContractID].push(_claimType);
 
         HealthContract memory _healthContract = getHealthContract(_healthContractID);
 
-        uint256 claimID = ClaimContractCount++;
+        uint32 claimID = ClaimContractCount++;
 
         // Create a new claim
         Claim memory newClaim = Claim({
@@ -70,22 +75,33 @@ contract ClaimContract is HealthPolicy {
             claimant: _individual,
             healthContract: _healthContract,
             claimAmount: _claimAmount,
-            status: ClaimStatus.Submitted
+            status: ClaimStatus.Submitted,
+            claimType: _claimType
         });
 
         // Add the claim to the list of claims
         claims.push(newClaim);
+
+        // Approve/Disapprove claim
+        if (_healthContract.approval){
+            approveClaim(newClaim.id);
+        }
+
         emit returnClaimID(newClaim.id);
-    }
+    }   
 
     // Function to request a claim by the individual
-    function requestClaim(string memory _username, uint32 _claimAmount, uint256 _healthContractID) public {
-        require(!claimExists[_username], "This individual has already requested a claim.");
-        claimExists[_username] = true;
+    function requestClaim(string memory _username, uint32 _claimAmount, uint32 _healthContractID, string memory _claimType) public {
+        if (checkHealthContractMapping(_username,  _healthContractID)){
+            require(!checkClaimType(_username, _healthContractID, _claimType), "You have already submitted a claim for this claim type.");
+        } else {
+            individualByClaim[_username][_healthContractID] = new string[](0);
+        }
+        individualByClaim[_username][_healthContractID].push(_claimType);
 
         HealthContract memory _healthContract = getHealthContract(_healthContractID);
         
-        uint256 claimID = ClaimContractCount++;
+        uint32 claimID = ClaimContractCount++;
 
         // Create a new claim
         Claim memory newClaim = Claim({
@@ -94,11 +110,18 @@ contract ClaimContract is HealthPolicy {
             claimant: _username,
             healthContract: _healthContract,
             claimAmount: _claimAmount,
-            status: ClaimStatus.Submitted
+            status: ClaimStatus.Submitted,
+            claimType: _claimType
         });
 
         // Add the claim to the list of claims
         claims.push(newClaim);
+
+        // Approve/Disapprove claim
+        if (_healthContract.approval){
+            approveClaim(newClaim.id);
+        }
+
         emit returnClaimID(newClaim.id);
     }
     
@@ -113,7 +136,14 @@ contract ClaimContract is HealthPolicy {
         // Check if the claim has already been approved or denied
         require(claim.status == ClaimStatus.Submitted, "The claim has already been approved or denied.");
 
-        uint claimLimit = (claim.healthContract.premium  * claim.healthContract.coverageLimit) / 100;
+        uint claimLimit = 0;
+        if (compareString(claim.claimType,"eyeCare")){
+            claimLimit = (claim.healthContract.premium  * claim.healthContract.eyeCare) / 100;
+        } else if (compareString(claim.claimType,"generalCare")){
+            claimLimit = (claim.healthContract.premium  * claim.healthContract.generalCare) / 100;
+        } else {
+            claimLimit = (claim.healthContract.premium  * claim.healthContract.dental) / 100;
+        }
 
         // Approve the claim if the claim amount is within the coverage limit
         if (claim.claimAmount <= claimLimit) {
@@ -173,5 +203,19 @@ contract ClaimContract is HealthPolicy {
 
     function compareString(string memory a, string memory b) private pure returns (bool) {
         return keccak256(abi.encodePacked(a)) == keccak256(abi.encodePacked(b));
+    }
+
+    function checkClaimType(string memory key1, uint32 key2, string memory value) internal view returns (bool) {
+        string[] storage claimValues = individualByClaim[key1][key2]; // retrieve the array of values at key2
+        for (uint i = 0; i < claimValues.length; i++) { // loop through the array
+            if (keccak256(bytes(claimValues[i])) == keccak256(bytes(value))) { // check if the value exists
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function checkHealthContractMapping(string memory individual, uint32 healthContractId) public view returns (bool) {
+        return individualByClaim[individual][healthContractId].length > 0;
     }
 }

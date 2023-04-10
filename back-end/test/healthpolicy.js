@@ -20,11 +20,13 @@ contract('HealthPolicy', (accounts) => {
         const premium = 500;
     
         // Upload the policy
-        await instance.uploadPolicy(coverageType, coverageLimit, premium, { from: accounts[0] });
+        await instance.uploadPolicy(coverageType, premium, coverageLimit, coverageLimit, coverageLimit, false, { from: accounts[0] });
     
         // Check if policy was uploaded
         const policy = await instance.getHealthContract(1);
-        assert.equal(parseInt(policy.coverageLimit), coverageLimit, "Coverage limit does not match");
+        assert.equal(parseInt(policy.dental), coverageLimit, "Coverage limit does not match");
+        assert.equal(parseInt(policy.eyeCare), coverageLimit, "Coverage limit does not match");
+        assert.equal(parseInt(policy.generalCare), coverageLimit, "Coverage limit does not match");
         assert.equal(policy.coverageType, coverageType, "Coverage type does not match");
         assert.equal(parseInt(policy.premium), premium, "Premium does not match");
     });
@@ -35,19 +37,25 @@ contract('HealthPolicy', (accounts) => {
       const coverageLimit = 100;
       const premium = 10;
   
-      await instance.uploadPolicy(coverageType, coverageLimit, premium, { from: accounts[0] });
+      await instance.uploadPolicy(coverageType, premium, coverageLimit, coverageLimit, coverageLimit, false, { from: accounts[0] });
+      
       try {
-        await instance.uploadPolicy(coverageType, coverageLimit, premium, { from: accounts[0] });
+        await instance.uploadPolicy(coverageType, premium, coverageLimit, coverageLimit, coverageLimit, false, { from: accounts[0] });
+        assert.fail('Expected to throw');
       } catch (error) {
-        assert.equal(error.message, 'VM Exception while processing transaction: revert Coverage already exits', 'Unexpected error message');
+        assert.include(error.message, 'Coverage already exits');
       }
     });
   
     it('should not upload a policy if not executed by insurance company', async () => {
+      const coverageType = 'Diamond';
+      const coverageLimit = 100;
+      const premium = 10;
       try {
-        await instance.uploadPolicy('Gold', 100, 10, { from: accounts[1] });
+        await instance.uploadPolicy(coverageType, premium, coverageLimit, coverageLimit, coverageLimit, false, { from: accounts[5] });
+        assert.fail('Expected to throw');
       } catch (error) {
-        assert.equal(error.message, 'VM Exception while processing transaction: revert Only the insurance can execute this function.', 'Unexpected error message');
+        assert.include(error.message, 'Only the insurance can execute this function.');
       }
     });
   });

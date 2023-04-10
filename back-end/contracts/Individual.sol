@@ -13,19 +13,19 @@ contract Individual {
         string username;
         string email;
         bytes32 password;
-        uint256 healthContractId;
+        uint32 healthContractId;
     }
      // Mapping from usernames to provider addresses
     mapping (uint32 => individual) public individuals;
     // Mappiing of the individual by username
     mapping (string => uint32) public individualsByUsername;
-    mapping (string => uint256) public healthContractsAssigned;
+    mapping (string => uint32[]) public healthContractsAssigned;
     mapping (address => uint32) public addressByIndiviudalID;
     mapping (string => bool) public isUsernameExists;
 
     // Events
     event LogInsuredPersonRegistered(uint32, string username);
-    event LogHealthContractAssigned(address, bool success, uint256);
+    event LogHealthContractAssigned(address, bool success, uint32);
     event LogIndividualAddress(address);
 
     // functions
@@ -72,20 +72,39 @@ contract Individual {
         return individualsByUsername[_username];
     }
 
-    function signHealthContract(string memory _username, uint256 _healthContractId) public {
-        require(healthContractsAssigned[_username] == 0, "You have already chosen a health contract.");
-        healthContractsAssigned[_username] = _healthContractId;
+    function signHealthContract(string memory _username, uint32 _healthContractId) public {
+        require(!contains(healthContractsAssigned[_username], _healthContractId), "You have already chosen this health contract.");
+        if (healthContractsAssigned[_username].length == 0) {
+            healthContractsAssigned[_username] = new uint32[](0);
+        }
+        healthContractsAssigned[_username].push(_healthContractId);
+
 
         uint32 _individual_id = addressByIndiviudalID[msg.sender];
         individuals[_individual_id].healthContractId = _healthContractId;
-        emit LogHealthContractAssigned(msg.sender,true, healthContractsAssigned[_username]);
+        emit LogHealthContractAssigned(msg.sender, true, _healthContractId);
     }
 
-    function getHealthContract(string memory _username) public view returns (uint256) {
-        require(healthContractsAssigned[_username] != 0, "No health contract has been assigned to this individual.");
-        return healthContractsAssigned[_username];
 
-    }   
+    function getHealthContracts(string memory _username) public view returns (uint32[] memory) {
+        require(healthContractsAssigned[_username].length > 0, "No health contracts have been assigned to this individual.");
+        return healthContractsAssigned[_username];
+    }
+
+    function isHealthContractSigned(string memory _username, uint32 _healthContractId) public view returns (bool) {
+        require(healthContractsAssigned[_username].length > 0, "No health contracts have been assigned to this individual.");
+        // Check if the value is a healthContractID
+        return contains(healthContractsAssigned[_username], _healthContractId);
+    }
+
+    function contains(uint32[] storage arr, uint32 value) internal view returns (bool) {
+        for (uint32 i = 0; i < arr.length; i++) {
+            if (arr[i] == value) {
+                return true;
+            }
+        }
+        return false;
+    }
  
     function authenticate(string memory _username, string memory _password) public view returns (bool) {
         uint32 individualId = individualsByUsername[_username];
