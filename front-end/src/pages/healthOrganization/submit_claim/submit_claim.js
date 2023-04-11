@@ -9,16 +9,22 @@ import notFound from '../../../images/view_contract/notFound.jpg';
 import './styles.css';
 import picture from '../../../images/submit_claim/picture.jpg';
 import { useNavigate } from "react-router-dom";
+import { UserContext } from '../../../UserContext';
 
 const IndividualContractAddress = contractAddresses.Individual;
 const ClaimContractAddress = contractAddresses.ClaimContract;
 
 const SubmitClaim = () => {
   const [individuals, setIndividuals] = useState([]);
+  const [healthServices, setHealthServices] = useState([]);
+  const [individualHealthContracts, setIndividualHealthContracts] = useState([]);
+  const [healthContract, setHealthContract] = useState([]);
   const [selectedIndividual, setSelectedIndividual] = useState(null);
   const [claimAmount, setClaimAmount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   let { signer } = useContext(Web3Context);
+  const {username} = useContext(UserContext);
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -36,15 +42,34 @@ const SubmitClaim = () => {
     loadIndividualList();
   }, [signer]);
 
+  const getHealthContract = async (contractID) => {
+    const claimContract = new ethers.Contract(ClaimContractAddress, ClaimContract.abi, signer);
+    return claimContract.getHealthContract(contractID);
+  }
 
-
-  const handleIndividualSelect = (individual) => {
+  const getIndividualContracts = async () => {
+    const individualContract = new ethers.Contract(IndividualContractAddress, IndividualContract.abi, signer);
+    if (selectedIndividual != null){
+      setIndividualHealthContracts(await individualContract.getHealthContracts(selectedIndividual));
+    }
+  }
+  
+  const handleIndividualSelect = async (individual) => {
     setSelectedIndividual(individual);
+    await getIndividualContracts();
+  };
+
+  const handleHealthServiceSelect = (healthService) => {
+    setHealthServices(healthService);
+  };
+
+  const handleHealthContracteSelect = (healthContract) => {
+    setHealthContract(healthContract);
   };
 
   const submitTheClaim = async () => {
     const claimContract = new ethers.Contract(ClaimContractAddress, ClaimContract.abi, signer);
-    await claimContract.submitClaim(selectedIndividual.individualAddress, claimAmount, selectedIndividual.healthContractId);
+    await claimContract.submitClaim(username, selectedIndividual.username, claimAmount, selectedIndividual.healthContractId);
 
   }
 
@@ -85,17 +110,59 @@ const SubmitClaim = () => {
                       <div className="u-form-group u-form-select u-form-group-2">
                         <label htmlFor="individual" className="u-label u-text-palette-4-dark-3 u-label-1">Choose the individual</label>
                         <div className="u-form-select-wrapper">
-                          <select id="individual" name="select" value={selectedIndividual} onChange={(e) => handleIndividualSelect(e.target.value)}  className="u-border-1 u-border-grey-30 u-input u-input-rectangle u-white" required="required">
-                          <option value="" disabled selected>Select an individual</option>
+                          <select 
+                            id="individual" 
+                            name="select" 
+                            value={selectedIndividual || ''} 
+                            onChange={(e) => handleIndividualSelect(e.target.value)} 
+                            className="u-border-1 u-border-grey-30 u-input u-input-rectangle u-white" 
+                            required="required"
+                          >
+                            <option value="" disabled defaultValue>Select an individual</option>
                             {individuals.map(individual => (
-                              <option value="individual" data-calc="individual" defaultValue="selected">{individual.first_name} {individual.last_name}</option>
+                              <option key={individual.username} value={individual.username} data-calc="individual">
+                                {individual.first_name} {individual.last_name}
+                              </option>
                             ))}
                           </select>
-                          <svg className="u-caret u-caret-svg" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16" style={{fill: "currentColor"}} xmlSpace="preserve"><polygon className="st0" points="8,12 2,4 14,4 "></polygon></svg>
+                          <svg className="u-caret u-caret-svg" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16" style={{fill: "currentColor"}} xmlSpace="preserve">
+                            <polygon className="st0" points="8,12 2,4 14,4 "></polygon>
+                          </svg>
                         </div>
                       </div>
                       {selectedIndividual && (
+                        individualHealthContracts.length === 0 ? (
+                          <>
+                            <div className="u-form-group u-form-select u-form-group-2">
+                              <label htmlFor="individual" style={{color: "red"}} className="u-label u-text-palette-4-dark-3 u-label-1">Individual does not have any signed health contract</label>
+                            </div>
+                          </>
+                        ):(
                         <>
+                          <div className="u-form-group u-form-select u-form-group-2">
+                          <label htmlFor="healthContract" className="u-label u-text-palette-4-dark-3 u-label-1">Choose the individual's signed contract</label>
+                          <div className="u-form-select-wrapper">
+                            <select id="healthContract" name="select" value={healthContract || ''} onChange={(e) => handleHealthContracteSelect(e.target.value)}  className="u-border-1 u-border-grey-30 u-input u-input-rectangle u-white" required="required">
+                            <option value="" disabled defaultValue>Select a signed health contract</option>
+                              {individualHealthContracts.map(async healthContractID => (
+                                <option key={healthContractID} value={healthContractID} data-calc="healthContract" >{await getHealthContract(healthContractID)}</option>
+                              ))}
+                            </select>
+                            <svg className="u-caret u-caret-svg" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16" style={{fill: "currentColor"}} xmlSpace="preserve"><polygon className="st0" points="8,12 2,4 14,4 "></polygon></svg>
+                            </div>
+                          </div>
+                          <div className="u-form-group u-form-select u-form-group-2">
+                            <label htmlFor="healthService" className="u-label u-text-palette-4-dark-3 u-label-1">Health Service</label>
+                            <div className="u-form-select-wrapper">
+                              <select id="healthService" name="select" value={healthServices || ''} onChange={(e) => handleHealthServiceSelect(e.target.value)}  className="u-border-1 u-border-grey-30 u-input u-input-rectangle u-white" required="required">
+                                <option value="" disabled defaultValue>Choose the health service</option>
+                                <option value="generalCare" data-calc="healthService" >General Care</option>
+                                <option value="dental" data-calc="healthService" >Dental Care</option>
+                                <option value="eyeCare" data-calc="healthService" >Eye Care</option>
+                              </select>
+                              <svg className="u-caret u-caret-svg" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16" style={{fill: "currentColor"}} xmlSpace="preserve"><polygon className="st0" points="8,12 2,4 14,4 "></polygon></svg>
+                            </div>
+                          </div>
                           <div className="u-form-group u-label-top u-form-group-2">
                             <label
                               htmlFor="claimAmt"
@@ -128,6 +195,7 @@ const SubmitClaim = () => {
                             />
                           </div>
                         </>
+                        )
                       )}
                     </form>
                   </div>

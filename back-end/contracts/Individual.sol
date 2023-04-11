@@ -13,12 +13,14 @@ contract Individual {
         string username;
         string email;
         bytes32 password;
-        uint32 healthContractId;
+        uint32[] healthContractId;
     }
+
      // Mapping from usernames to provider addresses
     mapping (uint32 => individual) public individuals;
     // Mappiing of the individual by username
     mapping (string => uint32) public individualsByUsername;
+    mapping(string => individual) public usernameByIndividual;
     mapping (string => uint32[]) public healthContractsAssigned;
     mapping (address => uint32) public addressByIndiviudalID;
     mapping (string => bool) public isUsernameExists;
@@ -67,7 +69,7 @@ contract Individual {
     function hashPassword(string memory _password) private pure returns (bytes32) {
         return keccak256(abi.encodePacked(_password));
     }
-
+    
     function getIndividualId(string memory _username) public view returns (uint32) {
         return individualsByUsername[_username];
     }
@@ -81,7 +83,7 @@ contract Individual {
 
 
         uint32 _individual_id = addressByIndiviudalID[msg.sender];
-        individuals[_individual_id].healthContractId = _healthContractId;
+        individuals[_individual_id].healthContractId.push(_healthContractId);
         emit LogHealthContractAssigned(msg.sender, true, _healthContractId);
     }
 
