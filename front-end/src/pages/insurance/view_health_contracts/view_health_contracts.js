@@ -26,6 +26,7 @@ const ViewContracts = () => {
                 );
         
                 const allContracts = await contract.getAllHealthContracts();
+                console.log(allContracts);
                 setContracts(allContracts);
             } catch (error) {
                 console.log(error);
@@ -68,9 +69,28 @@ const ViewContracts = () => {
                                                     {contract.coverageType}
                                                     </h3>
                                                     <h4 className="u-align-center-xl u-align-center-xs u-text u-text-4" style={{"color": "#37306B"}} >
-                                                    Rs{" "}{contract.coverageLimit.toLocaleString()}
+                                                    General Care at Rs{" "}{contract.generalCare.toLocaleString()}
                                                     <br />
                                                     </h4>
+                                                    <h4 className="u-align-center-xl u-align-center-xs u-text u-text-4" style={{"color": "#37306B"}} >
+                                                    Dental Care at Rs{" "}{contract.dental.toLocaleString()}
+                                                    <br />
+                                                    </h4>
+                                                    <h4 className="u-align-center-xl u-align-center-xs u-text u-text-4" style={{"color": "#37306B"}} >
+                                                    Eye Care at Rs{" "}{contract.eyeCare.toLocaleString()}
+                                                    <br />
+                                                    </h4>
+                                                    {contract.approval ? (
+                                                        <h4 className="u-align-center-xl u-align-center-xs u-text u-text-4" style={{"color": "#37306B"}} >
+                                                            Automatic Approval
+                                                            <br />
+                                                        </h4>
+                                                        ) : (
+                                                        <h4 className="u-align-center-xl u-align-center-xs u-text u-text-4" style={{"color": "#37306B"}} >
+                                                            Insurance Admin Approval
+                                                            <br />
+                                                        </h4>
+                                                    )}
                                                     <p className="u-align-center-xl u-align-center-xs u-text u-text-5" spellCheck={false} style={{"color": "#146C94"}}>
                                                     Affordable coverage at{" "}
                                                     <span style={{ fontWeight: 700 }}>{contract.premium}</span>% premium.

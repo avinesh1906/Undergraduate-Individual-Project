@@ -148,7 +148,7 @@ const UploadContract = () => {
                   {errors.eyeCare && <label className="u-label" style={{"color": "red"}}>{errors.eyeCare}</label>}
                 </div>
                 <div className="u-form-group u-label-top u-form-group-2">
-                  <label htmlFor="dental" className="u-label u-text-body-alt-color u-label-2">Coverage Limit</label>
+                  <label htmlFor="dental" className="u-label u-text-body-alt-color u-label-2">Dental Coverage Limit</label>
                   <input 
                     type="number" 
                     placeholder="Enter your coverage limit (e.g. 10 000)" 
