@@ -12,8 +12,11 @@ const ClaimContractAddress = contractAddresses.ClaimContract;
 
 const UploadContract = () => {
     const [coverageType, setCoverageType] = useState('');
-    const [coverageLimit, setCoverageLimit] = useState('');
+    const [generalCare, setGeneralCare] = useState('');
+    const [dental, setDental] = useState('');
+    const [eyeCare, setEyeCare] = useState('');
     const [premium, setPremium] = useState('');
+    const [approval, setApproval] = useState(false);
     const { provider, signer } = useContext(Web3Context);
     const [isLoading, setIsLoading] = useState(false);
     const [errors, setErrors] = useState({});
@@ -25,10 +28,20 @@ const UploadContract = () => {
         errors.coverageType ='Coverage Type is required';
       }
 
-      if (!coverageLimit){
-        errors.coverageLimit = 'Coverage Limit is required';
-      } else if (!/^\d+$/.test(coverageLimit)) {
-        errors.coverageLimit = 'Coverage Limit must be an integer';
+      if (!generalCare){
+        errors.generalCare = 'General Care coverage limit is required';
+      } else if (!/^\d+$/.test(generalCare)) {
+        errors.generalCare = 'General Care coverage limit must be an integer';
+      }  
+      if (!dental){
+        errors.dental = 'Dental coverage limit is required';
+      } else if (!/^\d+$/.test(dental)) {
+        errors.dental = 'Dental coverage limit must be an integer';
+      }  
+      if (!eyeCare){
+        errors.eyeCare = 'Eye Care coverage limit is required';
+      } else if (!/^\d+$/.test(eyeCare)) {
+        errors.eyeCare = 'Eye Care coverage limit must be an integer';
       }  
 
       if (!premium){
@@ -48,11 +61,15 @@ const UploadContract = () => {
       }
     };
     
+    function handleToggle() {
+      setApproval(!approval);
+    }
+
     async function uploadHealthContract() {
       setIsLoading(true);
       const healthContract = new ethers.Contract(ClaimContractAddress, ClaimContract.abi, signer);
       try {
-        const tx  = await healthContract.uploadPolicy(coverageType, coverageLimit, premium);
+        const tx  = await healthContract.uploadPolicy(coverageType, premium, dental, eyeCare, generalCare, approval);
         const receipt  = await  provider.waitForTransaction(tx.hash);
         if (receipt.status === 1) {
             console.log('Transaction successful');
@@ -101,19 +118,49 @@ const UploadContract = () => {
 
                 </div>
                 <div className="u-form-group u-label-top u-form-group-2">
-                  <label htmlFor="coverageLimit" className="u-label u-text-body-alt-color u-label-2">Coverage Limit</label>
+                  <label htmlFor="generalCare" className="u-label u-text-body-alt-color u-label-2">General Care Covarage limit</label>
                   <input 
                     type="number" 
                     placeholder="Enter your coverage limit (e.g. 10 000)" 
-                    id="coverageLimit" 
-                    name="coverage_limit" 
+                    id="generalCare" 
+                    name="generalCare" 
                     className="u-border-white u-input u-input-rectangle u-text-grey-70 u-input-2" 
                     required 
-                    value={coverageLimit}
-                    onChange={(e) => setCoverageLimit(e.target.value)}
+                    value={generalCare}
+                    onChange={(e) => setGeneralCare(e.target.value)}
                     min={0}
                   />
-                  {errors.coverageLimit && <label className="u-label" style={{"color": "red"}}>{errors.coverageLimit}</label>}
+                  {errors.generalCare && <label className="u-label" style={{"color": "red"}}>{errors.generalCare}</label>}
+                </div>
+                <div className="u-form-group u-label-top u-form-group-2">
+                  <label htmlFor="eyeCare" className="u-label u-text-body-alt-color u-label-2">Eye Care coverage limit</label>
+                  <input 
+                    type="number" 
+                    placeholder="Enter your coverage limit (e.g. 10 000)" 
+                    id="eyeCare" 
+                    name="eyeCare" 
+                    className="u-border-white u-input u-input-rectangle u-text-grey-70 u-input-2" 
+                    required 
+                    value={eyeCare}
+                    onChange={(e) => setEyeCare(e.target.value)}
+                    min={0}
+                  />
+                  {errors.eyeCare && <label className="u-label" style={{"color": "red"}}>{errors.eyeCare}</label>}
+                </div>
+                <div className="u-form-group u-label-top u-form-group-2">
+                  <label htmlFor="dental" className="u-label u-text-body-alt-color u-label-2">Coverage Limit</label>
+                  <input 
+                    type="number" 
+                    placeholder="Enter your coverage limit (e.g. 10 000)" 
+                    id="dental" 
+                    name="dental" 
+                    className="u-border-white u-input u-input-rectangle u-text-grey-70 u-input-2" 
+                    required 
+                    value={dental}
+                    onChange={(e) => setDental(e.target.value)}
+                    min={0}
+                  />
+                  {errors.dental && <label className="u-label" style={{"color": "red"}}>{errors.dental}</label>}
                 </div>
                 <div className="u-form-group u-label-top">
                   <label htmlFor="premium" className="u-label u-text-body-alt-color u-label-3">Premium</label>
@@ -129,6 +176,17 @@ const UploadContract = () => {
                     min={0}
                   />
                   {errors.premium && <label className="u-label" style={{"color": "red"}}>{errors.premium}</label>}
+                </div>
+                <div className="u-form-group u-label-top">
+                  <label htmlFor="approval" className="u-label u-text-body-alt-color u-label-3">Automatic Approval</label>
+                  <input 
+                    id="approval" 
+                    name="approval" 
+                    checked={approval}
+                    onChange={handleToggle}
+                    className="u-border-white u-input u-input-rectangle u-text-grey-70 u-input-3" 
+                    type="checkbox"
+                  />
                 </div>
                 <div 
                   className="u-align-left u-form-group u-form-submit u-label-top"
