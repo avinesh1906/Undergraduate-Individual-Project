@@ -22,6 +22,7 @@ const SubmitClaim = () => {
   const [selectedIndividual, setSelectedIndividual] = useState(null);
   const [claimAmount, setClaimAmount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitLoading, setIsSubmitLoading] = useState(false);
   let { signer } = useContext(Web3Context);
   const {username} = useContext(UserContext);
 
@@ -68,17 +69,16 @@ const SubmitClaim = () => {
   };
 
   const submitTheClaim = async () => {
+    setIsSubmitLoading(true);
     const claimContract = new ethers.Contract(ClaimContractAddress, ClaimContract.abi, signer);
     await claimContract.submitClaim(username, selectedIndividual.username, claimAmount, selectedIndividual.healthContractId);
-
+    setIsSubmitLoading(false);
   }
 
   const handleSubmit = (event) => {
     event.preventDefault();
-
     submitTheClaim();
     navigate("/hio/view_claims");
-
   };
 
   return (
@@ -179,7 +179,10 @@ const SubmitClaim = () => {
                               spellCheck="false"
                             />
                           </div>
-                          <div className="u-align-left u-form-group u-form-submit u-label-top">
+                          <div 
+                            className="u-align-left u-form-group u-form-submit u-label-top"
+                            style={{ display: isSubmitLoading ? "none" : "block" }}
+                          >
                             <a
                               href="/hio/submit_claim"
                               onClick={handleSubmit}
@@ -193,6 +196,11 @@ const SubmitClaim = () => {
                               className="u-form-control-hidden"
                               wfd-invisible="true"
                             />
+                          </div>
+                          <div className="loader-div-view-health-contracts">
+                            <div style={{ display: isSubmitLoading ? "block" : "none" }}>  
+                                <Loader/>
+                            </div>
                           </div>
                         </>
                         )
