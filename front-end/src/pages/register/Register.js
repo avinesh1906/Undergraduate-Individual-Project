@@ -194,7 +194,7 @@ const Register = () => {
           setUsername(event.args[0]);
           setLoggedMemberType(memberType);
           login();
-          navigate("");
+          navigate("/hio/view_claims");
         } else {
           console.log('Transaction failed');
         }
