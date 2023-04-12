@@ -17,7 +17,7 @@ const ChooseHealthContract = () => {
   const { signer } = useContext(Web3Context);
   const [healthContracts, setHealthContracts] = useState([]);
   const [selectedContract, setSelectedContract] = useState(null);
-  const [isSigned, setIsSigned] = useState(false);
+  const [individualExisitingHealthContracts, setSelectedIndividualExisitingHealthContracts] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitLoading, setIsSubmitLoading] = useState(false);
   const [selectedContractId, setSelectedContractId] = useState(null);
@@ -27,10 +27,9 @@ const ChooseHealthContract = () => {
   const checkIfSigned = useCallback(async () => {
         try {
             const individualContract = new ethers.Contract(IndividualContractAddress, IndividualContract.abi, signer);
-            await individualContract.getHealthContract(username);
-            setIsSigned(true);
+            setSelectedIndividualExisitingHealthContracts(await individualContract.getHealthContracts(username));
         } catch (error) {
-            setIsSigned(false);  
+            setSelectedIndividualExisitingHealthContracts([]);  
         } 
     }, [signer, username]);
 
@@ -81,6 +80,7 @@ const ChooseHealthContract = () => {
         <div style={{ display: isLoading ? "none" : "block" }}>
             <>
                 {healthContracts.length > 0 ? (
+                    
                     <div className="u-body u-xl-mode" data-lang="en">
                         <section className="u-align-center u-clearfix u-grey-15 u-section-7" id="carousel_e3db">
                             <div className="u-clearfix u-sheet u-sheet-1">
@@ -108,32 +108,49 @@ const ChooseHealthContract = () => {
                                                             <span style={{ fontWeight: 700 }}>{contract.premium}</span>% Premium<br />
                                                         </p>
                                                         <p className="u-text u-text-5" spellCheck={false}>
-                                                            Rs{" "}<span style={{ fontWeight: 700 }}>{contract.coverageLimit.toLocaleString()}</span> Coverage Limit
+                                                            Rs{" "}<span style={{ fontWeight: 700 }}>{contract.generalCare.toLocaleString()}</span> for general care
                                                         </p>
-                                                        {isSigned ? (
-                                                            <h2 className="u-custom-font" spellCheck="false" style={{"color": "#D27685"}}>A contract has already been signed<br /></h2>
-                                                        ): (
-                                                            <>
-                                                                <button 
-                                                                    className="u-active-palette-1-base u-border-2 u-border-active-white u-border-hover-white u-border-white u-btn u-btn-round u-button-style u-hover-palette-1-base u-radius-10 u-text-active-white u-text-hover-white u-white u-btn-1"
-                                                                    onClick={() => {
-                                                                        if (selectedContractId === contract.healthcontractID) {
-                                                                            submit();
-                                                                        } else {
-                                                                            selectContract(contract.healthcontractID);
-                                                                            setSelectedContractId(contract.healthcontractID);
-                                                                        }
-                                                                    }}
-                                                                    style={{
-                                                                        display: isSubmitLoading ? "none" : "block"
-                                                                    }}
-                                                                >
-                                                                    {selectedContractId === contract.healthcontractID ? "Sign" : "Select"}
-                                                                </button>
-                                                                <div className="loader-div" style={{ display: isSubmitLoading ? "block" : "none" }}>  
-                                                                    <Loader/>
-                                                                </div>
-                                                            </>
+                                                        <p className="u-text u-text-5" spellCheck={false}>
+                                                            Rs{" "}<span style={{ fontWeight: 700 }}>{contract.dental.toLocaleString()}</span> for dental care
+                                                        </p>
+                                                        <p className="u-text u-text-5" spellCheck={false}>
+                                                            Rs{" "}<span style={{ fontWeight: 700 }}>{contract.eyeCare.toLocaleString()}</span> for eye care
+                                                        </p>
+                                                        {contract.approval ? (
+                                                            <p className="u-text u-text-5" spellCheck={false}>
+                                                                <span style={{ fontWeight: 700 }}>Automatic{" "}</span> Approval
+                                                            </p>
+                                                            ) : (
+                                                            <p className="u-text u-text-5" spellCheck={false}>
+                                                                <span style={{ fontWeight: 700 }}>Insurance Admin{" "}</span> Approval
+                                                            </p>
+                                                        )}
+                                                        {individualExisitingHealthContracts.includes(contract.healthcontractID) ? (
+                                                            <h2 className="u-custom-font" spellCheck="false" style={{ color: "#0EA293" }}>SIGNED<br /></h2>
+                                                        ) : (
+                                                        <>
+                                                            <button 
+                                                            className="u-active-palette-1-base u-border-2 u-border-active-white u-border-hover-white u-border-white u-btn u-btn-round u-button-style u-hover-palette-1-base u-radius-10 u-text-active-white u-text-hover-white u-white u-btn-1"
+                                                            onClick={() => {
+                                                                if (selectedContractId === contract.healthcontractID) {
+                                                                submit();
+                                                                } else {
+                                                                selectContract(contract.healthcontractID);
+                                                                setSelectedContractId(contract.healthcontractID);
+                                                                }
+                                                            }}
+                                                            style={{
+                                                                display: isSubmitLoading ? "none" : "block"
+                                                            }}
+                                                            >
+                                                            {selectedContractId === contract.healthcontractID ? "Sign" : "Select"}
+                                                            </button>
+                                                            {selectedContractId === contract.healthcontractID && (
+                                                            <div className="loader-div" style={{ display: isSubmitLoading ? "block" : "none" }}>
+                                                                <Loader/>
+                                                            </div>
+                                                            )}
+                                                        </>
                                                         )}
                                                     </div>
                                                 </div>
