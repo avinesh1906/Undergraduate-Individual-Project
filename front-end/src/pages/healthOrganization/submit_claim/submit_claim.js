@@ -16,7 +16,7 @@ const ClaimContractAddress = contractAddresses.ClaimContract;
 
 const SubmitClaim = () => {
   const [individuals, setIndividuals] = useState([]);
-  const [healthServices, setHealthServices] = useState([]);
+  const [healthServices, setHealthServices] = useState('');
   const [individualHealthContracts, setIndividualHealthContracts] = useState([]);
   const [healthContract, setHealthContract] = useState('');
   const [selectedIndividual, setSelectedIndividual] = useState('');
@@ -80,14 +80,14 @@ const SubmitClaim = () => {
   const submitTheClaim = async () => {
     setIsSubmitLoading(true);
     const claimContract = new ethers.Contract(ClaimContractAddress, ClaimContract.abi, signer);
-    await claimContract.submitClaim(username, selectedIndividual.username, claimAmount, selectedIndividual.healthContractId);
+    await claimContract.submitClaim(username, selectedIndividual, claimAmount, healthContract, healthServices);
     setIsSubmitLoading(false);
+    navigate("/hio/view_claims");
   }
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    submitTheClaim();
-    navigate("/hio/view_claims");
+    await submitTheClaim();
   };
 
   return (

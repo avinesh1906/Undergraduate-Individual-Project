@@ -43,7 +43,7 @@ const ViewHIOClaims = () => {
                 <div className="u-body u-xl-mode" data-lang="en">
                     <section className="u-clearfix u-palette-5-light-2 u-section-6" id="sec-9b24">
                         <div className="u-clearfix u-sheet u-sheet-1">
-                            <h1 className="u-align-center u-text u-text-default u-text-1" spellCheck="false">List of Claims<br/></h1>
+                            <h1 className="u-align-center u-text u-text-default u-text-1" spellCheck="false">List of Submitted Claims<br/></h1>
                             <div className="u-expanded-width u-table u-table-responsive u-table-1">
                                 <table className="u-table-entity">
                                     <colgroup>
@@ -59,6 +59,7 @@ const ViewHIOClaims = () => {
                                         <th className="u-table-cell"></th>
                                         <th className="u-table-cell">Requester</th>
                                         <th className="u-table-cell">Health Contract<br/></th>
+                                        <th className="u-table-cell">Health Service<br/></th>
                                         <th className="u-table-cell">Status</th>
                                         <th className="u-table-cell">Claim Amount<br/></th>
                                     </tr>
@@ -71,6 +72,13 @@ const ViewHIOClaims = () => {
                                                         <td className="u-black u-first-column u-table-cell u-table-cell-7">{index + 1}</td>
                                                         <td className="u-table-cell">{claim["requester"]}</td>
                                                         <td className="u-table-cell">{claim["healthContract"]["coverageType"]}</td>
+                                                        {claim["claimType"] === "generalCare" ? (
+                                                        <td className="u-table-cell">General Care</td>
+                                                        ) : claim["claimType"] === "dental" ? (
+                                                        <td className="u-table-cell">Dental Care</td>
+                                                        ) : claim["claimType"] === "eyeCare" ? (
+                                                        <td className="u-table-cell">Eye Care</td>
+                                                        ) : null}
                                                         <td className="u-table-cell">{determineStatus(claim["status"])}</td>
                                                         <td className="u-table-cell">Rs{" "} {claim["claimAmount"].toLocaleString()}<br/></td>
                                                     </tr>
@@ -79,6 +87,13 @@ const ViewHIOClaims = () => {
                                                     <td className="u-black u-first-column u-table-cell u-table-cell-13">{index + 1}</td>
                                                     <td className="u-palette-5-light-1 u-table-cell u-table-cell-15">{claim["requester"]}</td>
                                                     <td className="u-palette-5-light-1 u-table-cell u-table-cell-16">{claim["healthContract"]["coverageType"]}</td>
+                                                    {claim["claimType"] === "generalCare" ? (
+                                                    <td className="u-palette-5-light-1 u-table-cell u-table-cell-16">General Care</td>
+                                                    ) : claim["claimType"] === "dental" ? (
+                                                    <td className="u-palette-5-light-1 u-table-cell u-table-cell-16">Dental Care</td>
+                                                    ) : claim["claimType"] === "eyeCare" ? (
+                                                    <td className="u-palette-5-light-1 u-table-cell u-table-cell-16">Eye Care</td>
+                                                    ) : null}
                                                     <td className="u-palette-5-light-1 u-table-cell u-table-cell-17">{determineStatus(claim["status"])}</td>
                                                     <td className="u-palette-5-light-1 u-table-cell u-table-cell-18">Rs{" "} {claim["claimAmount"].toLocaleString()}<br/></td>
                                                 </tr>
