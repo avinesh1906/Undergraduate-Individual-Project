@@ -25,6 +25,8 @@ const SubmitClaim = () => {
   const [isSubmitLoading, setIsSubmitLoading] = useState(false);
   let { signer } = useContext(Web3Context);
   const {username} = useContext(UserContext);
+  const [claimExists, isClaimExists] = useState(false);
+  const [claims, setClaims] = useState([]);
 
   const navigate = useNavigate();
 
@@ -57,11 +59,20 @@ const SubmitClaim = () => {
   
   const handleIndividualSelect = async (individual) => {
     setSelectedIndividual(individual);
+    const claimContract = new ethers.Contract(ClaimContractAddress, ClaimContract.abi, signer);
+    setClaims(await claimContract.getIndividualClaims(individual));
     await getIndividualContracts();
   };
 
   const handleHealthServiceSelect = (healthService) => {
     setHealthServices(healthService);
+    claims.forEach((claim) =>{
+      if (claim.claimType === healthServices && claim.healthContract.healthcontractID === healthContract){
+        isClaimExists(true);
+      } else {
+        isClaimExists(false);
+      }
+    });
   };
 
   const handleHealthContracteSelect = (healthContract) => {
@@ -183,6 +194,14 @@ const SubmitClaim = () => {
                             className="u-align-left u-form-group u-form-submit u-label-top"
                             style={{ display: isSubmitLoading ? "none" : "block" }}
                           >
+                            {claimExists ? (
+                            <label
+                              className="u-label u-text-palette-4-dark-3 u-label-2"
+                            >
+                              Claim already submitted for this health contract and health service 
+                            </label>
+                        ):(
+                          <>
                             <a
                               href="/hio/submit_claim"
                               onClick={handleSubmit}
@@ -196,6 +215,8 @@ const SubmitClaim = () => {
                               className="u-form-control-hidden"
                               wfd-invisible="true"
                             />
+                          </>
+                        )}
                           </div>
                           <div className="loader-div-view-health-contracts">
                             <div style={{ display: isSubmitLoading ? "block" : "none" }}>  

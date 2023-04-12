@@ -9,6 +9,7 @@ import { UserContext } from '../../../UserContext';
 import Loader from "../../../components/loader/loader";
 import notFound from '../../../images/view_contract/notFound.jpg';
 import { useNavigate } from "react-router-dom";
+import picture from '../../../images/submit_claim/picture.jpg';
 
 const ClaimContractAddress = contractAddresses.ClaimContract;
 const IndividualContractAddress = contractAddresses.Individual;
@@ -16,50 +17,57 @@ const IndividualContractAddress = contractAddresses.Individual;
 const RequestClaim = () => {
   const { signer, provider } = useContext(Web3Context);
   const [claimAmount, setClaimAmount] = useState("");
-  const [coverageLimit, setCoverageLimit] = useState("");
-	const [premium, setPremium] = useState("");
-	const [coverageType, setCoverageType] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [hasContract, setHasContract] = useState(false);
   const {username} = useContext(UserContext);
+  const [healthServices, setHealthServices] = useState([]);
+  const [claims, setClaims] = useState([]);
   const navigate = useNavigate();
-  const [hasClaim, setHasClaim] = useState(false);
+  const [isSubmitLoading, setIsSubmitLoading] = useState(false);
+  const [healthContract, setHealthContract] = useState([]);
+  const [individualHealthContracts, setIndividualHealthContracts] = useState([]);
+  const [claimExists, isClaimExists] = useState(false);
+
+    
+  const loadIndividualClaims = useCallback(async () => {
+    setIsLoading(true);
+    const claimContract = new ethers.Contract(ClaimContractAddress, ClaimContract.abi, signer);
+    setClaims(await claimContract.getIndividualClaims(username));
+  }, [signer, username]);
 
   const loadHealthContractID = useCallback(async () => {
     setIsLoading(true);
     const individualContract = new ethers.Contract(IndividualContractAddress, IndividualContract.abi, signer);
     try {
-      const indiviualHealthContractID = await individualContract.getHealthContract(username);
-      const claimContract = new ethers.Contract(
-        ClaimContractAddress,
-        ClaimContract.abi,
-        signer
-      );
-      const healthContractById = await claimContract.getHealthContract(indiviualHealthContractID);
-      console.log(healthContractById);
-      setCoverageLimit(healthContractById[1]);
-      setPremium(healthContractById[2]);
-      setCoverageType(healthContractById[3]);
+      setIndividualHealthContracts(await individualContract.getHealthContracts(username));
       setHasContract(true);
+      loadIndividualClaims();
     } catch (error) {
       setHasContract(false);
     }
-  }, [signer, username]);
+  }, [signer, username, loadIndividualClaims]);
 
   useEffect(() => {
-    const hasIndividualClaim = async () => {
+    const hasIndividualHealthContract = async () => {
       setIsLoading(true);
-      const claimContract = new ethers.Contract(ClaimContractAddress, ClaimContract.abi, signer);
-      const hasClaim  = await claimContract.hasIndividualClaim(username);
-      setHasClaim(hasClaim);
-      console.log(hasClaim);
       loadHealthContractID();
+      
+      setIsLoading(false);
     } 
-    hasIndividualClaim();
+    hasIndividualHealthContract();
   }, [signer, username, loadHealthContractID]);
 
-	
+  const getHealthContract = async (contractID) => {
+    const claimContract = new ethers.Contract(ClaimContractAddress, ClaimContract.abi, signer);
+    return claimContract.getHealthContract(contractID);
+  }
+
+  const handleHealthContracteSelect = (healthContract) => {
+    setHealthContract(healthContract);
+  };
+
   const handleRequestClaim = async () => {
+    setIsSubmitLoading(true);
     const individualContract = new ethers.Contract(IndividualContractAddress, IndividualContract.abi, signer);
     const indiviualHealthContractID = await individualContract.getHealthContract(username);
 
@@ -75,13 +83,28 @@ const RequestClaim = () => {
         if (log.topics[0] === eventSignature) {
           const event = claimContract.interface.parseLog(log);
           console.log(event.args);
+          
         }
         console.log('Transaction successful');
       });
     } else {
       console.log('Transaction failed');
     }
+    setIsSubmitLoading(false);
+
   }
+
+  const handleHealthServiceSelect = (healthService) => {
+    setHealthServices(healthService);
+    claims.forEach((claim) =>{
+      if (claim.claimType === healthServices && claim.healthContract.healthcontractID === healthContract){
+        isClaimExists(true);
+      } else {
+        isClaimExists(false);
+      }
+    });
+  };
+  
 	
   const signHealthContract = () => {
     navigate("/individual/sign_health_contract");
@@ -93,78 +116,93 @@ const RequestClaim = () => {
         <>
           {hasContract ? (
             <div className="u-body u-xl-mode" data-lang="en">
-            <section className="u-clearfix u-grey-5 u-section-9" id="sec-5990">
-              <div className="u-clearfix u-sheet u-sheet-1">
-                <div className="u-clearfix u-expanded-width u-gutter-0 u-layout-wrap u-layout-wrap-1">
-                  <div className="u-layout" style={{}}>
-                    <div className="u-layout-row" style={{}}>
-                      <div className="u-container-style u-layout-cell u-radius-7 u-shape-round u-size-30 u-layout-cell-1">
-                        <div className="u-border-2 u-border-grey-75 u-container-layout u-container-layout-1">
-                          <h5 className="u-custom-font u-font-montserrat u-text u-text-default u-text-1">
-                            24/7 Service
-                            <br />
-                          </h5>
-                          <h3 className="u-custom-font u-font-montserrat u-text u-text-default u-text-palette-1-dark-1 u-text-2" spellCheck="false">
-                            Signed Health Contract
-                            <br />
-                          </h3>
-                          <p className="u-text u-text-default u-text-3" spellCheck="false">
-                            Please find your signed health contract attached below for your reference
-                          </p>
-                          <ul className="u-text u-text-4" spellCheck="false">
-                            <li>{coverageType}</li>
-                            <li>Rs{" "}{coverageLimit.toLocaleString()} Coverage Limit</li>
-                            <li>{premium}% Premium</li>
-                          </ul>
+            <section className="u-clearfix u-valign-middle-xs u-section-10" id="sec-b1ce">
+              <div className="u-expanded-height u-palette-1-base u-shape u-shape-rectangle u-shape-1"></div>
+              <img src={picture} alt="" className="u-image u-image-default u-image-1" data-image-width="1200" data-image-height="800" />
+              <div className="u-align-center u-container-style u-gradient u-group u-group-1">
+                <div className="u-container-layout u-container-layout-1">
+                  <h2 className="u-text u-text-1" spellCheck="false">SUBMIT A CLAIM<br /></h2>
+                  <div className="u-align-left u-border-2 u-border-palette-4-light-3 u-form u-form-1">
+                    <form className="u-clearfix u-form-spacing-28 u-form-vertical u-inner-form" style={{ padding: '10px' }} source="email" name="form">
+                      <div className="u-form-group u-form-select u-form-group-2">
+                      <label htmlFor="healthContract" className="u-label u-text-palette-4-dark-3 u-label-1">Choose the individual's signed contract</label>
+                      <div className="u-form-select-wrapper">
+                        <select id="healthContract" name="select" value={healthContract || ''} onChange={(e) => handleHealthContracteSelect(e.target.value)}  className="u-border-1 u-border-grey-30 u-input u-input-rectangle u-white" required="required">
+                        <option value="" disabled defaultValue>Select a signed health contract</option>
+                          {individualHealthContracts.map(async healthContractID => (
+                            <option key={healthContractID} value={healthContractID} data-calc="healthContract" >{await getHealthContract(healthContractID)}</option>
+                          ))}
+                        </select>
+                        <svg className="u-caret u-caret-svg" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16" style={{fill: "currentColor"}} xmlSpace="preserve"><polygon className="st0" points="8,12 2,4 14,4 "></polygon></svg>
                         </div>
                       </div>
-                      <div className="u-container-style u-layout-cell u-shape-rectangle u-size-30 u-layout-cell-2">
-                        <div className="u-container-layout u-container-layout-2">
-                          <h3 className="u-custom-font u-font-montserrat u-text u-text-default u-text-palette-1-dark-1 u-text-5" spellCheck="false">
-                            Request A Claim
-                            <br />
-                          </h3>
-                          <div className="u-container-style u-expanded-width-sm u-expanded-width-xs u-group u-radius-20 u-shape-round u-white u-group-1">
-                            <div className="u-container-layout u-container-layout-3">
-                              <div className="u-form u-form-1">
-                                <div
-                                  className="u-clearfix u-form-spacing-10 u-form-vertical u-inner-form"
-                                  style={{ padding: "10px" }}
-                                >
-                                  <div className="u-form-group u-form-name">
-                                    <label htmlFor="name-61fc" className="u-label u-label-1">
-                                      Claim Amount
-                                    </label>
-                                    <input
-                                      type="number"
-                                      placeholder="Enter your claim amount"
-                                      id="name-61fc"
-                                      min={0}
-                                      name="name"
-                                      className="u-border-grey-10 u-input u-input-rectangle"
-                                      required=""
-                                      spellCheck="false"
-                                      value={claimAmount}
-                                      onChange={(e) => setClaimAmount(e.target.value)}
-                                    />
-                                  </div>
-                                  <div className="u-align-right u-form-group u-form-submit">
-                                    <button onClick={handleRequestClaim} className="u-border-none u-btn u-btn-submit u-button-style u-hover-palette-1-dark-1 u-palette-1-light-1 u-btn-1">
-                                      Submit
-                                    </button>
-                                  </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
+                      <div className="u-form-group u-form-select u-form-group-2">
+                        <label htmlFor="healthService" className="u-label u-text-palette-4-dark-3 u-label-1">Health Service</label>
+                        <div className="u-form-select-wrapper">
+                          <select id="healthService" name="select" value={healthServices || ''} onChange={(e) => handleHealthServiceSelect(e.target.value)}  className="u-border-1 u-border-grey-30 u-input u-input-rectangle u-white" required="required">
+                            <option value="" disabled defaultValue>Choose the health service</option>
+                            <option value="generalCare" data-calc="healthService" >General Care</option>
+                            <option value="dental" data-calc="healthService" >Dental Care</option>
+                            <option value="eyeCare" data-calc="healthService" >Eye Care</option>
+                          </select>
+                          <svg className="u-caret u-caret-svg" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16" style={{fill: "currentColor"}} xmlSpace="preserve"><polygon className="st0" points="8,12 2,4 14,4 "></polygon></svg>
                         </div>
                       </div>
-                    </div>
+                      <div className="u-form-group u-label-top u-form-group-2">
+                        <label
+                          htmlFor="claimAmt"
+                          className="u-label u-text-palette-4-dark-3 u-label-2"
+                        >
+                          Claim Amount
+                        </label>
+                        <input
+                          type="number"
+                          id="claimAmt"
+                          value={claimAmount}
+                          onChange={(event) => setClaimAmount(event.target.value)}
+                          className="u-input u-input-rectangle"
+                          spellCheck="false"
+                        />
+                      </div>
+                      <div 
+                        className="u-align-left u-form-group u-form-submit u-label-top"
+                        style={{ display: isSubmitLoading ? "none" : "block" }}
+                      >
+                        {claimExists ? (
+                            <label
+                              className="u-label u-text-palette-4-dark-3 u-label-2"
+                            >
+                              Claim already submitted for this health contract and health service 
+                            </label>
+                        ):(
+                          <>
+                            <a
+                              href="/hio/submit_claim"
+                              onClick={handleRequestClaim}
+                              className="u-border-2 u-border-grey-75 u-btn u-btn-round u-btn-submit u-button-style u-hover-palette-1-dark-1 u-palette-1-light-2 u-radius-6 u-text-active-palette-1-dark-2 u-btn-1"
+                            >
+                              Submit
+                            </a>
+                            <input
+                              type="submit"
+                              value="submit"
+                              className="u-form-control-hidden"
+                              wfd-invisible="true"
+                            />
+                          </>
+                        )}
+                      </div>
+                      <div className="loader-div-view-health-contracts">
+                        <div style={{ display: isSubmitLoading ? "block" : "none" }}>  
+                            <Loader/>
+                        </div>
+                      </div>
+                    </form>
                   </div>
                 </div>
-              </section>
-            </div>
+              </div>
+            </section>
+          </div>     
           ):(
             <div className="u-body u-xl-mode" data-lang="en">
                 <section className="u-align-center u-clearfix u-section-5" id="sec-f685">
