@@ -43,6 +43,8 @@ const ViewAllClaims = () => {
         const claimContract = new ethers.Contract(ClaimContractAddress, ClaimContract.abi, signer);
         await claimContract.adminApproval(claimID)
         setIsApprovalLoading(false);
+        window.location.reload({ preserveState: true });
+
     };
 
     const handleDecline = async (claimID) => {
@@ -50,6 +52,8 @@ const ViewAllClaims = () => {
         const claimContract = new ethers.Contract(ClaimContractAddress, ClaimContract.abi, signer);
         await claimContract.adminDisapproval(claimID)
         setIsApprovalLoading(false);
+        window.location.reload({ preserveState: true });
+
     };
       
     return (
