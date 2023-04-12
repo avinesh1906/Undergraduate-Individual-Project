@@ -156,6 +156,20 @@ contract ClaimContract is HealthPolicy {
         emit LogClaimLimit(claimLimit);
     }
 
+    function adminApproval(uint _claimID) public {
+        // Get the claim from the list of claims
+        Claim memory claim = claims[_claimID];
+        claim.status = ClaimStatus.Approved;
+        claims[_claimID] = claim;
+    }
+
+    function adminDisapproval(uint _claimID) public {
+        // Get the claim from the list of claims
+        Claim memory claim = claims[_claimID];
+        claim.status = ClaimStatus.Denied;
+        claims[_claimID] = claim;
+    }
+
     // Function to get all claims
     function getAllClaims() public onlyInsurance view returns (Claim[] memory){
         // Returns an array of all claims stored in the contract
