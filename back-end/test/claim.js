@@ -95,6 +95,24 @@ contract("ClaimContract", async accounts => {
     assert.equal(claim.status.toNumber(), 1);
   });
 
+  it("should approve an insurance request", async () => {
+    // Upload another policy
+    await contract.uploadPolicy("coverageType", 10, claimAmount, claimAmount, claimAmount, false, { from: accounts[2] });
+    await contract.requestClaim(individual, 5, 2, "generalCare", { from: individualAddress });
+    await contract.adminApproval(0);
+    const claim = await contract.claims(0);
+    assert.equal(claim.status.toNumber(), 1);
+  });
+
+  it("should disapprove an insurance request", async () => {
+    // Upload another policy
+    await contract.uploadPolicy("coverageType", 10, claimAmount, claimAmount, claimAmount, false, { from: accounts[2] });
+    await contract.requestClaim(individual, 5, 2, "generalCare", { from: individualAddress });
+    await contract.adminDisapproval(0);
+    const claim = await contract.claims(0);
+    assert.equal(claim.status.toNumber(), 2);
+  });
+
   it("should approve a submitted claim by the HIO", async () => {
     // Upload another policy
     await contract.uploadPolicy("coverageType", 10, claimAmount, claimAmount, claimAmount, true, { from: accounts[2] });
