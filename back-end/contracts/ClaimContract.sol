@@ -183,7 +183,7 @@ contract ClaimContract is HealthPolicy {
 
 
     // function for the individual to get all claims related to him
-    function getIndividualClaims(string memory _username) public onlyIndividual view returns (Claim[] memory) {
+    function getIndividualClaims(string memory _username) public view returns (Claim[] memory) {
         uint count = 0;
         for (uint i = 0; i < claims.length; i++) {
             if (compareString(claims[i].requester, _username)) {

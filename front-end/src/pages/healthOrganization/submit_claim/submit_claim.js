@@ -1,5 +1,5 @@
 import { ethers } from 'ethers';
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useCallback } from 'react';
 import contractAddresses from '../../../config';
 import IndividualContract from '../../../contracts/individual.json';
 import { Web3Context } from '../../../Web3Context';
@@ -18,8 +18,8 @@ const SubmitClaim = () => {
   const [individuals, setIndividuals] = useState([]);
   const [healthServices, setHealthServices] = useState([]);
   const [individualHealthContracts, setIndividualHealthContracts] = useState([]);
-  const [healthContract, setHealthContract] = useState([]);
-  const [selectedIndividual, setSelectedIndividual] = useState(null);
+  const [healthContract, setHealthContract] = useState('');
+  const [selectedIndividual, setSelectedIndividual] = useState('');
   const [claimAmount, setClaimAmount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitLoading, setIsSubmitLoading] = useState(false);
@@ -27,8 +27,16 @@ const SubmitClaim = () => {
   const {username} = useContext(UserContext);
   const [claimExists, isClaimExists] = useState(false);
   const [claims, setClaims] = useState([]);
+  const [allHealthContract, setHealthContracts] = useState([]);
+
 
   const navigate = useNavigate();
+
+  const getHealthContract = useCallback(async () => {
+    const claimContract = new ethers.Contract(ClaimContractAddress, ClaimContract.abi, signer);
+    setHealthContracts(await claimContract.getAllHealthContracts());
+  }, [signer]);
+  
 
   useEffect(() => {
     const loadIndividualList = async () => {
@@ -37,37 +45,27 @@ const SubmitClaim = () => {
         const individualContract = new ethers.Contract(IndividualContractAddress, IndividualContract.abi, signer);
         const individuals = await individualContract.getAllIndividuals();
         setIndividuals(individuals);
+        await getHealthContract();
       } catch (error) {
         console.log(error);
       }
       setIsLoading(false);
     } 
     loadIndividualList();
-  }, [signer]);
+  }, [getHealthContract, signer]);
 
-  const getHealthContract = async (contractID) => {
-    const claimContract = new ethers.Contract(ClaimContractAddress, ClaimContract.abi, signer);
-    return claimContract.getHealthContract(contractID);
-  }
-
-  const getIndividualContracts = async () => {
-    const individualContract = new ethers.Contract(IndividualContractAddress, IndividualContract.abi, signer);
-    if (selectedIndividual != null){
-      setIndividualHealthContracts(await individualContract.getHealthContracts(selectedIndividual));
-    }
-  }
-  
   const handleIndividualSelect = async (individual) => {
     setSelectedIndividual(individual);
     const claimContract = new ethers.Contract(ClaimContractAddress, ClaimContract.abi, signer);
     setClaims(await claimContract.getIndividualClaims(individual));
-    await getIndividualContracts();
+    const individualContract = new ethers.Contract(IndividualContractAddress, IndividualContract.abi, signer);
+    setIndividualHealthContracts(await individualContract.getHealthContracts(individual));
   };
 
   const handleHealthServiceSelect = (healthService) => {
     setHealthServices(healthService);
     claims.forEach((claim) =>{
-      if (claim.claimType === healthServices && claim.healthContract.healthcontractID === healthContract){
+      if (claim.claimType === healthService && String(claim["healthContract"]["healthcontractID"]) === String(healthContract)){
         isClaimExists(true);
       } else {
         isClaimExists(false);
@@ -155,9 +153,13 @@ const SubmitClaim = () => {
                           <div className="u-form-select-wrapper">
                             <select id="healthContract" name="select" value={healthContract || ''} onChange={(e) => handleHealthContracteSelect(e.target.value)}  className="u-border-1 u-border-grey-30 u-input u-input-rectangle u-white" required="required">
                             <option value="" disabled defaultValue>Select a signed health contract</option>
-                              {individualHealthContracts.map(async healthContractID => (
-                                <option key={healthContractID} value={healthContractID} data-calc="healthContract" >{await getHealthContract(healthContractID)}</option>
-                              ))}
+                            {individualHealthContracts.map(healthContractID => (
+                              allHealthContract.map((singleContract) => (
+                                singleContract.healthcontractID === healthContractID ? (
+                                  <option key={healthContractID} value={healthContractID} data-calc="healthContract" >{singleContract.coverageType}</option>
+                                ) : null
+                              ))
+                            ))}
                             </select>
                             <svg className="u-caret u-caret-svg" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16" style={{fill: "currentColor"}} xmlSpace="preserve"><polygon className="st0" points="8,12 2,4 14,4 "></polygon></svg>
                             </div>
@@ -198,27 +200,20 @@ const SubmitClaim = () => {
                             <label
                               className="u-label u-text-palette-4-dark-3 u-label-2"
                             >
-                              Claim already submitted for this health contract and health service 
+                              Cannot submit this claim again
                             </label>
                         ):(
                           <>
-                            <a
-                              href="/hio/submit_claim"
+                            <section
                               onClick={handleSubmit}
                               className="u-border-2 u-border-grey-75 u-btn u-btn-round u-btn-submit u-button-style u-hover-palette-1-dark-1 u-palette-1-light-2 u-radius-6 u-text-active-palette-1-dark-2 u-btn-1"
                             >
                               Submit
-                            </a>
-                            <input
-                              type="submit"
-                              value="submit"
-                              className="u-form-control-hidden"
-                              wfd-invisible="true"
-                            />
+                            </section>
                           </>
                         )}
                           </div>
-                          <div className="loader-div-view-health-contracts">
+                          <div className="loader-div">
                             <div style={{ display: isSubmitLoading ? "block" : "none" }}>  
                                 <Loader/>
                             </div>
