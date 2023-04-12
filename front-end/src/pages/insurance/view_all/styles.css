@@ -63,3 +63,11 @@
     font-weight: 700;
     background-image: none;
   }
+
+  #approveBtn:hover{
+    background-color: #2E4F4F;
+  }
+
+  #declineBtn:hover{
+    background-color: #DF2E38;
+  }

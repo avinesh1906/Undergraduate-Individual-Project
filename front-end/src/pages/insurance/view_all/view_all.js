@@ -13,6 +13,7 @@ const ViewAllClaims = () => {
     const {signer } = useContext(Web3Context);
     const [isLoading, setIsLoading] = useState(false);
     const [claims, setClaims] = useState([]);
+    const [isApprovalLoading, setIsApprovalLoading] = useState(false);
 
     useEffect(() => {
         const retrieveAllClaims = async () =>{
@@ -35,6 +36,22 @@ const ViewAllClaims = () => {
             return "Denied";
         }
     }
+
+
+    const handleApprove = async (claimID) => {
+        setIsApprovalLoading(true);
+        const claimContract = new ethers.Contract(ClaimContractAddress, ClaimContract.abi, signer);
+        await claimContract.adminApproval(claimID)
+        setIsApprovalLoading(false);
+    };
+
+    const handleDecline = async (claimID) => {
+        setIsApprovalLoading(true);
+        const claimContract = new ethers.Contract(ClaimContractAddress, ClaimContract.abi, signer);
+        await claimContract.adminDisapproval(claimID)
+        setIsApprovalLoading(false);
+    };
+      
     return (
     <>
         <div style={{ display: isLoading ? "none" : "block" }}> 
@@ -46,12 +63,13 @@ const ViewAllClaims = () => {
                             <div className="u-expanded-width u-table u-table-responsive u-table-1">
                                 <table className="u-table-entity">
                                     <colgroup>
-                                    <col width="11.6%"/>
-                                    <col width="22.5%"/>
-                                    <col width="17%"/>
-                                    <col width="17%"/>
+                                    <col width="7%"/>
                                     <col width="15%"/>
-                                    <col width="16.90000000000001%"/>
+                                    <col width="15%"/>
+                                    <col width="12%"/>
+                                    <col width="15%"/>
+                                    <col width="14%"/>
+                                    <col width="15%"/>
                                     </colgroup>
                                     <thead className="u-align-center u-table-header u-table-header-1">
                                     <tr style={{ height: '29px' }}>
@@ -59,8 +77,9 @@ const ViewAllClaims = () => {
                                         <th className="u-table-cell" spellCheck="false">Claimant</th>
                                         <th className="u-table-cell">Requester</th>
                                         <th className="u-table-cell">Health Contract<br/></th>
-                                        <th className="u-table-cell">Status</th>
-                                        <th className="u-table-cell">Claim Amount<br/></th>
+                                        <th className="u-table-cell">Health Service<br/></th>
+                                        <th className="u-table-cell">Claim Amount (Rs.)</th>
+                                        <th className="u-table-cell">Status<br/></th>
                                     </tr>
                                     </thead>
                                     <tbody className="u-align-center u-table-body">
@@ -72,17 +91,78 @@ const ViewAllClaims = () => {
                                                         <td className="u-table-cell">{claim["claimant"]}</td>
                                                         <td className="u-table-cell">{claim["requester"]}</td>
                                                         <td className="u-table-cell">{claim["healthContract"]["coverageType"]}</td>
-                                                        <td className="u-table-cell">{determineStatus(claim["status"])}</td>
-                                                        <td className="u-table-cell">Rs{" "} {claim["claimAmount"].toLocaleString()}<br/></td>
+                                                        {claim["claimType"] === "generalCare" ? (
+                                                        <td className="u-table-cell">General Care</td>
+                                                        ) : claim["claimType"] === "dental" ? (
+                                                        <td className="u-table-cell">Dental Care</td>
+                                                        ) : claim["claimType"] === "eyeCare" ? (
+                                                        <td className="u-table-cell">Eye Care</td>
+                                                        ) : null}
+                                                        <td className="u-table-cell">{claim["claimAmount"].toLocaleString()}<br/></td>
+                                                        {claim["status"] === 0 ? (
+                                                            isApprovalLoading ? (
+                                                                <div className="loader-div">
+                                                                    <div>  
+                                                                        <Loader/>
+                                                                    </div>
+                                                                </div>                                                            
+                                                            ) : (
+                                                            <div  style={{marginTop: '3%'}}>
+                                                                <button
+                                                                id="approveBtn"
+                                                                style={{ backgroundColor: "#19A7CE", color: "#F6F1F1", ":hover": { backgroundColor: "#2E4F4F" }}}
+                                                                onClick={() => handleApprove(claim.id)}
+                                                                >
+                                                                    Approve
+                                                                </button>
+                                                                <button
+                                                                    id="declineBtn"
+                                                                    style={{ backgroundColor: "#EA5455", color: "#E4DCCF" , ":hover": { backgroundColor: "#DF2E38" }}}
+                                                                    onClick={() => handleDecline(claim.id)}
+                                                                    >
+                                                                    Decline
+                                                                </button>
+                                                            </div>
+                                                            )
+                                                            
+                                                        ) : (
+                                                            <td className="u-table-cell">{determineStatus(claim["status"])}</td>
+                                                        )}
                                                     </tr>
                                                 ) : (
-                                                    <tr>
+                                                    <tr key={index}>
                                                     <td className="u-black u-first-column u-table-cell u-table-cell-13">{index + 1}</td>
                                                     <td className="u-palette-5-light-1 u-table-cell u-table-cell-14">{claim["claimant"]}</td>
                                                     <td className="u-palette-5-light-1 u-table-cell u-table-cell-15">{claim["requester"]}</td>
                                                     <td className="u-palette-5-light-1 u-table-cell u-table-cell-16">{claim["healthContract"]["coverageType"]}</td>
-                                                    <td className="u-palette-5-light-1 u-table-cell u-table-cell-17">{determineStatus(claim["status"])}</td>
-                                                    <td className="u-palette-5-light-1 u-table-cell u-table-cell-18">Rs{" "} {claim["claimAmount"].toLocaleString()}<br/></td>
+                                                    {claim["claimType"] === "generalCare" ? (
+                                                    <td className="u-palette-5-light-1 u-table-cell u-table-cell-16">General Care</td>
+                                                    ) : claim["claimType"] === "dental" ? (
+                                                    <td className="u-palette-5-light-1 u-table-cell u-table-cell-16">Dental Care</td>
+                                                    ) : claim["claimType"] === "eyeCare" ? (
+                                                    <td className="u-palette-5-light-1 u-table-cell u-table-cell-16">Eye Care</td>
+                                                    ) : null}
+                                                    <td className="u-palette-5-light-1 u-table-cell u-table-cell-18">{claim["claimAmount"].toLocaleString()}<br/></td>
+                                                    {claim["status"] === 0 ? (
+                                                     <div  style={{marginTop: '3%'}}>
+                                                     <button
+                                                     id="approveBtn"
+                                                     style={{ backgroundColor: "#19A7CE", color: "#F6F1F1", ":hover": { backgroundColor: "#2E4F4F" }}}
+                                                     onClick={() => handleApprove(claim.id)}
+                                                     >
+                                                         Approve
+                                                     </button>
+                                                     <button
+                                                         id="declineBtn"
+                                                         style={{ backgroundColor: "#EA5455", color: "#E4DCCF" , ":hover": { backgroundColor: "#DF2E38" }}}
+                                                         onClick={() => handleDecline(claim.id)}
+                                                         >
+                                                         Decline
+                                                     </button>
+                                                    </div>
+                                                    ) : (
+                                                        <td className="u-palette-5-light-1 u-table-cell u-table-cell-17">{determineStatus(claim["status"])}</td>
+                                                    )}
                                                 </tr>
                                                 )
 
