@@ -90,11 +90,11 @@ const ViewIndividualClaim = () => {
                                                     <td className="u-palette-5-light-1 u-table-cell u-table-cell-15">{claim["requester"]}</td>
                                                     <td className="u-palette-5-light-1 u-table-cell u-table-cell-16">{claim["healthContract"]["coverageType"]}</td>
                                                     {claim["claimType"] === "generalCare" ? (
-                                                    <td className="u-table-cell">General Care</td>
+                                                    <td className="u-palette-5-light-1 u-table-cell u-table-cell-16">General Care</td>
                                                     ) : claim["claimType"] === "dental" ? (
-                                                    <td className="u-table-cell">Dental Care</td>
+                                                    <td className="u-palette-5-light-1 u-table-cell u-table-cell-16">Dental Care</td>
                                                     ) : claim["claimType"] === "eyeCare" ? (
-                                                    <td className="u-table-cell">Eye Care</td>
+                                                    <td className="u-palette-5-light-1 u-table-cell u-table-cell-16">Eye Care</td>
                                                     ) : null}
                                                     <td className="u-palette-5-light-1 u-table-cell u-table-cell-17">{determineStatus(claim["status"])}</td>
                                                     <td className="u-palette-5-light-1 u-table-cell u-table-cell-18">Rs{" "} {claim["claimAmount"].toLocaleString()}<br/></td>
