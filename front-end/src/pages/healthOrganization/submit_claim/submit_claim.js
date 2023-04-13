@@ -64,14 +64,15 @@ const SubmitClaim = () => {
 
   const handleHealthServiceSelect = (healthService) => {
     setHealthServices(healthService);
-    claims.forEach((claim) =>{
-      if (claim.claimType === healthService && String(claim["healthContract"]["healthcontractID"]) === String(healthContract)){
+    for (const claim of claims) {
+      if (claim.claimType === healthService && String(claim.healthContract.healthcontractID) === String(healthContract)) {
         isClaimExists(true);
-      } else {
-        isClaimExists(false);
+        return; // early exit
       }
-    });
+    }
+    isClaimExists(false);
   };
+  
 
   const handleHealthContracteSelect = (healthContract) => {
     setHealthContract(healthContract);
