@@ -85,7 +85,7 @@ const ViewIndividualClaim = () => {
                                                         <td className="u-table-cell">Rs{" "} {claim["claimAmount"].toLocaleString()}<br/></td>
                                                     </tr>
                                                 ) : (
-                                                    <tr>
+                                                    <tr key={index}>
                                                     <td className="u-black u-first-column u-table-cell u-table-cell-13">{index + 1}</td>
                                                     <td className="u-palette-5-light-1 u-table-cell u-table-cell-15">{claim["requester"]}</td>
                                                     <td className="u-palette-5-light-1 u-table-cell u-table-cell-16">{claim["healthContract"]["coverageType"]}</td>

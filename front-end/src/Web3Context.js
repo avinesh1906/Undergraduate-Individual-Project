@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useMemo } from 'react';
 import { ethers } from 'ethers';
 
 // Create a new context to store the provider, signer, and address variables
@@ -9,7 +9,7 @@ export const Web3Provider = ({ children }) => {
   const [provider, setProvider] = useState(null);
   const [signer, setSigner] = useState(null);
   const [address, setAddress] = useState(null);
-  
+
   // Connect to the Web3 provider and update the context state
   const connectWeb3 = async () => {
     // check if MetaMask is installed
@@ -33,7 +33,7 @@ export const Web3Provider = ({ children }) => {
     }
   };
 
-  const disconnectWeb3  = async () => {
+  const disconnectWeb3 = async () => {
     setProvider(null);
     setSigner(null);
     setAddress(null);
@@ -58,9 +58,13 @@ export const Web3Provider = ({ children }) => {
     return () => window.removeEventListener('beforeunload', handlePageReload);
   }, [provider, signer, address]);
 
+  const contextValue = useMemo(() => {
+    return { provider, signer, address, connectWeb3, disconnectWeb3 };
+  }, [provider, signer, address]);
+
   return (
-    <Web3Context.Provider value={{ provider, signer, address, connectWeb3, disconnectWeb3 }}>
+    <Web3Context.Provider value={contextValue}>
       {children}
     </Web3Context.Provider>
-  ); 
+  );
 };
