@@ -49,12 +49,12 @@ const ViewIndividualClaim = () => {
                             <div className="u-expanded-width u-table u-table-responsive u-table-1">
                                 <table className="u-table-entity">
                                     <colgroup>
-                                    <col width="11.6%"/>
-                                    <col width="22.5%"/>
-                                    <col width="17%"/>
-                                    <col width="17%"/>
-                                    <col width="15%"/>
-                                    <col width="16.90000000000001%"/>
+                                    <col width="10%"/>
+                                    <col width="14%"/>
+                                    <col width="14%"/>
+                                    <col width="14%"/>
+                                    <col width="13%"/>
+                                    <col width="14%"/>
                                     </colgroup>
                                     <thead className="u-align-center u-table-header u-table-header-1">
                                     <tr style={{ height: '29px' }}>

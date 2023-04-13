@@ -47,17 +47,17 @@ const ViewHIOClaims = () => {
                             <div className="u-expanded-width u-table u-table-responsive u-table-1">
                                 <table className="u-table-entity">
                                     <colgroup>
-                                    <col width="11.6%"/>
-                                    <col width="22.5%"/>
-                                    <col width="17%"/>
-                                    <col width="17%"/>
-                                    <col width="15%"/>
-                                    <col width="16.90000000000001%"/>
+                                    <col width="10%"/>
+                                    <col width="14%"/>
+                                    <col width="14%"/>
+                                    <col width="14%"/>
+                                    <col width="13%"/>
+                                    <col width="14%"/>
                                     </colgroup>
                                     <thead className="u-align-center u-table-header u-table-header-1">
                                     <tr style={{ height: '29px' }}>
                                         <th className="u-table-cell"></th>
-                                        <th className="u-table-cell">Requester</th>
+                                        <th className="u-table-cell">Claimant</th>
                                         <th className="u-table-cell">Health Contract<br/></th>
                                         <th className="u-table-cell">Health Service<br/></th>
                                         <th className="u-table-cell">Status</th>
@@ -70,7 +70,7 @@ const ViewHIOClaims = () => {
                                                 index % 2 === 0 ? (
                                                     <tr key={index}>
                                                         <td className="u-black u-first-column u-table-cell u-table-cell-7">{index + 1}</td>
-                                                        <td className="u-table-cell">{claim["requester"]}</td>
+                                                        <td className="u-table-cell">{claim["claimant"]}</td>
                                                         <td className="u-table-cell">{claim["healthContract"]["coverageType"]}</td>
                                                         {claim["claimType"] === "generalCare" ? (
                                                         <td className="u-table-cell">General Care</td>
@@ -83,9 +83,9 @@ const ViewHIOClaims = () => {
                                                         <td className="u-table-cell">Rs{" "} {claim["claimAmount"].toLocaleString()}<br/></td>
                                                     </tr>
                                                 ) : (
-                                                    <tr>
+                                                    <tr key={index}>
                                                     <td className="u-black u-first-column u-table-cell u-table-cell-13">{index + 1}</td>
-                                                    <td className="u-palette-5-light-1 u-table-cell u-table-cell-15">{claim["requester"]}</td>
+                                                    <td className="u-palette-5-light-1 u-table-cell u-table-cell-15">{claim["claimant"]}</td>
                                                     <td className="u-palette-5-light-1 u-table-cell u-table-cell-16">{claim["healthContract"]["coverageType"]}</td>
                                                     {claim["claimType"] === "generalCare" ? (
                                                     <td className="u-palette-5-light-1 u-table-cell u-table-cell-16">General Care</td>

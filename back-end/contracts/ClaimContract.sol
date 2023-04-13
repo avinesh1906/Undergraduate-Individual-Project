@@ -200,14 +200,14 @@ contract ClaimContract is HealthPolicy {
     function getIndividualClaims(string memory _username) public view returns (Claim[] memory) {
         uint count = 0;
         for (uint i = 0; i < claims.length; i++) {
-            if (compareString(claims[i].requester, _username)) {
+            if (compareString(claims[i].claimant, _username)) {
                 count++;
             }
         }
         Claim[] memory result = new Claim[](count);
         uint index = 0;
         for (uint i = 0; i < claims.length; i++) {
-            if (compareString(claims[i].requester, _username)) {
+            if (compareString(claims[i].claimant, _username)) {
                 result[index] = claims[i];
                 index++;
             }
