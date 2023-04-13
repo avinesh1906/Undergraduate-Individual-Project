@@ -66,9 +66,7 @@ const ChooseHealthContract = () => {
     try {
         const individualContract = new ethers.Contract(IndividualContractAddress, IndividualContract.abi, signer);
         await individualContract.signHealthContract(username, selectedContract);
-        // Do something after the contract is signed, like redirecting to a dashboard
-        console.log("Signed");
-        navigate("/individual/view_signed_contract");
+        navigate("/individual/view_signed_contract");        
     } catch (error) {
         console.log(error);
     }
