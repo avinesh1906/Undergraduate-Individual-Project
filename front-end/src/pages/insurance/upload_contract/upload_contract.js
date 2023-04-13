@@ -16,6 +16,7 @@ const UploadContract = () => {
     const [dental, setDental] = useState('');
     const [eyeCare, setEyeCare] = useState('');
     const [premium, setPremium] = useState('');
+    const [approvalType, setApprovalType] = useState('automatic');
     const [approval, setApproval] = useState(false);
     const { provider, signer } = useContext(Web3Context);
     const [isLoading, setIsLoading] = useState(false);
@@ -61,10 +62,15 @@ const UploadContract = () => {
       }
     };
     
-    function handleToggle() {
-      setApproval(!approval);
+    const handleToggle = (e) => {
+      setApprovalType(e.target.value);
+      if (e.target.value === 'automatic'){
+        setApproval(true);
+      } else {
+        setApproval(false);
+      }
     }
-
+    
     async function uploadHealthContract() {
       setIsLoading(true);
       const healthContract = new ethers.Contract(ClaimContractAddress, ClaimContract.abi, signer);
@@ -177,16 +183,18 @@ const UploadContract = () => {
                   />
                   {errors.premium && <label className="u-label" style={{"color": "red"}}>{errors.premium}</label>}
                 </div>
-                <div className="u-form-group u-label-top">
-                  <label htmlFor="approval" className="u-label u-text-body-alt-color u-label-3">Automatic Approval</label>
-                  <input 
-                    id="approval" 
-                    name="approval" 
-                    checked={approval}
-                    onChange={handleToggle}
-                    className="u-border-white u-input u-input-rectangle u-text-grey-70 u-input-3" 
-                    type="checkbox"
-                  />
+                <div className="u-form-group u-form-input-layout-horizontal u-form-radiobutton u-form-group-6">
+                  <label className="u-label u-text-body-alt-color u-label-6">Approval</label>
+                  <div className="u-form-radio-button-wrapper">
+                    <div className="u-input-row">
+                      <input id="field-554e" type="radio" name="radiobutton" value="automatic" className="u-border-2 u-border-grey-75 u-border-hover-palette-1-dark-2 u-field-input u-radius-15" checked={approvalType === 'automatic'} data-calc="automatic" required={true} onChange={handleToggle} />
+                      <label className="u-field-label u-text-palette-1-dark-3" htmlFor="field-554e" style={{ fontSize: '1rem' }}>Automatic</label>
+                    </div>
+                    <div className="u-input-row">
+                      <input id="field-be59" type="radio" name="radiobutton" value="admin" className="u-border-2 u-border-grey-75 u-border-hover-palette-1-dark-2 u-field-input u-radius-15" data-calc="admin" required={true} onChange={handleToggle} />
+                      <label className="u-field-label u-text-palette-1-dark-3" htmlFor="field-be59" style={{ fontSize: '1rem' }}>Insurance Admin</label>
+                    </div>
+                  </div>
                 </div>
                 <div 
                   className="u-align-left u-form-group u-form-submit u-label-top"
