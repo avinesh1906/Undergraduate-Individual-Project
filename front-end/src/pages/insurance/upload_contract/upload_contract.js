@@ -17,7 +17,7 @@ const UploadContract = () => {
     const [eyeCare, setEyeCare] = useState('');
     const [premium, setPremium] = useState('');
     const [approvalType, setApprovalType] = useState('automatic');
-    const [approval, setApproval] = useState(false);
+    const [approval, setApproval] = useState(true);
     const { provider, signer } = useContext(Web3Context);
     const [isLoading, setIsLoading] = useState(false);
     const [errors, setErrors] = useState({});
