@@ -84,7 +84,7 @@ const ViewAllClaims = () => {
                                         <th className="u-table-cell">Requester</th>
                                         <th className="u-table-cell">Health Contract<br/></th>
                                         <th className="u-table-cell">Health Service<br/></th>
-                                        <th className="u-table-cell">Claim Amount (Rs.)</th>
+                                        <th className="u-table-cell">Claim Amount</th>
                                         <th className="u-table-cell">Status<br/></th>
                                     </tr>
                                     </thead>
@@ -104,7 +104,7 @@ const ViewAllClaims = () => {
                                                         ) : claim["claimType"] === "eyeCare" ? (
                                                         <td className="u-table-cell">Eye Care</td>
                                                         ) : null}
-                                                        <td className="u-table-cell">{claim["claimAmount"].toLocaleString()}<br/></td>
+                                                        <td className="u-table-cell">Rs.{" "}{claim["claimAmount"].toLocaleString()}<br/></td>
                                                         {claim["status"] === 0 ? (
                                                             isApprovalLoading ? (
                                                                 <div className="loader-div">
@@ -148,7 +148,7 @@ const ViewAllClaims = () => {
                                                     ) : claim["claimType"] === "eyeCare" ? (
                                                     <td className="u-palette-5-light-1 u-table-cell u-table-cell-16">Eye Care</td>
                                                     ) : null}
-                                                    <td className="u-palette-5-light-1 u-table-cell u-table-cell-18">{claim["claimAmount"].toLocaleString()}<br/></td>
+                                                    <td className="u-palette-5-light-1 u-table-cell u-table-cell-18">Rs.{" "}{claim["claimAmount"].toLocaleString()}<br/></td>
                                                     {claim["status"] === 0 ? (
                                                      <div  style={{marginTop: '3%'}}>
                                                      <button

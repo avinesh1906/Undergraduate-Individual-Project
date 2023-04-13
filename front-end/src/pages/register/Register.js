@@ -146,6 +146,7 @@ const Register = () => {
   }
 
   async function connectInsuranceAddress(){
+    setIsLoading(true);
     const claimContract = new ethers.Contract(ClaimContractAddress, ClaimContract.abi, signer);
     const tx2  = await claimContract.setInsuranceCompanyAddress();
     const receipt2  = await  provider.waitForTransaction(tx2.hash);
@@ -162,6 +163,7 @@ const Register = () => {
   }
 
   async function connectHealthInsurance(){
+    setIsLoading(true);
     const claimContract = new ethers.Contract(ClaimContractAddress, ClaimContract.abi, signer);
     const tx  = await claimContract.setHealthOrganizationAddress();
     const receipt  = await  provider.waitForTransaction(tx.hash);
