@@ -81,7 +81,8 @@ const SubmitClaim = () => {
   const submitTheClaim = async () => {
     setIsSubmitLoading(true);
     const claimContract = new ethers.Contract(ClaimContractAddress, ClaimContract.abi, signer);
-    await claimContract.submitClaim(username, selectedIndividual, claimAmount, healthContract, healthServices);
+    const transaction =  await claimContract.submitClaim(username, selectedIndividual, claimAmount, healthContract, healthServices);
+    await transaction.wait();
     setIsSubmitLoading(false);
     navigate("/hio/view_claims");
   }
