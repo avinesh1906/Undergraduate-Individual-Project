@@ -30,7 +30,9 @@ const ViewSignedContract = () => {
       ClaimContract.abi,
       signer
     );
-    setContracts(await contract.getAllHealthContracts());
+    const contracts = await contract.getAllHealthContracts()
+    setContracts(contracts);
+    console.log(contracts);
   }, [signer]);
   
   useEffect(() => {
@@ -115,26 +117,30 @@ const ViewSignedContract = () => {
               </div>
             </>
           ):(
-            contracts.map((contract, index) => (
-            <div key={index} className="u-body u-xl-mode" data-lang="en">
-            <section className="u-align-center u-clearfix u-section-8" id="carousel_4c41">
-              <div className="u-clearfix u-sheet u-sheet-1">
-                <h2 className="u-text u-text-black u-text-default u-text-1" spellCheck="false">Signed Health Contract<br /></h2>
-                <div className="u-align-center u-container-style u-gradient u-group u-radius-50 u-shape-round u-group-1">
-                  <div className="u-container-layout u-valign-top u-container-layout-1">
-                    <img className="u-image u-image-default u-image-1" alt="" data-image-width="432" data-image-height="386" src={signedContract} />
-                    <p className="u-text u-text-grey-80 u-text-2" spellCheck="false">{contract.coverageType}</p>
-                    <div className="u-border-11 u-border-white u-line u-line-horizontal u-line-1"></div>
-                    <p className="u-text u-text-black u-text-3" spellCheck="false">with a general care coverage Limit of Rs <span style={{ fontWeight: 700 }}>{contract.generalCare.toLocaleString()}</span><br /></p>
-                    <p className="u-text u-text-black u-text-3" spellCheck="false">a dental care coverage Limit of Rs <span style={{ fontWeight: 700 }}>{contract.dental.toLocaleString()}</span><br /></p>
-                    <p className="u-text u-text-black u-text-3" spellCheck="false">and an eye care coverage Limit of Rs <span style={{ fontWeight: 700 }}>{contract.eyeCare.toLocaleString()}</span><br /></p>
-                    <p className="u-text u-text-4" spellCheck="false">In adition, with a premium of <span style={{ fontWeight: 700 }}>{contract.premium}</span>%<br /></p>
-                  </div>
-                </div>
-              </div>
-            </section>
-            </div>
-          ))
+            contractIDs.map((id, index) => (
+              contracts.map((contract) => (
+                  contract.healthcontractID === id ? (
+                    <div key={index} className="u-body u-xl-mode" data-lang="en">
+                    <section className="u-align-center u-clearfix u-section-8" id="carousel_4c41">
+                      <div className="u-clearfix u-sheet u-sheet-1">
+                        <h2 className="u-text u-text-black u-text-default u-text-1" spellCheck="false">Signed Health Contract<br /></h2>
+                        <div className="u-align-center u-container-style u-gradient u-group u-radius-50 u-shape-round u-group-1">
+                          <div className="u-container-layout u-valign-top u-container-layout-1">
+                            <img className="u-image u-image-default u-image-1" alt="" data-image-width="432" data-image-height="386" src={signedContract} />
+                            <p className="u-text u-text-grey-80 u-text-2" spellCheck="false">{contract.coverageType}</p>
+                            <div className="u-border-11 u-border-white u-line u-line-horizontal u-line-1"></div>
+                            <p className="u-text u-text-black u-text-3" spellCheck="false">with a general care coverage Limit of Rs <span style={{ fontWeight: 700 }}>{contract.generalCare.toLocaleString()}</span><br /></p>
+                            <p className="u-text u-text-black u-text-3" spellCheck="false">a dental care coverage Limit of Rs <span style={{ fontWeight: 700 }}>{contract.dental.toLocaleString()}</span><br /></p>
+                            <p className="u-text u-text-black u-text-3" spellCheck="false">and an eye care coverage Limit of Rs <span style={{ fontWeight: 700 }}>{contract.eyeCare.toLocaleString()}</span><br /></p>
+                            <p className="u-text u-text-4" spellCheck="false">In adition, with a premium of <span style={{ fontWeight: 700 }}>{contract.premium}</span>%<br /></p>
+                          </div>
+                        </div>
+                      </div>
+                    </section>
+                    </div>
+                ) : null
+              ))
+            ))
           )
         ):(
           <div className="u-body u-xl-mode" data-lang="en">
