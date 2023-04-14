@@ -133,6 +133,13 @@ const ViewSignedContract = () => {
                             <p className="u-text u-text-black u-text-3" spellCheck="false">a dental care coverage Limit of Rs <span style={{ fontWeight: 700 }}>{contract.dental.toLocaleString()}</span><br /></p>
                             <p className="u-text u-text-black u-text-3" spellCheck="false">and an eye care coverage Limit of Rs <span style={{ fontWeight: 700 }}>{contract.eyeCare.toLocaleString()}</span><br /></p>
                             <p className="u-text u-text-4" spellCheck="false">In adition, with a premium of <span style={{ fontWeight: 700 }}>{contract.premium}</span>%<br /></p>
+                            {contract.approval ? (
+                                <p className="u-text u-text-4" spellCheck="false"><span style={{ fontWeight: 700 }}>{contract.premium}Automatic</span>{" "}approval<br /></p>
+                                ) : (
+                                <p className="u-text u-text-4" spellCheck={false}>
+                                    <span style={{ fontWeight: 700 }}>Insurance Admin{" "}</span> Approval
+                                </p>
+                            )}
                           </div>
                         </div>
                       </div>
