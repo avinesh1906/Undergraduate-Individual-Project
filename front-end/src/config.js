@@ -1,8 +1,8 @@
 const contractAddresses = {
-    ClaimContract: '0x9616d62258E43E9b15005797AFe0756E05B16Db7',
-    HealthOrganization: '0x5c0Ab2Ff4587829FD16d1a68f02c387E1e49F1ED',
-    Individual: '0x099Cb2a3694c6826569f5A948886a22551797dE3',
-    InsuranceProvider: '0x2253E2726403DEa7Bc08b3BA00612b329bB2f64c'
+    ClaimContract: '0xF5AFc42c82a9F68c301376d469E11afb2d4969EF',
+    HealthOrganization: '0xAc1bD84e15Ce8F14A477d0F7d2517dB989B16D9a',
+    Individual: '0xB87911356344423278DC9033d192DACd90d2ba1B',
+    InsuranceProvider: '0x850f0207d5D2dcE739db1B13d7D91197695F0BB5'
 };
 
 export default contractAddresses;
