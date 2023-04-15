@@ -8,7 +8,6 @@ contract InsuranceProvider {
     string insuranceName;
     string email;
     bytes32 password;
-    address healthContractAddress;
 
     // Events
     event NewProvider(string provider_name, string username);
@@ -32,14 +31,19 @@ contract InsuranceProvider {
         emit NewProvider(_name, _email);
     }
 
+    // Function uses the keccak256 hash function to compute the hash of the password
     function hashPassword(string memory _password) private pure returns (bytes32) {
         return keccak256(abi.encodePacked(_password));
     }
 
+    // Function to verify if there is an alreadyr registered insurance
     function isInsuranceRegistered() public view returns (bool) {
+        // If the insurance provider address is equal to the zero address, 
+        // it means that no insurance provider is registered and the function returns false.
         return insuranceProviderAddress != address(0);
     }
 
+    // This function authenticates an insurance provider based on the email and password entered by the user.
     function authenticate(string memory _email, string memory _password) public view returns (bool, string memory) {
         if (compareEmail(_email) && hashPassword(_password) == password){
             return (true, insuranceName);
@@ -47,7 +51,9 @@ contract InsuranceProvider {
         return (false, "");
     }
     
-    function compareEmail(string memory a ) public view returns (bool) {
-        return keccak256(abi.encodePacked(a)) == keccak256(abi.encodePacked(email));
+    // Compare the email
+    function compareEmail(string memory inputEmail ) public view returns (bool) {
+        // uses the keccak256 to compare string
+        return keccak256(abi.encodePacked(inputEmail)) == keccak256(abi.encodePacked(email));
     }
 }

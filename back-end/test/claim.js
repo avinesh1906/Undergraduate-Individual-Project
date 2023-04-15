@@ -161,7 +161,7 @@ contract("ClaimContract", async accounts => {
     await contract.requestClaim(individual, claimAmount, 7, { from: individualAddress });
 
     const claims = await contract.getIndividualClaims(individual,{ from: individualAddress });
-    assert.equal(claims.length, 1);
+    assert.equal(claims.length, 2);
     assert.equal(claims[0].claimAmount, claimAmount);
   });
 

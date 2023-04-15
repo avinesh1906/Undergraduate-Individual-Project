@@ -16,20 +16,20 @@ export const Web3Provider = ({ children }) => {
     if (window.ethereum) {
       try {
         await window.ethereum.request({ method: 'eth_requestAccounts' }); // Prompt user for account connections
-        const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
-        const web3Signer = web3Provider.getSigner();
-        const web3Address = await web3Signer.getAddress();
+        const web3Provider = new ethers.providers.Web3Provider(window.ethereum); // create a new web3 provider object
+        const web3Signer = web3Provider.getSigner(); // get the signer object from the provider
+        const web3Address = await web3Signer.getAddress(); // get the current user's Ethereum address
 
-        console.log('Connected to MetaMask with address:', web3Address);
-        setProvider(web3Provider);
-        setSigner(web3Signer);
-        setAddress(web3Address);
+        console.log('Connected to MetaMask with address:', web3Address); // log the address to the console
+        setProvider(web3Provider); // set the provider state variable to the new provider object
+        setSigner(web3Signer); // set the signer state variable to the new signer object
+        setAddress(web3Address); // set the address state variable to the user's Ethereum address
       } catch (err) {
-        console.log(err);
-        window.alert('Failed to connect to MetaMask');
+        console.log(err); // log any errors that occur
+        window.alert('Failed to connect to MetaMask'); // show an alert if there is an error
       }
     } else {
-      window.alert('Please install MetaMask to use this app');
+      window.alert('Please install MetaMask to use this app'); // show an alert if MetaMask is not installed
     }
   };
 
@@ -39,6 +39,8 @@ export const Web3Provider = ({ children }) => {
     setAddress(null);
   };
 
+  // Check if provider, signer, and address are already cached in state. If they are, log a message to the console.
+  // Otherwise, call the connectWeb3 function to connect to the Web3 provider.
   useEffect(() => {
     if (provider && signer && address) {
       console.log('Using cached provider, signer, and address:', provider, signer, address);
@@ -46,8 +48,9 @@ export const Web3Provider = ({ children }) => {
       connectWeb3();
     }
   }, [provider, signer, address]);
-
+  
   // Reconnect to the web3 provider on page reload
+  // Add an event listener for the "beforeunload" event to reload the page if provider, signer, and address are already cached.
   useEffect(() => {
     const handlePageReload = () => {
       if (provider && signer && address) {
@@ -57,7 +60,8 @@ export const Web3Provider = ({ children }) => {
     window.addEventListener('beforeunload', handlePageReload);
     return () => window.removeEventListener('beforeunload', handlePageReload);
   }, [provider, signer, address]);
-
+  
+  // Create a memoized context value object with the current values of provider, signer, address, connectWeb3, and disconnectWeb3.
   const contextValue = useMemo(() => {
     return { provider, signer, address, connectWeb3, disconnectWeb3 };
   }, [provider, signer, address]);

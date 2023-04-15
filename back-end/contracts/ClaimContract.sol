@@ -42,7 +42,6 @@ contract ClaimContract is HealthPolicy {
     // Events
     event returnClaimID(uint id);
     event LogClaimLimit(uint);
-    event LogHOClaims(Claim[]);
     event HealthOrganizationAddressSetup(address);
 
     function setHealthOrganizationAddress() public {
@@ -55,20 +54,34 @@ contract ClaimContract is HealthPolicy {
         return checkClaimType(_username, _healthContractID, _claimType);
     }
 
-    // Function to submit a claim by the health organization
-    function submitClaim(string memory _username, string memory _individual, uint32 _claimAmount, uint32 _healthContractID, string memory _claimType) public onlyHealthOrganization {
+    /**
+        @dev Submit a new claim
+        @param _username The username of the user who submitted the claim
+        @param _individual The individual's name who is submitting the claim
+        @param _claimAmount The amount being claimed
+        @param _healthContractID The ID of the health contract related to the claim
+        @param _claimType The type of claim being submitted
+    */
+    function submitClaim(string memory _username, string memory _individual, uint32 _claimAmount,
+                        uint32 _healthContractID, string memory _claimType) public onlyHealthOrganization {
+
+        // Check if the health contract and claim type have not already been submitted
         if (checkHealthContractMapping(_individual,  _healthContractID)){
             require(!checkClaimType(_individual, _healthContractID, _claimType), "You have already submitted a claim for this claim type.");
         } else {
+            // Create a new claim list for the individual and health contract mapping
             individualByClaim[_individual][_healthContractID] = new string[](0);
         }
+        // Add the claim type to the list of claims for this individual and health contract
         individualByClaim[_individual][_healthContractID].push(_claimType);
 
+        // Get the health contract for this claim
         HealthContract memory _healthContract = getHealthContract(_healthContractID);
 
+        // Create a new claim ID
         uint32 claimID = ClaimContractCount++;
 
-        // Create a new claim
+        // Create a new claim object with the provided information
         Claim memory newClaim = Claim({
             id: claimID,
             requester: _username,
@@ -79,28 +92,44 @@ contract ClaimContract is HealthPolicy {
             claimType: _claimType
         });
 
-        // Add the claim to the list of claims
+        // Add the new claim to the claims array
         claims.push(newClaim);
 
-        // Approve/Disapprove claim
+        // Approve/disapprove the claim based on the health contract approval status
         if (_healthContract.approval){
             approveClaim(newClaim.id);
         }
 
+        // Emit the claim ID
         emit returnClaimID(newClaim.id);
-    }   
+    }
 
-    // Function to request a claim by the individual
+
+    /**
+        @dev This function allows an individual to request a claim.
+        @param _username The username of the individual requesting the claim.
+        @param _claimAmount The amount of the claim requested.
+        @param _healthContractID The ID of the health contract for which the claim is being requested.
+        @param _claimType The type of claim being requested.
+    */
     function requestClaim(string memory _username, uint32 _claimAmount, uint32 _healthContractID, string memory _claimType) public {
+        // Check if the user has a valid health contract for the specified health contract ID
         if (checkHealthContractMapping(_username,  _healthContractID)){
+            // Check if the user has already submitted a claim for this claim type
             require(!checkClaimType(_username, _healthContractID, _claimType), "You have already submitted a claim for this claim type.");
         } else {
+            // Create a new claim type array for the user and the specified health contract
             individualByClaim[_username][_healthContractID] = new string[](0);
         }
+
+
+        // Add the claim type to the user's array of claim types for the specified health contract
         individualByClaim[_username][_healthContractID].push(_claimType);
 
+        // Get the HealthContract information for the specified health contract ID
         HealthContract memory _healthContract = getHealthContract(_healthContractID);
         
+        // Generate a new claim ID
         uint32 claimID = ClaimContractCount++;
 
         // Create a new claim
@@ -125,7 +154,10 @@ contract ClaimContract is HealthPolicy {
         emit returnClaimID(newClaim.id);
     }
     
-    // Function to approve a claim
+    /**
+        @dev This function allows to approve or disapprove automatically a claim.
+        @param _claimId The claim id to approve/disapprove.
+    */
     function approveClaim(uint _claimId) public  {
         require(claims.length > 0, "Claims array is empty.");
         require(_claimId < claims.length, "Claim with this id does not exist.");
@@ -136,6 +168,7 @@ contract ClaimContract is HealthPolicy {
         // Check if the claim has already been approved or denied
         require(claim.status == ClaimStatus.Submitted, "The claim has already been approved or denied.");
 
+        // calculate teh claim limit based on the claim type
         uint claimLimit = 0;
         if (compareString(claim.claimType,"eyeCare")){
             claimLimit = (claim.healthContract.premium  * claim.healthContract.eyeCare) / 100;
@@ -159,18 +192,22 @@ contract ClaimContract is HealthPolicy {
     function adminApproval(uint _claimID) public {
         // Get the claim from the list of claims
         Claim memory claim = claims[_claimID];
+        // Set the claim status to approve
         claim.status = ClaimStatus.Approved;
+        // update the claim in the map
         claims[_claimID] = claim;
     }
 
     function adminDisapproval(uint _claimID) public {
         // Get the claim from the list of claims
         Claim memory claim = claims[_claimID];
+        // Set the claim status to approve
         claim.status = ClaimStatus.Denied;
+        // update the claim in the map
         claims[_claimID] = claim;
     }
 
-    // Function to get all claims
+    // Function to get all claims that can only be executed by the insurance
     function getAllClaims() public onlyInsurance view returns (Claim[] memory){
         // Returns an array of all claims stored in the contract
         return claims;
@@ -179,13 +216,18 @@ contract ClaimContract is HealthPolicy {
     // function for the health organization to get all claims related to him
     function getOrganizationClaims(string memory _username) public onlyHealthOrganization view returns (Claim[] memory) {
         uint count = 0;
+        // Count the number of claims submitted by the health organization
         for (uint i = 0; i < claims.length; i++) {
             if (compareString(claims[i].requester, _username)) {
                 count++;
             }
         }
+
+        // Create an array to store the claims
         Claim[] memory result = new Claim[](count);
         uint index = 0;
+
+        // Store the claims in the array
         for (uint i = 0; i < claims.length; i++) {
             if (compareString(claims[i].requester, _username)) {
                 result[index] = claims[i];
@@ -195,34 +237,55 @@ contract ClaimContract is HealthPolicy {
         return result;
     }
 
-
-    // function for the individual to get all claims related to him
+    /**
+    * @dev Retrieves all claims made by a particular individual.
+    * @param _username The username of the individual.
+    * @return An array of claims made by the individual.
+    */
     function getIndividualClaims(string memory _username) public view returns (Claim[] memory) {
+        // Count the number of claims made by the individual
         uint count = 0;
         for (uint i = 0; i < claims.length; i++) {
             if (compareString(claims[i].claimant, _username)) {
                 count++;
             }
         }
+        
+        // Create an array to hold the claims
         Claim[] memory result = new Claim[](count);
         uint index = 0;
+        
+        // Fill the array with the claims made by the individual
         for (uint i = 0; i < claims.length; i++) {
             if (compareString(claims[i].claimant, _username)) {
                 result[index] = claims[i];
                 index++;
             }
         }
+        
+        // Return the array of claims made by the individual
         return result;
     }
+
 
     function compareString(string memory a, string memory b) private pure returns (bool) {
         return keccak256(abi.encodePacked(a)) == keccak256(abi.encodePacked(b));
     }
 
+    /**
+        @dev Internal function to check if a claim type exists for an individual in a specific health contract.
+        @param key1 The key representing the individual.
+        @param key2 The key representing the health contract ID.
+        @param value The value representing the claim type to check for.
+        @return A boolean indicating whether or not the claim type exists.
+    */
     function checkClaimType(string memory key1, uint32 key2, string memory value) internal view returns (bool) {
-        string[] storage claimValues = individualByClaim[key1][key2]; // retrieve the array of values at key2
-        for (uint i = 0; i < claimValues.length; i++) { // loop through the array
-            if (keccak256(bytes(claimValues[i])) == keccak256(bytes(value))) { // check if the value exists
+        // Retrieve the array of values at key2
+        string[] storage claimValues = individualByClaim[key1][key2];
+        // Loop through the array
+        for (uint i = 0; i < claimValues.length; i++) {
+        // Check if the value exists
+            if (keccak256(bytes(claimValues[i])) == keccak256(bytes(value))) {
                 return true;
             }
         }

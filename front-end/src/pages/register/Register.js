@@ -111,15 +111,20 @@ const Register = () => {
   };
   async function registerIndividual() {
     setIsLoading(true);
+
     // Get the event signature
     const eventSignature = ethers.utils.id("LogInsuredPersonRegistered(uint32,string)");
     const individualContract = new ethers.Contract(IndividualContractAddress, IndividualContract.abi, signer);
+    // Attempt to register an individual by calling the 'registerIndividual' function on the individual contract
     try {
-      const tx  = await individualContract.registerIndividual(firstName, lastName, usernameToBeAdded, email, password);
-      const receipt  = await  provider.waitForTransaction(tx.hash);
+      const tx = await individualContract.registerIndividual(firstName, lastName, usernameToBeAdded, email, password);
+      // Wait for the transaction receipt to be generated
+      const receipt = await provider.waitForTransaction(tx.hash);
+      // Check if the transaction was successful by verifying the status of the receipt
       if (receipt.status === 1) {
-        // check the logs for the LogInsuredPersonRegistered event
+        // If successful, iterate over the logs in the receipt to check for the LogInsuredPersonRegistered event
         receipt.logs.forEach(log => {
+          // If the event is found, parse the event arguments and update state accordingly
           if (log.topics[0] === eventSignature) {
             const event = individualContract.interface.parseLog(log);
             setUsername(event.args[1]);
@@ -134,15 +139,15 @@ const Register = () => {
         console.log('Transaction failed');
       }
     } catch (error) {
-      const newErrorMessage = "Username already exists.";
-      setErrors(prevState => ({
-        ...prevState,
-        username: newErrorMessage
-      }));
+        // If an error occurs during registration, update the state with an error message
+        const newErrorMessage = "Username already exists.";
+        setErrors(prevState => ({
+          ...prevState,
+          username: newErrorMessage
+        }));
     }
     
     setIsLoading(false);
-
   }
 
   async function connectInsuranceAddress(){
