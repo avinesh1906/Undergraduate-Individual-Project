@@ -6,11 +6,11 @@ contract('Individual', async accounts => {
     beforeEach(async () => {
         instance = await Individual.new();
     });
-    it("should register a provider successfully", async () => {
+    it("should register an individual successfully", async () => {
         let firstname = "Avinesh";
         let lastname = "culloo";
         let username = "avi1906";
-        let email = "johndoe@example.com";
+        let email = "avineshculloo@example.com";
         let password = "password";
     
         let result = await instance.registerIndividual(firstname, lastname, username, email, password);
@@ -42,6 +42,7 @@ contract('Individual', async accounts => {
           assert.include(error.message, "Username already exists");
         }
       });
+
       it("Should return the correct individual details", async () => {
         // Register an individual
         await instance.registerIndividual("John", "Doe", "aviC", "johndoe@example.com", "password123");
@@ -56,6 +57,7 @@ contract('Individual', async accounts => {
         assert.equal(individual[1], accounts[0], "The address is not correct");
         assert.equal(individual[2], "johndoe@example.com", "The email is not correct");
       });
+
     it("should authenticate a registered individual with the correct password", async () => {
       let username = "avi19061";
       let password = "password";
@@ -97,14 +99,13 @@ contract('Individual', async accounts => {
       // Get all registered individuals
       let individuals = await instance.getAllIndividuals();
     
-      // Assert that the correct number of individuals were returned
-      // assert.equal(individuals.length, 2);
-    
       // Assert that the individuals were returned in the correct order
       assert.equal(individuals[0].username, "johndoe123");
       assert.equal(individuals[1].username, "janedoe321");
     });
+
   describe('signHealthContract', () => {
+
     it('should assign a health contract to an individual', async () => {
       const username = 'alice';
       const healthContractId = 1;
@@ -136,6 +137,7 @@ contract('Individual', async accounts => {
         assert.include(error.message, 'You have already chosen this health contract.');
       }
     });
+
     it('should check if a health contract has been signed by an individual', async () => {
       const username = 'alice';
       const healthContractId = 1;
@@ -154,6 +156,7 @@ contract('Individual', async accounts => {
   });
 
   describe('getHealthContracts', () => {
+
     it('should return an empty array if no health contracts have been assigned to the individual', async () => {
       const username = 'alice';
     
@@ -183,7 +186,8 @@ contract('Individual', async accounts => {
     
       // Check that all signed health contracts are returned for the individual
       const healthContracts = await instance.getHealthContracts(username);
-      assert(healthContracts.length === 3 && healthContracts[0].words[0] === 1 && healthContracts[1].words[0] === 2 && healthContracts[2].words[0] === 3 , 'Health contract was not assigned to the individual.')
+      assert(healthContracts.length === 3 && healthContracts[0].words[0] === 1 && healthContracts[1].words[0] === 2 && healthContracts[2].words[0] === 3 , 
+        'Health contract was not assigned to the individual.')
     });
     
     it('should revert if called by an individual with no assigned health contracts', async () => {

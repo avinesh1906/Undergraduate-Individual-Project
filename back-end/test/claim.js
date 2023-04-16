@@ -38,7 +38,7 @@ contract("ClaimContract", async accounts => {
     assert.equal(claim.status.toNumber(), 0);
   });
 
-  it("should submit multiple claims of different type by the health organization", async () => {
+  it("should submit multiple claims of different types of the health organization", async () => {
     await contract.submitClaim(username, individual, claimAmount, healthContractId, "eyeCare",{ from: accounts[0] });
     await contract.submitClaim(username, individual, claimAmount, healthContractId, "dentalCare",{ from: accounts[0] });
     await contract.submitClaim(username, individual, claimAmount, healthContractId, "generalCare ",{ from: accounts[0] });
@@ -113,7 +113,7 @@ contract("ClaimContract", async accounts => {
     assert.equal(claim.status.toNumber(), 2);
   });
 
-  it("should approve a submitted claim by the HIO", async () => {
+  it("should approve a submitted claim by the HO", async () => {
     // Upload another policy
     await contract.uploadPolicy("coverageType", 10, claimAmount, claimAmount, claimAmount, true, { from: accounts[2] });
     await contract.submitClaim(username,individual, 6, 2, "generalCare", { from: accounts[0] });
@@ -122,7 +122,7 @@ contract("ClaimContract", async accounts => {
     assert.equal(claim.status.toNumber(), 1);
   });
 
-  it("should not approve a submitted claim by the HIO", async () => {
+  it("should not approve a submitted claim by the HO", async () => {
     // Upload another policy
     await contract.uploadPolicy("coverageType", 10, claimAmount, claimAmount, claimAmount, true, { from: accounts[2] });
     await contract.submitClaim(username,individual, 10000, 2, "generalCare", { from: accounts[0] });

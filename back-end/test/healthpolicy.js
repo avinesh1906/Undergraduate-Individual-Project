@@ -8,10 +8,16 @@ contract('HealthPolicy', (accounts) => {
     });
   
     it('should set the insurance company address', async () => {
+      // Set the insurance company address using account 0
       await instance.setInsuranceCompanyAddress({ from: accounts[0] });
+    
+      // Retrieve the insurance company address from the contract
       const insuranceCompanyAddress = await instance.getInsuranceCompanyAddress();
+    
+      // Check if the retrieved insurance company address matches the address used to set it
       assert.equal(insuranceCompanyAddress, accounts[0], 'Insurance company address does not match');
     });
+    
   
     it("should upload a health insurance policy", async () => {
         await instance.setInsuranceCompanyAddress({ from: accounts[0] });
