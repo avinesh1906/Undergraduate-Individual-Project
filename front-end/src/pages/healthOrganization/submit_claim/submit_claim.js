@@ -58,8 +58,14 @@ const SubmitClaim = () => {
     setSelectedIndividual(individual);
     const claimContract = new ethers.Contract(ClaimContractAddress, ClaimContract.abi, signer);
     setClaims(await claimContract.getIndividualClaims(individual));
-    const individualContract = new ethers.Contract(IndividualContractAddress, IndividualContract.abi, signer);
-    setIndividualHealthContracts(await individualContract.getHealthContracts(individual));
+    try {
+      const individualContract = new ethers.Contract(IndividualContractAddress, IndividualContract.abi, signer);
+      setIndividualHealthContracts(await individualContract.getHealthContracts(individual));
+    } catch (error) {
+      console.log(error);
+      setIndividualHealthContracts([]);
+    }
+    
   };
 
   const handleHealthServiceSelect = (healthService) => {
