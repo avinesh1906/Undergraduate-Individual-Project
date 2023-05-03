@@ -124,7 +124,7 @@ const UploadContract = () => {
 
                 </div>
                 <div className="u-form-group u-label-top u-form-group-2">
-                  <label htmlFor="generalCare" className="u-label u-text-body-alt-color u-label-2">General Care Covarage limit</label>
+                  <label htmlFor="generalCare" className="u-label u-text-body-alt-color u-label-2">General Care Coverage limit</label>
                   <input 
                     type="number" 
                     placeholder="Enter your coverage limit (e.g. 10 000)" 
